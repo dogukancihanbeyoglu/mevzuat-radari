@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yönetim Sunumu | NVIDIA H200 & Yapay Zeka Stratejisi</title>
+    <style>
+        :root {
+            --bg: #090d16;
+            --surface: rgba(18, 24, 38, 0.75);
+            --surface-hover: rgba(28, 38, 58, 0.85);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(56, 189, 248, 0.4);
+            
+            --primary: #38bdf8;
+            --primary-gradient: linear-gradient(135deg, #38bdf8, #818cf8);
+            --emerald: #34d399;
+            --amber: #fbbf24;
+            --rose: #fb7185;
+            
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(129, 140, 248, 0.06) 0%, transparent 40%);
+        }
+
+        /* Presentation Wrapper */
+        .presentation-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 40px;
+        }
+
+        .slide-deck {
+            width: 100%;
+            max-width: 1140px;
+            height: 600px;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 50px 60px;
+            backdrop-filter: blur(20px);
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 1px rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transform: scale(0.98);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Slide Header */
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+
+        .category-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--primary);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .category-tag::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+
+        .slide-title {
+            font-size: 2.1rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            color: #ffffff;
+        }
+
+        .slide-subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .tag-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* Slide Content Areas */
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        /* Clean Executive Card */
+        .exec-card {
+            background: rgba(11, 15, 25, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.25s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .exec-card:hover {
+            border-color: var(--border-active);
+            background: var(--surface-hover);
+            transform: translateY(-2px);
+        }
+
+        .card-number {
+            font-size: 2.4rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .card-heading {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Pillar Box (for architectures / workflows) */
+        .pillar {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px;
+            border-top: 3px solid var(--primary);
+        }
+
+        .pillar.emerald { border-top-color: var(--emerald); }
+        .pillar.amber { border-top-color: var(--amber); }
+
+        .pillar-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bullet-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .bullet-list li {
+            position: relative;
+            padding-left: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        .bullet-list li strong {
+            color: #f1f5f9;
+        }
+
+        .bullet-list li::before {
+            content: "•";
+            position: absolute;
+            left: 4px;
+            color: var(--primary);
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        /* Flow Diagram */
+        .flow-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(11, 15, 25, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px 30px;
+            gap: 12px;
+        }
+
+        .flow-step {
+            flex: 1;
+            text-align: center;
+        }
+
+        .flow-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .flow-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .flow-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .flow-arrow {
+            color: var(--text-dim);
+            font-size: 1.2rem;
+        }
+
+        /* Footer & Navigation Controls */
+        .presentation-footer {
+            height: 65px;
+            background: rgba(9, 13, 22, 0.95);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-btn.active {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .progress-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .slide-indicator {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .progress-track {
+            width: 220px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 12.5%;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+
+        /* Speaker Notes Overlay Drawer */
+        .notes-drawer {
+            position: fixed;
+            bottom: 65px;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.98);
+            border-top: 1px solid var(--border-active);
+            padding: 16px 40px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 -15px 30px rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 100;
+        }
+
+        .notes-drawer.open {
+            display: block;
+        }
+
+        .notes-header {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--amber);
+            margin-bottom: 6px;
+        }
+
+        .notes-text {
+            font-size: 0.95rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+            max-width: 1000px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-container">
+        <div class="slide-deck">
+
+            <!-- SLIDE 1: KAPAK & STRATEJİK VİZYON -->
+            <div class="slide active">
+                <div class="slide-header">
+                    <div>
+                        <div class="category-tag">Yönetim Kurulu Brifingi</div>
+                        <h1 class="slide-title">Kurum İçi Yapay Zeka (On-Premise) Dağıtımı & İç Denetim</h1>
+                        <div class="slide-subtitle">NVIDIA H200 Altyapısı ile Güvenli, Otonom ve Yasal Uyumlu Dönüşüm</div>
+                    </div>
+                    <div class="tag-badge">Ocak 2027 Hedefi</div>
+                </div>
+                <div class="slide-content">
+                    <div class="grid-3" style="margin-top: 10px;">
+                        <div class="exec-card">
+                            <div class="card-number">100%</div>
+                            <div class="card-heading">Veri Egemenliği (On-Premise)</div>
+                            <div class="card-desc">Tüm finansal veriler, sözleşmeler ve şirket sırları kurum dışına çıkmadan yerel sunucuda işlenir.</div>
+                        </div>
+                        <div class="exec-card">
+                            <div class="card-number">141 GB</div>
+                            <div class="card-heading">HBM3e Süper Bellek</div>
+                            <div class="card-desc">Tek bir GPU üzerinde 70B akıl yürütme modeli ve 30+ kurumsal uzman asistan eşzamanlı çalışır.</div>
+                        </div>
+                        <div class="exec-card">
+                            <div class="card-number">%80</div>
+                            <div class="card-heading">Denetim Hız Artışı</div>
+                            <div class="card-desc">Örneklem yerine %100 sözleşme ve masraf taraması; IIA formatında otomatik taslak raporlama.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="notes-data" style="display:none;">
+                    Ocak 2027'de devreye alınacak NVIDIA H200 donanımı; kurumsal verilerimizi buluta çıkarmadan, en üst seviye yapay zeka modellerini iç denetim ve kurum süreçlerinde tam güvenlik ve yasal uyumla kullanmamızı sağlayacaktır.
+                </div>
+            </div>
+
+            <!-- SLIDE 2: DONANIM & GEREKÇE -->
+            <div class="slide">
+                <div class="slide-header">
+                    <div>
+                        <div class="category-tag">Altyapı Stratejisi</div>
+                        <h2 class="slide-title">Neden NVIDIA H200 & On-Premise?</h2>
+                        <div class="slide-subtitle">H100'e kıyasla %76 daha geniş VRAM ile sıfır veri sızıntısı</div>
+                    </div>
+                    <div class="tag-badge">Hopper Mimarisi</div>
+                </div>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="pillar">
+                            <div class="pillar-title">
+                                <span>🚀 Donanım Üstünlüğü (141 GB VRAM)</span>
+                            </div>
+                            <ul class="bullet-list">
+                                <li><strong>4.8 TB/s Bant Genişliği:</strong> Yüzlerce eşzamanlı personel sorgusuna milisaniyeler içinde yanıt.</li>
+                                <li><strong>Çoklu Model Barındırma:</strong> 1x 70B Büyük Model + 1x 32B Kodlama/Analiz Modeli + RAG Vektör Motorları tek kartta.</li>
+                                <li><strong>Büyük Oturum Kapasitesi:</strong> Uzun denetim dosyaları ve çok sayfalı raporlar için devasa KV-Cache belleği.</li>
+                            </ul>
+                        </div>
+                        <div class="pillar emerald">
+                            <div class="pillar-title">
+                                <span>🛡️ On-Premise Tercihinin 3 Temel Sebebi</span>
+                            </div>
+                            <ul class="bullet-list">
+                                <li><strong>Yasal & Regülasyon Zorunluluğu:</strong> BDDK, SPK ve KVKK gereği hassas verilerin yurt dışı buluta çıkış yasağı.</li>
+                                <li><strong>Sıfır Veri Sızıntısı:</strong> Yönetim kurulu kararları, M&A sözleşmeleri ve personel bordroları kurum içinde kalır.</li>
+                                <li><strong>Öngörülebilir Sabit Maliyet:</strong> İstek başına token ücreti olmadan sınırsız kurum içi kullanım.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="notes-data" style="display:none;">
+                    H200 donanımını bulut yerine kendi sistem odamızda konumlandırarak hem BDDK ve KVKK regülasyonlarına tam uyum sağlıyoruz hem de ticari sırlarımızın dışarı sızma riskini tamamen ortadan kaldırıyoruz.
+                </div>
+            </div>
+
+            <!-- SLIDE 3: 3 TEMEL DAĞITIM YÖNTEMİ -->
+            <div class="slide">
+                <div class="slide-header">
+                    <div>
+                        <div class="category-tag">Mimari Tercihler</div>
+                        <h2 class="slide-title">Kurum İçi 3 Temel Dağıtım Modeli</h2>
+                        <div class="slide-subtitle">İhtiyaca göre maksimum verim, donanımsal izolasyon veya dinamik havuz</div>
+                    </div>
+                    <div class="tag-badge">VRAM Yönetimi</div>
+                </div>
+                <div class="slide-content">
+                    <div class="grid-3">
+                        <div class="exec-card" style="border-top: 3px solid var(--primary);">
+                            <div class="card-heading">1. Multi-LoRA Mimarisi</div>
+                            <div style="font-size: 0.8rem; color: var(--emerald); font-weight: 700; margin-bottom: 8px;">MAKSİMUM VERİMLİLİK</div>
+                            <div class="card-desc">1 adet 70B ana model üzerine 30+ hafif departman adaptörü takılır (Hukuk, İK, Denetim, Mali İşler). Sıfır VRAM israfı.</div>
+                        </div>
+                        <div class="exec-card" style="border-top: 3px solid var(--amber);">
+                            <div class="card-heading">2. NVIDIA MIG İzolasyonu</div>
+                            <div style="font-size: 0.8rem; color: var(--amber); font-weight: 700; margin-bottom: 8px;">DONANIMSAL SLA GARANTİSİ</div>
+                            <div class="card-desc">H200 fiziksel olarak 7 bağımsız sanal GPU'ya bölünür (7x 20 GB). Departmanlar birbirinin performansını asla etkilemez.</div>
+                        </div>
+                        <div class="exec-card" style="border-top: 3px solid var(--rose);">
+                            <div class="card-heading">3. vLLM / Triton RAG Havuzu</div>
+                            <div style="font-size: 0.8rem; color: var(--rose); font-weight: 700; margin-bottom: 8px;">DİNAMİK KAYNAK PAYLAŞIMI</div>
+                            <div class="card-desc">Tek büyük bellek havuzunda Genel Asistan + RAG Arama + Embedding motorları eşzamanlı ve dinamik ölçeklenir.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="notes-data" style="display:none;">
+                    Farklı iş birimlerimizin ihtiyaçlarına göre mimariyi esnetebiliyoruz: Departman asistanları için Multi-LoRA, bağımsız kritik birimler için donanımsal MIG, doküman arama/RAG için ise dinamik vLLM havuzunu kullanacağız.
+                </div>
+            </div>
+
+            <!-- SLIDE 4: GÜVENLİK & RBAC -->
+            <div class="slide">
+                <div class="slide-header">
+                    <div>
+                        <div class="category-tag">Veri Güvenliği</div>
+                        <h2 class="slide-title">Yetkilendirme Güvenliği: Bilgi İfşası Nasıl Önlenir?</h2>
+                        <div class="slide-subtitle">Güvenlik modele bırakılamaz; arama katmanında deterministik çözülür</div>
+                    </div>
+                    <div class="tag-badge">RBAC / ABAC</div>
+                </div>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="pillar">
+                            <div class="pillar-title"><span>🔒 Metadata-Based ACL (Pre-Filtering)</span></div>
+                            <ul class="bullet-list">
+                                <li>Dokümanlar indekslenirken rol ve departman izinleri (örn. <code>allowed_roles: ["ik_muduru"]</code>) işlenir.</li>
+                                <li>Kullanıcı sorgu attığında arama motoru yetkisiz dokümanları <strong>modele göndermeden eler</strong>.</li>
+                                <li>Yetkisi olmayan personel sorsa bile model bu bilgiyi <strong>asla görmez</strong>.</li>
+                            </ul>
+                        </div>
+                        <div class="pillar emerald">
+                            <div class="pillar-title"><span>👤 Identity Propagation (Kimlik Aktarımı)</span></div>
+                            <ul class="bullet-list">
+                                <li>Yapay zeka ortak bir "Root/Admin" yetkisiyle değil; sorguyu yapan personelin <strong>Active Directory / SSO kimliğiyle</strong> çalışır.</li>
+                                <li><strong>Deny-by-Default İlkesi:</strong> İzin etiketi eksik olan hiçbir veri sonuç havuzuna dahil edilmez.</li>
+                                <li><strong>AI Guardrails:</strong> NeMo Guardrails ile Prompt Injection saldırıları gerçek zamanlı engellenir.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="notes-data" style="display:none;">
+                    En kritik soru: Yetkisiz personel gizli maaş veya sözleşme bilgilerini sorarsa model açık verir mi? Hayır. Çünkü kimlik doğrulaması Active Directory üzerinden arama katmanında yapılır; yetkisiz veri modele hiç iletilmez.
+                </div>
+            </div>
+
+            <!-- SLIDE 5: HALÜSİNASYON & ATIF TAKİBİ -->
+            <div class="slide">
+                <div class="slide-header">
+                    <div>
+                        <div class="category-tag">Gözlemlenebilirlik</div>
+                        <h2 class="slide-title">Halüsinasyon Engelleme & Kaynak Atfı (Citation)</h2>
+                        <div class="slide-subtitle">Üretilen her kararın resmi şirket belgesi dayanağı %100 kanıtlanabilir</div>
+                    </div>
+                    <div class="tag-badge">Traceability</div>
+                </div>
+                <div class="slide-content">
+                    <div class="grid-3">
+                        <div class="exec-card">
+                            <div class="card-heading">🎯 Canlı Doğruluk Ölçümü</div>
+                            <div class="card-desc"><strong>Arize Phoenix & Langfuse</strong> ile modelin cevabının kaynak dokümanlara sadakati (% Groundedness skoru) canlı ölçülür; kaynaktan sapan yanıtlar engellenir.</div>
+                        </div>
+                        <div class="exec-card">
+                            <div class="card-heading">📑 Tıklanabilir Dipnot (Citation)</div>
+                            <div class="card-desc">Model her cümlenin sonuna <code>[1]</code> referansı ekler. Personel dipnota tıkladığında orijinal PDF belgesinin ilgili sayfası sarı ile vurgulanmış açılır.</div>
+                        </div>
+                        <div class="exec-card">
+                            <div class="card-heading">🏛️ Yasal İspat (Audit Trail)</div>
+                            <div class="card-desc">Verilen her tavsiyenin ve bilginin hangi personele, ne zaman ve hangi şirket dokümanına dayanarak üretildiği geriye dönük <strong>%100 kayıt altındadır</strong>.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="notes-data" style="display:none;">
+                    Yapay zekanın kafasından bilgi uydurma (halüsinasyon) riskini iki katmanla çözüyoruz: Arize Phoenix ile kaynak uyumunu ölçüyoruz; LlamaIndex atıf motoruyla her cümlenin altına orijinal PDF sayfasını tıklanabilir kanıt olarak ekliyoruz.
+                </div>
+            </div>
+
+            <!-- SLIDE 6: İÇ DENETİM PROJELERİ -->
+            <div class="slide">
+                <div class="slide-header">
+                    <div>
+                        <div class="category-tag">Uygulama Alanları</div>
+                        <h2 class="slide-title">İç Denetimde 3 Yüksek Etkili Proje</h2>
+                        <div class="slide-subtitle">Örneklemden %100 tam popülasyon taramasına geçiş</div>
+                    </div>
+                    <div class="tag-badge">Öncelikler</div>
+                </div>
+                <div class="slide-content">
+                    <div class="grid-3">
+                        <div class="pillar" style="border-top-color: var(--emerald);">
+                            <div class="pillar-title">1. Sözleşme Denetimi</div>
+                            <div style="font-size: 0.75rem; color: var(--emerald); font-weight: 700; margin-bottom: 8px;">ŞUBAT 2027 (QUICK WIN)</div>
+                            <ul class="bullet-list">
+                                <li><strong>ContractGuard / ClauseGuard:</strong> Yıllık yüzlerce satın alma sözleşmesinin %100'ü taranır.</li>
+                                <li>Prosedüre aykırı cezai şartlar ve yetkisiz onaylar kırmızı bayrakla (Red Flag) listelenir.</li>
+                            </ul>
+                        </div>
+                        <div class="pillar" style="border-top-color: var(--primary);">
+                            <div class="pillar-title">2. Mali Masraf & Suiistimal</div>
+                            <div style="font-size: 0.75rem; color: var(--primary); font-weight: 700; margin-bottom: 8px;">MART - NİSAN 2027</div>
+                            <ul class="bullet-list">
+                                <li><strong>FraudDetection-LLM:</strong> SAP/ERP yevmiye ve masraf formlarında limit altı parçalanmış ödemeleri yakalar.</li>
+                                <li>Şüpheli işlemin arkasındaki nedeni Türkçe gerekçelendirir.</li>
+                            </ul>
+                        </div>
+                        <div class="pillar" style="border-top-color: var(--amber);">
+                            <div class="pillar-title">3. Otonom Raporlama</div>
+                            <div style="font-size: 0.75rem; color: var(--amber); font-weight: 700; margin-bottom: 8px;">MAYIS - HAZİRAN 2027</div>
+                            <ul class="bullet-list">
+                                <li><strong>LangGraph Multi-Agent:</strong> 4 sanal denetçi IIA standartlarında 5C formatında resmi Çalışma Kağıdı ve Rapor üretir.</li>
+                                <li>Raporlama süresi 2 haftadan 1 güne iner.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="notes-data" style="display:none;">
+                    İç denetimde ilk olarak hızlı kazanım sağlayacağımız sözleşme denetimini devreye alacağız. Ardından SAP bağlantısıyla masraf kaçaklarını tespit edecek, sonrasında ise raporlama süremizi %80 kısaltacak çok ajanlı sistemi kuracağız.
+                </div>
+            </div>
+
+            <!-- SLIDE 7: YOL HARİTASI -->
+            <div class="slide">
+                <div class="slide-header">
+                    <div>
+                        <div class="category-tag">Uygulama Takvimi</div>
+                        <h2 class="slide-title">2026 – 2027 Stratejik Yol Haritası</h2>
+                        <div class="slide-subtitle">4 Aylık Hazırlık Dönemi ve 2027 Kademeli Canlıya Geçiş</div>
+                    </div>
+                    <div class="tag-badge">Stratejik Plan</div>
+                </div>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="pillar amber">
+                            <div class="pillar-title">📅 Hazırlık Dönemi (Eylül – Aralık 2026)</div>
+                            <ul class="bullet-list">
+                                <li><strong>Eylül:</strong> Sözleşme/prosedür veri envanteri ve RBAC yetki matrisi.</li>
+                                <li><strong>Ekim:</strong> 50 gerçek denetim vakasından oluşan "Altın Test Kümesi" (Golden Dataset).</li>
+                                <li><strong>Kasım:</strong> 100+ denetim kuralı prompt kütüphanesi ve 5C rapor şablonları.</li>
+                                <li><strong>Aralık:</strong> Yerel KVKK maskeleme pipeline'ı ve BT sistem odası hazırlığı.</li>
+                            </ul>
+                        </div>
+                        <div class="pillar emerald">
+                            <div class="pillar-title">🚀 Dağıtım & Canlı Dönemi (2027)</div>
+                            <ul class="bullet-list">
+                                <li><strong>Ocak 2027:</strong> H200 kurulumu, Llama 70B & Qwen 32B modellerinin devreye alınması.</li>
+                                <li><strong>Şubat (Faz 1):</strong> Sözleşme ve Mevzuat Denetimi canlıda (Quick Win).</li>
+                                <li><strong>Mart - Nisan (Faz 2):</strong> SAP Masraf & Suiistimal Tespiti entegrasyonu.</li>
+                                <li><strong>Mayıs - Haziran (Faz 3):</strong> Çok Ajanlı Otomatik Raporlama Ekibi (LangGraph).</li>
+                                <li><strong>2027 2. Yarı (Faz 4):</strong> 7/24 Sürekli Kontrol İzleme (CCM / GRC).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="notes-data" style="display:none;">
+                    Ocak 2027'yi beklemiyoruz. Eylül-Aralık 2026 arasındaki 4 ayı veri temizliği, test setleri ve prompt kurallarını hazırlayarak geçireceğiz. Donanım teslim edildiği anda Şubat ayında ilk fazı hemen canlıya alacağız.
+                </div>
+            </div>
+
+            <!-- SLIDE 8: MODEL YÖNETİŞİMİ & ONAY -->
+            <div class="slide">
+                <div class="slide-header">
+                    <div>
+                        <div class="category-tag">Yönetişim & Karar</div>
+                        <h2 class="slide-title">Yapay Zekanın Denetimi ve Onay Talebi</h2>
+                        <div class="slide-subtitle">Kurum modellerinin güvenliği, tarafsızlığı ve yasal uyumunun denetimi</div>
+                    </div>
+                    <div class="tag-badge">Yönetim Kararı</div>
+                </div>
+                <div class="slide-content">
+                    <div class="grid-2">
+                        <div class="exec-card">
+                            <div class="card-heading">🛡️ Model Denetim Çerçevesi (Governance)</div>
+                            <ul class="bullet-list" style="margin-top: 6px;">
+                                <li><strong>Garak & PyRIT:</strong> Prompt Injection ve siber zaafiyetlere karşı periyodik güvenlik taraması.</li>
+                                <li><strong>COMPL-AI:</strong> AB Yapay Zeka Yasası (EU AI Act) ve ISO 42001 teknik uyum karnesi.</li>
+                                <li><strong>AIF360 / Fairlearn:</strong> Model kararlarında önyargı ve ayrımcılık denetimi.</li>
+                            </ul>
+                        </div>
+                        <div class="exec-card" style="background: rgba(56, 189, 248, 0.08); border-color: var(--primary);">
+                            <div class="card-heading" style="color: var(--primary);">📌 Yönetimden Talep Edilen Kararlar:</div>
+                            <ul class="bullet-list" style="margin-top: 6px;">
+                                <li><strong>1. Hazırlık Çalışma Grubu:</strong> Eylül-Aralık 2026 döneminde BT, İK ve Hukuk ekipleriyle ortak koordinasyonun başlatılması.</li>
+                                <li><strong>2. Pilot Alan Tahsisi:</strong> Ocak 2027 H200 sunucusu üzerinde İç Denetim için Faz 1 çalışma alanının ayrılması.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="notes-data" style="display:none;">
+                    İç Denetim olarak yalnızca yapay zekayı kullanmayacağız; kurumdaki tüm yapay zeka modellerini yasal uyum ve güvenlik standartlarına göre denetleyeceğiz. Eylül ayı itibarıyla hazırlık çalışmalarını başlatmak üzere onaylarınızı arz ederiz.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SPEAKER NOTES DRAWER -->
+    <div class="notes-drawer" id="notesDrawer">
+        <div class="notes-header">🎙️ KONUŞMACI NOTU (SPEAKER NOTE)</div>
+        <div class="notes-text" id="notesText"></div>
+    </div>
+
+    <!-- PRESENTATION FOOTER -->
+    <div class="presentation-footer">
+        <div class="nav-controls">
+            <button class="nav-btn" onclick="prevSlide()">◀ Önceki</button>
+            <button class="nav-btn" onclick="nextSlide()">Sonraki ▶</button>
+        </div>
+
+        <div class="progress-section">
+            <span class="slide-indicator" id="slideIndicator">SLAYT 1 / 8</span>
+            <div class="progress-track">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="nav-controls">
+            <button class="nav-btn" id="notesToggleBtn" onclick="toggleNotes()">🎙️ Konuşmacı Notları (N)</button>
+            <button class="nav-btn" onclick="toggleFullscreen()">⛶ Tam Ekran (F)</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const slideIndicator = document.getElementById('slideIndicator');
+        const progressBar = document.getElementById('progressBar');
+        const notesDrawer = document.getElementById('notesDrawer');
+        const notesText = document.getElementById('notesText');
+        const notesToggleBtn = document.getElementById('notesToggleBtn');
+
+        function updateView() {
+            slides.forEach((s, idx) => {
+                s.classList.toggle('active', idx === currentSlide);
+            });
+
+            slideIndicator.textContent = `SLAYT ${currentSlide + 1} / ${totalSlides}`;
+            progressBar.style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+
+            const activeNote = slides[currentSlide].querySelector('.notes-data');
+            if (activeNote) {
+                notesText.textContent = activeNote.textContent.trim();
+            } else {
+                notesText.textContent = "Bu slayt için konuşmacı notu bulunmuyor.";
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateView();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateView();
+            }
+        }
+
+        function toggleNotes() {
+            notesDrawer.classList.toggle('open');
+            notesToggleBtn.classList.toggle('active');
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                prevSlide();
+            } else if (e.key.toLowerCase() === 'n') {
+                toggleNotes();
+            } else if (e.key.toLowerCase() === 'f') {
+                toggleFullscreen();
+            }
+        });
+
+        // Initialize
+        updateView();
+    </script>
+</body>
+</html>
