@@ -1,94 +1,86 @@
-# ================================================================
-# ŞİRKET UYUM VE DENETİM PROFİLİ: STM SAVUNMA TEKNOLOJİLERİ A.Ş.
-# ================================================================
 company_profile:
   general:
-    name: "STM Savunma Teknolojileri Mühendislik ve Ticaret A.Ş."
-    legal_type: "Anonim Şirket"
-    scale: "Büyük Ölçekli (Savunma Sanayii Lideri)"
+    annual_turnover_tl: 10B+
     employee_count: 2200
-    annual_turnover_tl: "10B+" # Büyük ölçekli savunma projeleri ve ihracat
     is_publicly_traded: false
-
-  sectors_and_nace:
-    primary_sector: "Savunma Sanayii, Askeri Denizcilik ve Taktik Mini İHA Sistemleri"
-    secondary_sectors:
-      - "Siber Güvenlik & Kritik Altyapı Koruma"
-      - "Uydu ve Uzay Teknolojileri"
-      - "Komuta Kontrol ve Radar Sistemleri"
-      - "Savunma Sanayii Danışmanlığı ve Mühendislik"
-    nace_codes:
-      - "30.40.00" # Askeri savaş araçlarının imalatı
-      - "30.11.02" # Savaş gemileri ve askeri deniz taşıtlarının yapımı
-      - "62.01.01" # Bilgisayar programlama ve siber güvenlik faaliyetleri
-      - "72.19.01" # Doğal bilimler ve mühendislikle ilgili araştırma-geliştirme (Ar-Ge)
-      - "30.30.01" # Hava ve uzay araçları, insansız hava araçları (İHA) imalatı
-
-  regulatory_bodies:
-    - "Cumhurbaşkanlığı Savunma Sanayii Başkanlığı (SSB)"
-    - "Milli Savunma Bakanlığı (MSB)"
-    - "Sanayi ve Teknoloji Bakanlığı"
-    - "Ticaret Bakanlığı (Kontrole Tabi Savunma İhracatı)"
-    - "Ulaştırma ve Altyapı Bakanlığı / BTK / USOM"
-    - "Hazine ve Maliye Bakanlığı (Savunma Sanayii Destekleme Fonu - SSDF)"
-    - "Kişisel Verileri Koruma Kurumu (KVKK)"
-    - "Çalışma ve Sosyal Güvenlik Bakanlığı"
-
-  operational_traits:
-    has_foreign_trade: true # Askeri ihracat, gümrük, son kullanıcı (End-User) izinleri
-    has_rd_center: true # 5746 sayılı Ar-Ge Merkezi ve Teknopark/TGB faaliyetleri
-    uses_subcontractors: true # Savunma yan sanayii, alt yüklenici ve KOBİ ekosistemi
-    e_commerce_license: false
-    processes_special_category_data: true # Milli Gizli / NATO Gizli Tesis ve Kişi Güvenlik Belgesi gereksinimleri
-
-  risk_priorities:
-    defense_procurement_and_export_control: "Kritik" # 5201/5202 sayılı Kanunlar, askeri malzeme ihracatı
-    information_security_and_cyber: "Kritik" # NATO/Milli Gizlilik, Tesis Güvenlik, Kritik Altyapı
-    rd_and_defense_funds: "Kritik" # SSDF, Ar-Ge teşvikleri, Teknoloji Geliştirme Bölgeleri
-    military_zones_and_security: "Yüksek" # Askeri yasak bölgeler ve güvenlik protokolleri
-    subcontractor_and_supply_chain: "Yüksek" # Alt yüklenici denetimleri ve yerlilik oranları
-    tax_and_finance: "Yüksek" # Savunma fon kesintileri ve Ar-Ge vergi muafiyetleri
-
+    legal_type: Anonim Şirket
+    name: STM Savunma Teknolojileri Mühendislik ve Ticaret A.Ş.
+    scale: Büyük Ölçekli (Savunma Sanayii Lideri)
   keywords:
-    high_priority:
-      - "savunma sanayii"
-      - "milli savunma"
-      - "askeri"
-      - "teknoloji geliştirme bölgesi"
-      - "insansız hava aracı"
-      - "iha"
-      - "siber güvenlik"
-      - "askeri yasak bölge"
-      - "denizaltı"
-      - "harp gemisi"
-      - "5201"
-      - "5202"
-      - "ssb"
-      - "ar-ge"
-      - "tesis güvenlik"
-    medium_priority:
-      - "ihracat izni"
-      - "stratejik malzeme"
-      - "kamulaştırma"
-      - "teknokent"
-      - "bilgi güvenliği"
-      - "kamu ihale"
-      - "kambiyo"
     excluded:
-      - "öğrenci"
-      - "lisansüstü"
-      - "yüksek lisans"
-      - "doktora"
-      - "fakülte"
-      - "enstitü"
-      - "rektörlük"
-      - "akademik"
-      - "öğretim elemanı"
-      - "öğretim üyesi"
-      - "öğretim görevlisi"
-      - "müfredat"
-      - "sınav yönetmeliği"
-      - "sağlık personeli"
-      - "hastane"
-      - "belediye"
-      - "atama kararları"
+    - öğrenci
+    - lisansüstü
+    - yüksek lisans
+    - doktora
+    - fakülte
+    - enstitü
+    - rektörlük
+    - akademik
+    - öğretim elemanı
+    - öğretim üyesi
+    - öğretim görevlisi
+    - müfredat
+    - sınav yönetmeliği
+    - sağlık personeli
+    - hastane
+    - belediye
+    - atama kararları
+    high_priority:
+    - savunma sanayii
+    - milli savunma
+    - askeri
+    - teknoloji geliştirme bölgesi
+    - insansız hava aracı
+    - iha
+    - siber güvenlik
+    - askeri yasak bölge
+    - denizaltı
+    - harp gemisi
+    - '5201'
+    - '5202'
+    - ssb
+    - ar-ge
+    - tesis güvenlik
+    medium_priority:
+    - ihracat izni
+    - stratejik malzeme
+    - kamulaştırma
+    - teknokent
+    - bilgi güvenliği
+    - kamu ihale
+    - kambiyo
+  operational_traits:
+    e_commerce_license: false
+    has_foreign_trade: true
+    has_rd_center: true
+    processes_special_category_data: true
+    uses_subcontractors: true
+  regulatory_bodies:
+  - Cumhurbaşkanlığı Savunma Sanayii Başkanlığı (SSB)
+  - Milli Savunma Bakanlığı (MSB)
+  - Sanayi ve Teknoloji Bakanlığı
+  - Ticaret Bakanlığı (Kontrole Tabi Savunma İhracatı)
+  - Ulaştırma ve Altyapı Bakanlığı / BTK / USOM
+  - Hazine ve Maliye Bakanlığı (Savunma Sanayii Destekleme Fonu - SSDF)
+  - Kişisel Verileri Koruma Kurumu (KVKK)
+  - Çalışma ve Sosyal Güvenlik Bakanlığı
+  risk_priorities:
+    defense_procurement_and_export_control: Kritik
+    information_security_and_cyber: Kritik
+    military_zones_and_security: Yüksek
+    rd_and_defense_funds: Kritik
+    subcontractor_and_supply_chain: Yüksek
+    tax_and_finance: Yüksek
+  sectors_and_nace:
+    nace_codes:
+    - 30.40.00
+    - 30.11.02
+    - 62.01.01
+    - 72.19.01
+    - 30.30.01
+    primary_sector: Savunma Sanayii, Askeri Denizcilik ve Taktik Mini İHA Sistemleri
+    secondary_sectors:
+    - Siber Güvenlik & Kritik Altyapı Koruma
+    - Uydu ve Uzay Teknolojileri
+    - Komuta Kontrol ve Radar Sistemleri
+    - Savunma Sanayii Danışmanlığı ve Mühendislik

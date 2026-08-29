@@ -1,6 +1,6 @@
 """
 Data models for Mevzuat Radarı (Resmî Gazete İç Denetim & Uyum Radarı).
-Includes support for Negative/Exclusion Keywords and Contextual Filtering.
+Includes support for Negative/Exclusion Keywords, Horizontal Corporate Domains, and Multi-Layered Compliance.
 """
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
@@ -68,6 +68,8 @@ class AuditEvaluation(BaseModel):
     item: GazetteItem
     relevance_score: int = Field(..., ge=0, le=100, description="0-100 arası alaka skoru")
     risk_level: str = Field(..., description="Risk Seviyesi: Kritik, Yüksek, Orta, Düşük, Bilgi")
+    compliance_domain: str = Field(default="Sektörel Uyum", description="Uyum Alanı: Sektörel Uyum, Vergi & Maliye, İş Hukuku & İK, KVKK & Siber, vb.")
+    domain_badge: str = Field(default="SEKTÖREL", description="Rozet: SEKTÖREL, VERGİ & MALİYE, İŞ HUKUKU & İK, vb.")
     matched_reasons: List[str] = Field(default_factory=list, description="Neden şirketle alakalı?")
     executive_summary: str = Field(..., description="Yönetici özeti")
     penalty_and_legal_risk: Optional[str] = Field(default=None, description="Cezai ve hukuki yaptırım riski")

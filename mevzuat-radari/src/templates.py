@@ -23,11 +23,12 @@ def format_markdown_report(report: DailyAuditReport) -> str:
 
     for i, ev in enumerate(report.evaluations, 1):
         badge = "🔴" if ev.risk_level == "Kritik" else ("🟠" if ev.risk_level == "Yüksek" else "🟡")
-        lines.append(f"### {badge} {i}. [{ev.risk_level.upper()}] {ev.item.title}")
+        domain_tag = f"[{ev.domain_badge}]" if hasattr(ev, 'domain_badge') and ev.domain_badge else ""
+        lines.append(f"### {badge} {i}. [{ev.risk_level.upper()}] {domain_tag} {ev.item.title}")
         
         loc_str = ev.item.location_breadcrumb or f"{ev.item.gazette_date or report.date} Resmî Gazete > {ev.item.section} > {ev.item.category}"
         lines.append(f"📍 **Resmî Gazete Konumu:** `{loc_str}`")
-        lines.append(f"* **Kategori:** {ev.item.category} | **Bölüm:** {ev.item.section}")
+        lines.append(f"* **Uyum Alanı:** {ev.compliance_domain} | **Kategori:** {ev.item.category} | **Bölüm:** {ev.item.section}")
         if ev.item.institution:
             lines.append(f"* **Düzenleyen Kurum:** {ev.item.institution}")
         lines.append(f"* **Alaka Skoru:** %{ev.relevance_score}")
@@ -70,6 +71,7 @@ def format_html_report(report: DailyAuditReport) -> str:
     items_html = ""
     for i, ev in enumerate(report.evaluations, 1):
         color = "#e53e3e" if ev.risk_level == "Kritik" else ("#dd6b20" if ev.risk_level == "Yüksek" else "#d69e2e")
+        domain_tag = ev.domain_badge if hasattr(ev, 'domain_badge') and ev.domain_badge else "SEKTÖREL"
         reasons_li = "".join([f"<li>{safe_html(r)}</li>" for r in ev.matched_reasons])
         deps_spans = " ".join([f"<span style='background:#edf2f7;padding:3px 8px;border-radius:4px;font-size:12px;margin-right:4px;'>{safe_html(d)}</span>" for d in ev.affected_departments])
         checklist_li = "".join([f"<li style='margin-bottom:4px;'>⬜ {safe_html(chk)}</li>" for chk in ev.action_checklist])
@@ -80,6 +82,7 @@ def format_html_report(report: DailyAuditReport) -> str:
         <div style="border: 1px solid #e2e8f0; border-left: 5px solid {color}; border-radius: 8px; padding: 18px; margin-bottom: 20px; background-color: #ffffff;">
             <h3 style="margin-top:0; color: #2d3748; font-size: 16px;">
                 <span style="background:{color}; color:white; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 6px;">{safe_html(ev.risk_level)}</span>
+                <span style="background:#edf2f7; color:#2d3748; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight:bold; margin-right: 6px;">{safe_html(domain_tag)}</span>
                 {i}. {safe_html(ev.item.title)}
             </h3>
             <p style="color: #2b6cb0; font-size: 12px; margin: 4px 0; font-family: monospace;">

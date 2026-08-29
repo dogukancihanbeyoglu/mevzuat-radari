@@ -1,5 +1,5 @@
 """
-Unit and Integration Tests for Mevzuat Radarı (STM Savunma A.Ş. Profile).
+Unit and Integration Tests for Mevzuat Radarı (Multi-Layered Compliance Matrix).
 """
 import pytest
 import os
@@ -68,7 +68,7 @@ def test_scoring_high_relevance_defense():
         url="https://resmigazete.gov.tr/sample",
         category="Cumhurbaşkanı Kararı",
     )
-    score, reasons, risk = score_item_relevance(item, profile)
+    score, reasons, risk, domain, badge = score_item_relevance(item, profile)
     assert score >= 70
     assert risk == "Kritik"
     assert any("Ar-Ge" in r or "Milli Savunma" in r or "Savunma" in r for r in reasons)
@@ -82,7 +82,7 @@ def test_scoring_unrelated_item():
         category="Yönetmelik",
         institution="Sağlık Bakanlığı",
     )
-    score, reasons, risk = score_item_relevance(item, profile)
+    score, reasons, risk, domain, badge = score_item_relevance(item, profile)
     assert score == 0
     assert risk == "Bilgi"
 
@@ -97,9 +97,9 @@ def test_affected_departments_inference_defense():
 
 
 def test_checklist_generation():
-    checklist = generate_action_checklist("Katma Değer Vergisi Tebliği", "Tebliğ", "Yüksek")
+    checklist = generate_action_checklist("Katma Değer Vergisi Tebliği", "Tebliğ", "Yüksek", "VERGİ & MALİYE")
     assert len(checklist) > 0
-    assert any("ERP" in c or "parametre" in c for c in checklist)
+    assert any("ERP" in c or "parametre" in c or "YMM" in c for c in checklist)
 
 
 def test_templates_rendering():
@@ -185,7 +185,7 @@ def test_advanced_rule_based_negative_filtering():
         category="Yönetmelik",
         institution="Milli Savunma Üniversitesi",
     )
-    score, _, risk = score_item_relevance(item_academic, profile)
+    score, _, risk, _, _ = score_item_relevance(item_academic, profile)
     assert score == 0
     assert risk == "Bilgi"
 
@@ -196,7 +196,7 @@ def test_advanced_rule_based_negative_filtering():
         category="Yönetmelik",
         institution="Sağlık Bakanlığı",
     )
-    score_med, _, risk_med = score_item_relevance(item_medical, profile)
+    score_med, _, risk_med, _, _ = score_item_relevance(item_medical, profile)
     assert score_med == 0
     assert risk_med == "Bilgi"
 
@@ -207,9 +207,47 @@ def test_advanced_rule_based_negative_filtering():
         category="Tebliğ",
         institution="Milli Savunma Bakanlığı",
     )
-    score_uav, _, risk_uav = score_item_relevance(item_uav, profile)
+    score_uav, _, risk_uav, _, _ = score_item_relevance(item_uav, profile)
     assert score_uav >= 70
     assert risk_uav == "Kritik"
+
+
+def test_horizontal_corporate_compliance():
+    """Verifies that corporate horizontal regulations (Tax, Labor/HR, KVKK, Tenders) are captured."""
+    profile = load_company_profile("config/company_profile.yaml")
+
+    # 1. Tax & Finance
+    item_tax = GazetteItem(
+        title="Katma Değer Vergisi Genel Uygulama Tebliğinde Değişiklik Yapılmasına Dair Tebliğ (Seri No: 52)",
+        url="https://resmigazete.gov.tr/tax",
+        category="Tebliğ",
+        institution="Hazine ve Maliye Bakanlığı",
+    )
+    score_tax, _, risk_tax, domain_tax, badge_tax = score_item_relevance(item_tax, profile)
+    assert score_tax >= 50
+    assert badge_tax == "VERGİ & MALİYE"
+
+    # 2. Labor & HR (Minimum Wage)
+    item_hr = GazetteItem(
+        title="Asgari Ücret Tespit Komisyonu Kararı",
+        url="https://resmigazete.gov.tr/hr",
+        category="Tebliğ",
+        institution="Çalışma ve Sosyal Güvenlik Bakanlığı",
+    )
+    score_hr, _, risk_hr, domain_hr, badge_hr = score_item_relevance(item_hr, profile)
+    assert score_hr >= 50
+    assert badge_hr == "İŞ HUKUKU & İK"
+
+    # 3. KVKK & Data Privacy
+    item_kvkk = GazetteItem(
+        title="Kişisel Verilerin Yurt Dışına Aktarılmasına İlişkin Usul ve Esaslar Hakkında Yönetmelik",
+        url="https://resmigazete.gov.tr/kvkk",
+        category="Yönetmelik",
+        institution="Kişisel Verileri Koruma Kurumu",
+    )
+    score_kvkk, _, risk_kvkk, domain_kvkk, badge_kvkk = score_item_relevance(item_kvkk, profile)
+    assert score_kvkk >= 50
+    assert badge_kvkk == "KVKK & SİBER"
 
 
 def test_sector_presets_api():

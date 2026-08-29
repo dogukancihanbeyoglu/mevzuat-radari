@@ -1,16 +1,15 @@
 """
 AI and Rules-based Regulatory Relevance and Internal Audit Evaluator Module.
-Features Universal Contextual Multi-Layered Rule Engine:
-- Universal Public Administration Noise Classifier (suppresses academic, student, municipal, civil servant noise)
-- Standard Sectoral Taxonomy & Auto-Tuning Presets
-- Strict Word-boundary Regex Matching (avoids substring false triggers)
-- Institutional Jurisdiction & Commercial Override Routing
-- Live GenAI LLM reasoning integration with graceful local fallback
+Features Universal Multi-Layered Compliance Matrix:
+1. Vertical Sectoral Layer (Defense, Aviation, Maritime, Space, SSB, MSB, 5201/5202)
+2. Horizontal Corporate Layer (Tax & Finance, Labor & HR, KVKK & Cyber, Public Procurement, Customs & Trade, Corporate Law)
+3. Universal Public Noise Filter (suppresses academic/student/municipal noise)
+4. Live GenAI LLM reasoning integration with graceful local fallback
 """
 import os
 import re
 from datetime import datetime
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Dict, Any
 import yaml
 
 from .models import (
@@ -23,7 +22,11 @@ from .models import (
 from .scraper import fetch_gazette_index, fetch_gazette_date_range, fetch_regulation_content
 from .llm_engine import call_llm_evaluation
 from .utils import lower_tr
-from .sector_templates import UNIVERSAL_NOISE_KEYWORDS, COMMERCIAL_OVERRIDE_TERMS
+from .sector_templates import (
+    UNIVERSAL_NOISE_KEYWORDS,
+    COMMERCIAL_OVERRIDE_TERMS,
+    HORIZONTAL_CORPORATE_DOMAINS,
+)
 
 
 def load_company_profile(profile_path: str = "config/company_profile.yaml") -> CompanyProfile:
@@ -55,11 +58,10 @@ def _contains_term(text: str, term: str) -> bool:
     return term_lower in text
 
 
-def score_item_relevance(item: GazetteItem, profile: CompanyProfile) -> Tuple[int, List[str], str]:
+def score_item_relevance(item: GazetteItem, profile: CompanyProfile) -> Tuple[int, List[str], str, str, str]:
     """
-    Computes a universal multi-layered relevance score (0-100) between a GazetteItem and CompanyProfile.
-    Employs Universal Noise Classification, Negative Keywords, and Sectoral Jurisdiction Matching.
-    Returns (score, matched_reasons, risk_level).
+    Computes multi-layered relevance score (0-100) across Vertical Sector and Horizontal Corporate domains.
+    Returns (score, matched_reasons, risk_level, compliance_domain, domain_badge).
     """
     title_lower = lower_tr(item.title)
     institution_lower = lower_tr(item.institution or "")
@@ -67,93 +69,106 @@ def score_item_relevance(item: GazetteItem, profile: CompanyProfile) -> Tuple[in
     combined_text = f"{title_lower} {institution_lower} {category_lower}"
 
     # 1. COMMERCIAL & SECTORAL OVERRIDE CHECK
-    # Only protect from noise if an explicit commercial/procurement/legal term is present
     is_protected_from_noise = any(_contains_term(title_lower, term) for term in COMMERCIAL_OVERRIDE_TERMS)
 
     # 2. UNIVERSAL PUBLIC NOISE FILTER (If not protected by explicit commercial override)
     if not is_protected_from_noise:
-        # Check universal noise (academic, student, municipal, civil servant)
         if any(_contains_term(title_lower, noise) for noise in UNIVERSAL_NOISE_KEYWORDS):
-            return 0, [], "Bilgi"
+            return 0, [], "Bilgi", "Genel", "BİLGİ"
 
-        # Suppress generic university internal rules
         if "üniversite" in combined_text:
-            return 0, [], "Bilgi"
+            return 0, [], "Bilgi", "Genel", "BİLGİ"
 
-        # Suppress routine public appointments unless from company's primary regulatory body
         if "atama" in category_lower or "atama" in title_lower:
-            reg_match = any(_contains_term(title_lower, reg) for reg in profile.regulatory_bodies)
+            reg_match = False
+            for reg in profile.regulatory_bodies:
+                reg_clean = re.sub(r"\(.*?\)", "", reg).strip()
+                if _contains_term(title_lower, reg_clean):
+                    reg_match = True
+                    break
             if not reg_match:
-                return 0, [], "Bilgi"
+                return 0, [], "Bilgi", "Genel", "BİLGİ"
 
     # 3. COMPANY-SPECIFIC NEGATIVE EXCLUSION FILTER
     if profile.keywords.excluded and not is_protected_from_noise:
         if any(_contains_term(title_lower, exc) or _contains_term(institution_lower, exc) for exc in profile.keywords.excluded):
-            return 0, [], "Bilgi"
+            return 0, [], "Bilgi", "Genel", "BİLGİ"
 
     score = 0
     reasons = []
+    detected_domain = "Sektörel Uyum"
+    domain_badge = "SEKTÖREL"
 
-    # 4. HIGH PRIORITY KEYWORDS MATCH
+    # =========================================================================
+    # A. VERTICAL SECTOR LAYER (Savunma, Havacılık, NACE, Yetkili Kurumlar)
+    # =========================================================================
+    # High Priority Keywords
     for kw in profile.keywords.high_priority:
         if _contains_term(title_lower, kw):
             score += 35
-            reasons.append(f"Yüksek öncelikli sektörel anahtar kelime: '{kw}'")
+            reasons.append(f"Yüksek öncelikli dikey sektörel anahtar kelime: '{kw}'")
 
-    # 5. MEDIUM PRIORITY KEYWORDS MATCH
+    # Medium Priority Keywords
     for kw in profile.keywords.medium_priority:
         if _contains_term(title_lower, kw):
             score += 15
             reasons.append(f"Orta öncelikli sektörel anahtar kelime: '{kw}'")
 
-    # 6. REGULATORY BODIES JURISDICTION MATCH
+    # Regulatory Bodies Jurisdiction (Match both full name and acronym in parens)
     for reg in profile.regulatory_bodies:
-        if _contains_term(title_lower, reg) or (institution_lower and _contains_term(institution_lower, reg)):
+        reg_clean = re.sub(r"\(.*?\)", "", reg).strip()
+        acronym_match = re.search(r"\((.*?)\)", reg)
+        acronym = acronym_match.group(1).strip() if acronym_match else ""
+
+        if _contains_term(title_lower, reg_clean) or (acronym and _contains_term(title_lower, acronym)) or \
+           (institution_lower and (_contains_term(institution_lower, reg_clean) or (acronym and _contains_term(institution_lower, acronym)))):
             score += 30
             reasons.append(f"Tabi olunan yetkili düzenleyici kurum: '{reg}'")
 
-    # 7. OPERATIONAL TRAITS MATCH
-    if profile.operational_traits.has_rd_center:
-        if any(_contains_term(title_lower, term) for term in ["ar-ge", "teknoloji geliştirme", "tgb", "5746", "teknokent", "tübitak"]):
-            score += 30
-            reasons.append("Şirketin Ar-Ge Merkezi ve Teknoloji Geliştirme Bölgesi (TGB) operasyonlarını doğrudan ilgilendiriyor")
-
-    if profile.operational_traits.has_foreign_trade:
-        if any(_contains_term(title_lower, term) for term in ["gümrük", "ithalat", "ihracat", "kambiyo", "askeri ihracat", "stratejik malzeme", "dış ticaret"]):
-            score += 25
-            reasons.append("Şirketin İthalat/İhracat ve Dış Ticaret operasyonlarını ilgilendiriyor")
-
-    if profile.operational_traits.e_commerce_license:
-        if any(_contains_term(title_lower, term) for term in ["e-ticaret", "mesafeli", "elektronik ticaret", "etbis", "tüketici", "pazaryeri"]):
-            score += 25
-            reasons.append("Şirketin E-Ticaret ve Dijital Satış faaliyetlerini ilgilendiriyor")
-
-    # 8. SECTOR & NACE ALIGNMENT
+    # Sector / NACE Alignment
     primary_sec = lower_tr(profile.sectors_and_nace.primary_sector)
     if "savunma" in primary_sec or "askeri" in primary_sec:
         defense_indicators = ["milli savunma", "savunma sanayii", "askeri", "askeri yasak bölge", "harp", "denizaltı", "iha", "5201", "5202", "milgem", "kargu"]
         if any(_contains_term(title_lower, term) for term in defense_indicators):
             score += 35
             reasons.append("Savunma Sanayii, Askeri Denizcilik ve Taktik İHA regülasyonları ile doğrudan ilgili")
-    elif "finans" in primary_sec or "ödeme" in primary_sec or "banka" in primary_sec:
-        fin_indicators = ["ödeme hizmet", "elektronik para", "6493", "5411", "bddk", "tcmb", "masak", "kripto", "faiz"]
-        if any(_contains_term(title_lower, term) for term in fin_indicators):
-            score += 35
-            reasons.append("Finansal Piyasalar ve Bankacılık/Ödeme mevzuatı ile doğrudan ilgili")
-    elif "e-ticaret" in primary_sec or "perakende" in primary_sec:
-        ecom_indicators = ["elektronik ticaret", "6563", "6502", "mesafeli", "etbis", "tüketici"]
-        if any(_contains_term(title_lower, term) for term in ecom_indicators):
-            score += 35
-            reasons.append("E-Ticaret ve Tüketici Hukuku mevzuatı ile doğrudan ilgili")
-    elif "enerji" in primary_sec or "elektrik" in primary_sec:
-        energy_indicators = ["epdk", "elektrik piyasası", "6446", "yekdem", "ges", "res"]
-        if any(_contains_term(title_lower, term) for term in energy_indicators):
-            score += 35
-            reasons.append("Enerji Piyasası ve Elektrik Üretim/Dağıtım mevzuatı ile doğrudan ilgili")
+            detected_domain = "Savunma Sanayii & Askeri Sistemler"
+            domain_badge = "SAVUNMA & ASKERİ"
+
+    # Operational Traits
+    if profile.operational_traits.has_rd_center:
+        if any(_contains_term(title_lower, term) for term in ["ar-ge", "teknoloji geliştirme", "tgb", "5746", "teknokent", "tübitak"]):
+            score += 30
+            reasons.append("Şirketin Ar-Ge Merkezi ve Teknoloji Geliştirme Bölgesi (TGB) operasyonlarını doğrudan ilgilendiriyor")
+            if detected_domain == "Sektörel Uyum":
+                detected_domain = "Ar-Ge & Teknoloji Teşvikleri"
+                domain_badge = "AR-GE & TEKNOLOJİ"
+
+    if profile.operational_traits.has_foreign_trade:
+        if any(_contains_term(title_lower, term) for term in ["gümrük", "ithalat", "ihracat", "kambiyo", "askeri ihracat", "stratejik malzeme", "dış ticaret"]):
+            score += 25
+            reasons.append("Şirketin İthalat/İhracat ve Dış Ticaret operasyonlarını ilgilendiriyor")
+
+    # =========================================================================
+    # B. HORIZONTAL CORPORATE LAYER (Vergi, İş Hukuku, KVKK, İhale, Gümrük, Ticaret)
+    # =========================================================================
+    for dom_key, dom_data in HORIZONTAL_CORPORATE_DOMAINS.items():
+        matched_kw = [k for k in dom_data["keywords"] if _contains_term(title_lower, k)]
+        if matched_kw:
+            h_score = 40
+            if any(c in category_lower or c in title_lower for c in ["tebliğ", "yönetmelik", "karar", "kanun"]):
+                h_score += 25
+            score = max(score, h_score)
+            
+            reasons.append(f"Kurumsal Yatay Uyum [{dom_data['domain_name']}]: '{', '.join(matched_kw[:2])}' düzenlemesi")
+            
+            if detected_domain in ("Sektörel Uyum", "Genel"):
+                detected_domain = dom_data["domain_name"]
+                domain_badge = dom_data["badge_label"]
 
     # If no core reason was triggered, suppress
     if not reasons:
-        return 0, [], "Bilgi"
+        return 0, [], "Bilgi", "Genel", "BİLGİ"
 
     # Cap score at 100
     final_score = min(score, 100)
@@ -170,14 +185,34 @@ def score_item_relevance(item: GazetteItem, profile: CompanyProfile) -> Tuple[in
     else:
         risk_level = "Bilgi"
 
-    return final_score, reasons, risk_level
+    return final_score, reasons, risk_level, detected_domain, domain_badge
 
 
-def infer_affected_departments(title: str, matched_reasons: List[str]) -> List[str]:
-    """Infers internal company departments affected by the regulation."""
+def infer_affected_departments(title: str, matched_reasons: List[str], domain_badge: str = "SEKTÖREL") -> List[str]:
+    """Infers internal company departments affected by the regulation across all corporate domains."""
     t = lower_tr(title)
     deps = set()
 
+    # Domain specific additions
+    if domain_badge == "VERGİ & MALİYE" or any(_contains_term(t, k) for k in ["vergi", "kdv", "fatura", "ssdf", "muhasebe", "mali", "tevkifat"]):
+        deps.add("Mali İşler & Muhasebe")
+        deps.add("Finansman & Bütçe")
+    if domain_badge == "İŞ HUKUKU & İK" or any(_contains_term(t, k) for k in ["iş kanunu", "asgari ücret", "sgk", "istihdam", "işçi", "isg", "tazminat"]):
+        deps.add("İnsan Kaynakları")
+        deps.add("Bordro & Özlük İşleri")
+        deps.add("İş Sağlığı ve Güvenliği (İSG)")
+    if domain_badge == "KVKK & SİBER" or any(_contains_term(t, k) for k in ["kvkk", "kişisel veri", "verbis", "siber", "veri aktarımı", "usom", "btk"]):
+        deps.add("Hukuk & Uyum")
+        deps.add("Siber Güvenlik Operasyon Merkezi (SOC)")
+        deps.add("Bilgi Teknolojileri (IT)")
+    if domain_badge == "KAMU İHALE & SÖZLEŞMELER" or any(_contains_term(t, k) for k in ["kamu ihale", "4734", "4735", "fiyat farkı", "ihale"]):
+        deps.add("Sözleşmeler & İhale Yönetimi")
+        deps.add("Satınalma & Tedarik Zinciri")
+    if domain_badge == "GÜMRÜK & DIŞ TİCARET" or any(_contains_term(t, k) for k in ["gümrük", "ithalat", "ihracat", "kambiyo", "dahilde işleme"]):
+        deps.add("Dış Ticaret & Lojistik")
+        deps.add("Gümrük Operasyonları")
+
+    # Defense / Technical additions
     if any(_contains_term(t, k) for k in ["milli savunma", "askeri", "savunma", "harp", "deniz", "iha", "milgem", "kargu"]):
         deps.add("Savunma Projeleri Yönetimi")
         deps.add("Mühendislik & Sistem Entegrasyonu")
@@ -187,22 +222,6 @@ def infer_affected_departments(title: str, matched_reasons: List[str]) -> List[s
     if any(_contains_term(t, k) for k in ["teknoloji geliştirme", "teknoloji", "ar-ge", "teknokent", "5746", "tgb"]):
         deps.add("Ar-Ge & Teknoloji Yönetimi")
         deps.add("Teşvik ve Fon Yönetimi")
-    if any(_contains_term(t, k) for k in ["siber", "bilgi sistem", "yazılım", "usom", "btk"]):
-        deps.add("Siber Güvenlik Operasyon Merkezi (SOC)")
-        deps.add("Bilgi Teknolojileri (IT)")
-    if any(_contains_term(t, k) for k in ["ihracat", "ithalat", "gümrük", "5201", "5202", "kontrole tabi", "dış ticaret"]):
-        deps.add("İhracat & Lojistik Operasyonları")
-        deps.add("Sözleşmeler & İhracat Kontrol")
-    if any(_contains_term(t, k) for k in ["ödeme", "bddk", "tcmb", "masak", "kripto", "para", "banka"]):
-        deps.add("Mali İşler & Uyum (Compliance)")
-        deps.add("Risk Yönetimi")
-    if any(_contains_term(t, k) for k in ["e-ticaret", "mesafeli", "etbis", "tüketici", "pazaryeri"]):
-        deps.add("E-Ticaret & Dijital Operasyonlar")
-        deps.add("Müşteri Hizmetleri & Uyum")
-    if any(_contains_term(t, k) for k in ["vergi", "kdv", "fatura", "ssdf", "muhasebe", "mali"]):
-        deps.add("Mali İşler & Muhasebe")
-    if any(_contains_term(t, k) for k in ["iş kanunu", "asgari ücret", "sgk", "istihdam", "işçi"]):
-        deps.add("İnsan Kaynakları")
 
     if not deps:
         deps.add("Hukuk & Uyum")
@@ -214,36 +233,52 @@ def infer_affected_departments(title: str, matched_reasons: List[str]) -> List[s
     return sorted(list(deps))
 
 
-def generate_action_checklist(title: str, category: str, risk_level: str) -> List[str]:
-    """Generates practical internal audit checklist items."""
+def generate_action_checklist(title: str, category: str, risk_level: str, domain_badge: str = "SEKTÖREL") -> List[str]:
+    """Generates practical internal audit checklist items based on regulatory domain."""
     checklist = []
     t = lower_tr(title)
 
-    if "teknoloji geliştirme" in t or "ar-ge" in t or "tgb" in t:
-        checklist.append("Teknoloji Geliştirme Bölgesi (TGB) kapsamındaki Ar-Ge projelerinin ve teşvik şartlarının gözden geçirilmesi.")
-        checklist.append("Yeni teknopark alanında şirketimiz için tesis/ofis tahsis imkanlarının değerlendirilmesi.")
+    # 1. Tax & Accounting
+    if domain_badge == "VERGİ & MALİYE" or any(_contains_term(t, k) for k in ["vergi", "kdv", "fatura", "ssdf", "muhasebe", "tevkifat"]):
+        checklist.append("ERP ve muhasebe parametrelerinin yeni vergi/fon oranlarına göre sistemde güncellenmesi.")
+        checklist.append("Yeminli Mali Müşavir (YMM) / Vergi Danışmanı görüşü alınarak beyanname kontrollerinin yapılması.")
+        checklist.append("E-Fatura, e-defter ve tevsik limitlerinin ilgili dönem takvimine işlenmesi.")
 
-    if "askeri yasak bölge" in t or "yasak bölge" in t:
-        checklist.append("Şirketin operasyon, saha testleri ve uçuş/seyir izin protokollerinin askeri bölge sınırları doğrultusunda güncellenmesi.")
-        checklist.append("Tesis ve Saha Güvenliği Prosedürlerinin Askeri Yasak Bölgeler mevzuatına uyumunun denetlenmesi.")
+    # 2. Labor & HR
+    elif domain_badge == "İŞ HUKUKU & İK" or any(_contains_term(t, k) for k in ["asgari ücret", "sgk", "iş kanunu", "isg", "tazminat"]):
+        checklist.append("Bordro, özlük hakları ve asgari ücret/tavan parametrelerinin İK yazılımında güncellenmesi.")
+        checklist.append("İş sözleşmeleri, uzaktan çalışma ve şirket içi İK prosedürlerinin mevzuata göre revize edilmesi.")
+        checklist.append("6331 sayılı Kanun kapsamında İSG risk değerlendirmesi ve periyodik denetim adımlarının yürütülmesi.")
 
-    if any(_contains_term(t, k) for k in ["ödeme", "bddk", "tcmb", "masak", "6493", "5411"]):
-        checklist.append("MASAK ve BDDK uyum politikalarının ve şüpheli işlem bildirim parametrelerinin güncellenmesi.")
-        checklist.append("Bilgi sistemleri denetim ve siber dayanıklılık kriterlerinin test edilmesi.")
+    # 3. KVKK & Data Privacy
+    elif domain_badge == "KVKK & SİBER" or any(_contains_term(t, k) for k in ["kvkk", "kişisel veri", "verbis", "veri aktarımı"]):
+        checklist.append("VERBİS kayıt envanteri ve veri işleme politikalarının güncel Kurul kararıyla doğrulanması.")
+        checklist.append("Yurtdışı veri aktarımı ve standart sözleşme taahhütlerinin revize edilmesi.")
+        checklist.append("Siber olay bildirim ve bilgi güvenliği prosedürlerinin test edilmesi.")
 
-    if any(_contains_term(t, k) for k in ["e-ticaret", "6563", "6502", "etbis", "mesafeli"]):
-        checklist.append("Mesafeli satış sözleşmeleri, ön bilgilendirme formları ve cayma hakkı metinlerinin revize edilmesi.")
+    # 4. Public Procurement & Tenders
+    elif domain_badge == "KAMU İHALE & SÖZLEŞMELER" or any(_contains_term(t, k) for k in ["kamu ihale", "4734", "4735", "fiyat farkı"]):
+        checklist.append("Kamu ihale eşik değerleri ve teminat oranlarının teklif hazırlık süreçlerine yansıtılması.")
+        checklist.append("Mevcut sözleşmelerdeki fiyat farkı ve süre uzatımı haklarının hukuki analizinin yapılması.")
 
-    if "yönetmelik" in t or (category and "yönetmelik" in lower_tr(category)):
-        checklist.append("Şirket içi ilgili yönerge ve süreç dokümanlarının revize edilmesi.")
-        checklist.append("Mevcut iş süreçlerinin yeni mevzuat maddeleri ile GAP (fark) analizinin yapılması.")
+    # 5. Customs & Trade
+    elif domain_badge == "GÜMRÜK & DIŞ TİCARET" or any(_contains_term(t, k) for k in ["gümrük", "ithalat", "ihracat", "kambiyo"]):
+        checklist.append("Gümrük tarife pozisyonları (GTİP) ve ithalat gözetim/vergi oranlarının kontrol edilmesi.")
+        checklist.append("Dahilde İşleme İzin Belgeleri (DİİB) ve ihracat taahhüt sürelerinin incelenmesi.")
 
-    if any(_contains_term(t, k) for k in ["ihracat", "5201", "5202"]):
-        checklist.append("MSB ve SSB izin prosedürlerinin ihracat kontrol listeleriyle doğrulanması.")
+    # 6. Defense & R&D / General
+    else:
+        if "teknoloji geliştirme" in t or "ar-ge" in t or "tgb" in t:
+            checklist.append("Teknoloji Geliştirme Bölgesi (TGB) kapsamındaki Ar-Ge projelerinin ve teşvik şartlarının gözden geçirilmesi.")
+            checklist.append("Yeni teknopark alanında şirketimiz için tesis/ofis tahsis imkanlarının değerlendirilmesi.")
 
-    if any(_contains_term(t, k) for k in ["vergi", "kdv", "fatura", "ssdf"]):
-        checklist.append("ERP ve muhasebe parametrelerinin/oranlarının sistemde güncellenmesi.")
-        checklist.append("Vergi danışmanı görüşü alınarak beyanname ve fon kontrollerinin yapılması.")
+        if "askeri yasak bölge" in t or "yasak bölge" in t:
+            checklist.append("Şirketin operasyon, saha testleri ve uçuş/seyir izin protokollerinin askeri bölge sınırları doğrultusunda güncellenmesi.")
+            checklist.append("Tesis ve Saha Güvenliği Prosedürlerinin Askeri Yasak Bölgeler mevzuatına uyumunun denetlenmesi.")
+
+        if "yönetmelik" in t or (category and "yönetmelik" in lower_tr(category)):
+            checklist.append("Şirket içi ilgili yönerge ve süreç dokümanlarının revize edilmesi.")
+            checklist.append("Mevcut iş süreçlerinin yeni mevzuat maddeleri ile GAP (fark) analizinin yapılması.")
 
     checklist.append(f"İç Denetim Uyum Takvimine {datetime.now().strftime('%Y-%m')} dönemi periyodik kontrol adımı olarak eklenmesi.")
     return checklist
@@ -251,7 +286,7 @@ def generate_action_checklist(title: str, category: str, risk_level: str) -> Lis
 
 def evaluate_gazette_item(item: GazetteItem, profile: CompanyProfile, content: Optional[str] = None) -> AuditEvaluation:
     """
-    Constructs a complete AuditEvaluation for a single item.
+    Constructs a complete AuditEvaluation for a single item across all compliance domains.
     Leverages live LLM analysis if configured; otherwise uses universal deterministic heuristics.
     """
     llm_res = call_llm_evaluation(
@@ -270,18 +305,29 @@ def evaluate_gazette_item(item: GazetteItem, profile: CompanyProfile, content: O
         penalty_risk = llm_res.get("penalty_and_legal_risk")
         affected_deps = list(llm_res.get("affected_departments", []))
         checklist = list(llm_res.get("action_checklist", []))
+        compliance_domain = "Sektörel / Yapay Zeka Analizi"
+        domain_badge = "YZ DEĞERLENDİRME"
     else:
-        score, matched_reasons, risk_level = score_item_relevance(item, profile)
-        affected_deps = infer_affected_departments(item.title, matched_reasons)
-        checklist = generate_action_checklist(item.title, item.category, risk_level)
+        score, matched_reasons, risk_level, compliance_domain, domain_badge = score_item_relevance(item, profile)
+        affected_deps = infer_affected_departments(item.title, matched_reasons, domain_badge)
+        checklist = generate_action_checklist(item.title, item.category, risk_level, domain_badge)
 
         doc_info = f" ({item.doc_number})" if item.doc_number else ""
         institution_info = f" ({item.institution})" if item.institution else ""
-        summary = f"{item.category}{institution_info} kapsamındaki '{item.title}' düzenlemesi yayımlanmıştır.{doc_info} Düzenleme şirketin yasal uyum, Ar-Ge ve operasyonel süreçleri açısından doğrudan etki doğurmaktadır."
+        summary = f"[{domain_badge}] {item.category}{institution_info} kapsamındaki '{item.title}' düzenlemesi yayımlanmıştır.{doc_info} Düzenleme şirketin {lower_tr(compliance_domain)} ve operasyonel işleyişi açısından doğrudan etki doğurmaktadır."
 
         penalty_risk = None
         if risk_level in ("Kritik", "Yüksek"):
-            penalty_risk = "Yetkili düzenleyici otoritelerin mevzuatı ve ilgili kanunlar uyarınca idari para cezası, faaliyet kısıtı ve sözleşme fesih riski bulunmaktadır."
+            if domain_badge == "VERGİ & MALİYE":
+                penalty_risk = "Vergi Usul Kanunu uyarınca vergi ziyaı cezası, gecikme faizi ve usulsüzlük yaptırımı riski bulunmaktadır."
+            elif domain_badge == "İŞ HUKUKU & İK":
+                penalty_risk = "İş Kanunu ve 6331 sayılı İSG Kanunu uyarınca idari para cezası ve iş durdurma riski bulunmaktadır."
+            elif domain_badge == "KVKK & SİBER":
+                penalty_risk = "6698 sayılı KVKK uyarınca 1.000.000 TL'yi aşan idari para cezası ve itibar kaybı riski bulunmaktadır."
+            elif domain_badge == "KAMU İHALE & SÖZLEŞMELER":
+                penalty_risk = "Kamu İhale Sözleşmeleri uyarınca teminatın irat kaydedilmesi ve kamu ihalelerinden yasaklanma riski bulunmaktadır."
+            else:
+                penalty_risk = "Yetkili düzenleyici otoritelerin mevzuatı ve ilgili kanunlar uyarınca idari para cezası, faaliyet kısıtı ve sözleşme fesih riski bulunmaktadır."
 
     effective_date = "Yayımı tarihinde"
     if content:
@@ -293,6 +339,8 @@ def evaluate_gazette_item(item: GazetteItem, profile: CompanyProfile, content: O
         item=item,
         relevance_score=score,
         risk_level=risk_level,
+        compliance_domain=compliance_domain,
+        domain_badge=domain_badge,
         matched_reasons=matched_reasons,
         executive_summary=summary,
         penalty_and_legal_risk=penalty_risk,
@@ -316,7 +364,7 @@ def generate_daily_audit_report(
 
     evaluations: List[AuditEvaluation] = []
     for item in index.items:
-        score, _, _ = score_item_relevance(item, profile)
+        score, _, _, _, _ = score_item_relevance(item, profile)
         if score >= min_score:
             content = None
             if not item.is_pdf:
@@ -358,7 +406,7 @@ def generate_range_audit_report(
 
     for idx in indices:
         for item in idx.items:
-            score, _, _ = score_item_relevance(item, profile)
+            score, _, _, _, _ = score_item_relevance(item, profile)
             if score >= min_score:
                 content = None
                 if not item.is_pdf:

@@ -900,19 +900,30 @@ def index_page():
                 const isCrit = ev.risk_level === 'Kritik';
                 const badgeColor = isCrit ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20';
 
+                const domainTag = ev.domain_badge || 'SEKTÖREL';
+                let domainBadgeClass = 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+                if (domainTag.includes('VERGİ') || domainTag.includes('MALİ')) domainBadgeClass = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+                else if (domainTag.includes('İŞ') || domainTag.includes('İK')) domainBadgeClass = 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
+                else if (domainTag.includes('KVKK') || domainTag.includes('SİBER')) domainBadgeClass = 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20';
+                else if (domainTag.includes('İHALE') || domainTag.includes('SÖZLEŞME')) domainBadgeClass = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+                else if (domainTag.includes('GÜMRÜK') || domainTag.includes('TİCARET')) domainBadgeClass = 'bg-sky-500/10 text-sky-400 border-sky-500/20';
+
                 const locationBreadcrumb = ev.item.location_breadcrumb || 
                     `${{ev.item.gazette_date || data.date}} Resmî Gazete ${{ev.item.gazette_number ? '(Sayı: ' + ev.item.gazette_number + ')' : ''}} > ${{ev.item.section || 'Yürütme ve İdare Bölümü'}} > ${{ev.item.category}}`;
 
                 return `
                     <div class="bg-slate-900 border border-slate-800/90 rounded-xl p-5 space-y-3.5">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                            <div class="flex items-center gap-2">
+                            <div class="flex flex-wrap items-center gap-2">
                                 <span class="px-2 py-0.5 rounded text-[11px] font-bold border ${{badgeColor}} font-mono">
                                     ${{ev.risk_level.toUpperCase()}}
                                 </span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${{domainBadgeClass}} font-mono">
+                                    ${{domainTag}}
+                                </span>
                                 <span class="text-xs font-semibold text-slate-300">${{ev.item.category}}</span>
                                 <span class="text-xs text-slate-600">•</span>
-                                <span class="text-xs font-medium text-slate-400 truncate max-w-[240px]">${{ev.item.institution || 'Resmî Gazete'}}</span>
+                                <span class="text-xs font-medium text-slate-400 truncate max-w-[200px]">${{ev.item.institution || 'Resmî Gazete'}}</span>
                             </div>
                             <div class="flex items-center gap-2 text-xs">
                                 <span class="text-slate-400">Alaka Skoru:</span>
