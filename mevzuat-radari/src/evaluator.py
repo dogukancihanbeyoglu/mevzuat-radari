@@ -144,22 +144,37 @@ def score_item_relevance(item: GazetteItem, profile: CompanyProfile) -> Tuple[in
             score += 30
             reasons.append(f"Tabi olunan yetkili düzenleyici kurum: '{reg}'")
 
-    primary_sec = lower_tr(profile.sectors_and_nace.primary_sector)
-    if "savunma" in primary_sec or "askeri" in primary_sec:
-        defense_indicators = ["milli savunma", "savunma sanayii", "askeri", "askeri yasak bölge", "harp", "denizaltı", "iha", "5201", "5202", "milgem", "kargu"]
-        if any(_contains_term(title_lower, term) for term in defense_indicators):
-            score += 35
-            reasons.append("Savunma Sanayii, Askeri Denizcilik ve Taktik İHA regülasyonları ile doğrudan ilgili")
-            detected_domain = "Savunma Sanayii & Askeri Sistemler"
-            domain_badge = "SAVUNMA & ASKERİ"
+    # Multi-Sector Vertical Domain Triggers
+    if any(_contains_term(title_lower, term) for term in ["milli savunma", "savunma sanayii", "askeri", "harp", "denizaltı", "iha", "5201", "5202", "milgem", "kargu"]):
+        score += 35
+        reasons.append("Savunma Sanayii, Askeri Sistemler ve Taktik İHA regülasyonları ile doğrudan ilgili")
+        detected_domain = "Savunma Sanayii & Askeri Sistemler"
+        domain_badge = "SAVUNMA & ASKERİ"
+    elif any(_contains_term(title_lower, term) for term in ["ödeme hizmet", "elektronik para", "6493", "5411", "6362", "bddk", "tcmb", "masak", "kripto varlık", "açık bankacılık", "fast", "iban", "pos"]):
+        score += 35
+        reasons.append("Finansal Teknolojiler, Ödeme Sistemleri ve Bankacılık Bilgi Sistemleri regülasyonları ile doğrudan ilgili")
+        detected_domain = "FinTech & Bankacılık"
+        domain_badge = "FİNTECH & BANKACILIK"
+    elif any(_contains_term(title_lower, term) for term in ["elektronik ticaret", "e-ticaret", "6563", "6502", "mesafeli sözleşme", "etbis", "pazaryeri", "cayma hakkı"]):
+        score += 35
+        reasons.append("E-Ticaret, Dijital Pazaryeri ve Tüketici Hukuku regülasyonları ile doğrudan ilgili")
+        detected_domain = "E-Ticaret & Pazaryeri"
+        domain_badge = "E-TİCARET & PAZARYERİ"
+    elif any(_contains_term(title_lower, term) for term in ["teknoloji geliştirme", "tgb", "teknokent", "5746", "4691", "bulut bilişim", "yazılım ihracat", "yapay zeka"]):
+        score += 35
+        reasons.append("Yazılım, SaaS Platformları ve Teknoloji Geliştirme Bölgesi (TGB) teşvikleri ile doğrudan ilgili")
+        detected_domain = "Yazılım & Ar-Ge Teknolojileri"
+        domain_badge = "YAZILIM & AR-GE"
+    elif any(_contains_term(title_lower, term) for term in ["epdk", "elektrik piyasası", "6446", "yekdem", "lisanssız elektrik", "ges", "res"]):
+        score += 35
+        reasons.append("Enerji Piyasası, Elektrik Üretimi ve Yenilenebilir Kaynaklar ile doğrudan ilgili")
+        detected_domain = "Enerji & Elektrik Piyasası"
+        domain_badge = "ENERJİ & ELEKTRİK"
 
     if profile.operational_traits.has_rd_center:
         if any(_contains_term(title_lower, term) for term in ["ar-ge", "teknoloji geliştirme", "tgb", "5746", "teknokent", "tübitak"]):
             score += 30
             reasons.append("Şirketin Ar-Ge Merkezi ve Teknoloji Geliştirme Bölgesi (TGB) operasyonlarını doğrudan ilgilendiriyor")
-            if detected_domain == "Sektörel Uyum":
-                detected_domain = "Ar-Ge & Teknoloji Teşvikleri"
-                domain_badge = "AR-GE & TEKNOLOJİ"
 
     if profile.operational_traits.has_foreign_trade:
         if any(_contains_term(title_lower, term) for term in ["gümrük", "ithalat", "ihracat", "kambiyo", "askeri ihracat", "stratejik malzeme", "dış ticaret"]):
@@ -240,6 +255,27 @@ def analyze_company_profile_impact(
             f"tesis güvenlik belgesi (5201/5202) ve Savunma Sanayii Başkanlığı (SSB) ile Milli Savunma Bakanlığı (MSB) "
             f"sözleşme yükümlülüklerini doğrudan bağlamaktadır. Proje ekiplerimizin saha izinleri ve gizlilik protokolleri kontrol edilmelidir."
         )
+    elif "FİNTECH" in domain_badge or "BANKACILIK" in domain_badge:
+        impact = (
+            f"Şirketimiz {comp_name} bünyesinde sunulan finansal yazılımlar, güvenli ödeme sistemleri entegrasyonu, "
+            f"açık bankacılık API'leri ve BDDK/TCMB bilgi sistemleri uyumu açısından; sistem mimarisi, kimlik doğrulama "
+            f"ve MASAK şüpheli işlem bildirim standartları güncellenmelidir."
+        )
+    elif "E-TİCARET" in domain_badge or "PAZARYERİ" in domain_badge:
+        impact = (
+            f"Şirketimizin dijital satış kanalları, e-ihracat operasyonları ve mesafeli sözleşme süreçleri açısından; "
+            f"ETBİS kaydı, 6563 sayılı E-Ticaret Kanunu yükümlülükleri, cayma hakkı süreleri ve tüketici bilgilendirme metinleri revize edilmelidir."
+        )
+    elif "YAZILIM" in domain_badge or "AR-GE" in domain_badge:
+        impact = (
+            f"Şirketimizin 5746/4691 sayılı kanunlar kapsamındaki Ar-Ge projeleri, teknokent teşvikleri ve yazılım geliştirme "
+            f"operasyonları bakımından; proje süreleri, gelir vergisi stopajı teşviki, Ar-Ge personeli uzaktan çalışma oranları ve Sanayi Bakanlığı bildirimleri kontrol edilmelidir."
+        )
+    elif "ENERJİ" in domain_badge or "ELEKTRİK" in domain_badge:
+        impact = (
+            f"Şirketimizin enerji tedarik sözleşmeleri, lisanssız elektrik üretimi (GES/RES) ve EPDK piyasa takas fiyatları "
+            f"açısından; şebeke bağlantı anlaşmaları, YEKDEM destekleri ve dağıtım tarifeleri fizibilitelere işlenmelidir."
+        )
     elif "VERGİ" in domain_badge or "MALİ" in domain_badge:
         impact = (
             f"Şirketimizin {scale} ölçekli yapısı ve {turnover} yıllık işlem hacmi kapsamında; "
@@ -301,7 +337,6 @@ def analyze_company_profile_impact(
     # 2. Key Articles & Core Provisions Extraction
     articles = []
     if c_text:
-        # Check for specific articles
         found_articles = re.findall(r"(MADDE\s+\d+[\s–\-—:]+[^\n\r]+)", c_text, re.IGNORECASE)
         if found_articles:
             articles = found_articles[:3]
@@ -335,6 +370,26 @@ def infer_affected_departments(title: str, matched_reasons: List[str], domain_ba
         deps.add("Hukuk & Uyum")
         deps.add("Stratejik Planlama")
 
+    if "SAVUNMA" in domain_badge or "ASKERİ" in domain_badge or any(_contains_term(t, k) for k in ["milli savunma", "askeri", "savunma", "harp", "deniz", "iha", "milgem", "kargu"]):
+        deps.add("Savunma Projeleri Yönetimi")
+        deps.add("Mühendislik & Sistem Entegrasyonu")
+
+    if "FİNTECH" in domain_badge or "BANKACILIK" in domain_badge or any(_contains_term(t, k) for k in ["bddk", "tcmb", "6493", "ödeme", "masak", "kripto"]):
+        deps.add("Finansal Teknolojiler (FinTech)")
+        deps.add("Bilgi Güvenliği & Uyum")
+
+    if "E-TİCARET" in domain_badge or "PAZARYERİ" in domain_badge or any(_contains_term(t, k) for k in ["e-ticaret", "etbis", "mesafeli", "cayma hakkı"]):
+        deps.add("E-Ticaret & Dijital Operasyonlar")
+        deps.add("Tüketici Hukuku & Müşteri Deneyimi")
+
+    if "YAZILIM" in domain_badge or "AR-GE" in domain_badge or any(_contains_term(t, k) for k in ["yazılım", "teknokent", "tgb", "5746", "4691"]):
+        deps.add("Yazılım & Ürün Geliştirme")
+        deps.add("Ar-Ge & Teşvik Yönetimi")
+
+    if "ENERJİ" in domain_badge or "ELEKTRİK" in domain_badge or any(_contains_term(t, k) for k in ["epdk", "elektrik piyasası", "ges", "res", "yekdem"]):
+        deps.add("Enerji Operasyonları & Altyapı")
+        deps.add("Tesis Yönetimi")
+
     if "VERGİ" in domain_badge or "MALİ" in domain_badge or any(_contains_term(t, k) for k in ["vergi", "kdv", "fatura", "ssdf", "muhasebe", "mali", "tevkifat"]):
         deps.add("Mali İşler & Muhasebe")
         deps.add("Finansman & Bütçe")
@@ -355,19 +410,10 @@ def infer_affected_departments(title: str, matched_reasons: List[str], domain_ba
     if "TEŞVİK" in domain_badge or "YATIRIM" in domain_badge or any(_contains_term(t, k) for k in ["yatırım teşvik", "devlet yardımları", "faiz desteği"]):
         deps.add("Yatırım & Finansman")
         deps.add("Stratejik Planlama")
-    if "ÇEVRE" in domain_badge or "SÜRDÜRÜLEBİLİRLİK" in domain_badge or any(_contains_term(t, k) for k in ["çevre", "çed", "sıfır atık", "karbon"]):
-        deps.add("İş Sağlığı, Güvenliği & Çevre (İSG-Ç)")
-        deps.add("Tesis Yönetimi & İdari İşler")
-    if "STANDART" in domain_badge or "SANAYİ" in domain_badge or any(_contains_term(t, k) for k in ["sanayi sicil", "tse", "ce işareti", "standart"]):
-        deps.add("Kalite Güvence & Standardizasyon")
-        deps.add("Üretim & Mühendislik")
     if "KAMULAŞTIRMA" in domain_badge or any(_contains_term(t, k) for k in ["kamulaştırma", "yasak bölge", "saha"]):
         deps.add("Tesis Güvenlik Koordinatörlüğü")
         deps.add("İdari İşler & Emlak")
 
-    if any(_contains_term(t, k) for k in ["milli savunma", "askeri", "savunma", "harp", "deniz", "iha", "milgem", "kargu"]):
-        deps.add("Savunma Projeleri Yönetimi")
-        deps.add("Mühendislik & Sistem Entegrasyonu")
     if any(_contains_term(t, k) for k in ["teknoloji geliştirme", "teknoloji", "ar-ge", "teknokent", "5746", "tgb"]):
         deps.add("Ar-Ge & Teknoloji Yönetimi")
         deps.add("Teşvik ve Fon Yönetimi")

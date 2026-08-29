@@ -178,3 +178,38 @@ Metindeki hükümler, şirketin YAML konfigürasyonundaki operasyonel özellikle
 ### ⏱️ 7.3. Uyum & Yürürlük Takvimi (`compliance_deadlines`)
 * Düzenlemenin yürürlüğe giriş tarihi, geçiş süreleri (Örn: *"Yayımı tarihinden itibaren 3 ay sonra"*, *"1/1/2026 tarihinden geçerli olmak üzere"*) metin içinden regex ve semantik kalıplarla tespit edilir.
 
+---
+
+## 8. Çoklu Sektör & Hibrit Faaliyet Modeli (Multi-Sector Conglomerate Mode)
+
+Gerçek dünyada STM, Aselsan, Havelsan gibi teknoloji ve savunma holdingleri veya büyük şirketler **aynı anda birden fazla dikey sektörde** faaliyet yürütmektedir:
+* **Savunma Sanayii & Askeri Sistemler** (MİLGEM, KARGU İHA, 5201/5202, SSB/MSB)
+* **FinTech & Bankacılık** (Güvenli ödeme sistemleri, BDDK/TCMB bilgi sistemleri uyumu, FAST, 6493)
+* **Yazılım, SaaS & Ar-Ge** (Teknokent/TGB 5746/4691 teşvikleri, Bulut bilişim, BTK/USOM siber güvenlik)
+* **E-Ticaret & Dijital Pazaryeri** (Elektronik tedarik portalı, ETBİS, 6563 sayılı Kanun, mesafeli satış)
+* **Enerji & Elektrik Piyasası** (Lisanssız GES/RES santralleri, EPDK, TEİAŞ 6446)
+
+### 🔀 8.1. Akıllı Birleştirme ve Çelişki Giderme Motoru (`merge_sector_presets`)
+Farklı sektör şablonları birleştirilirken en büyük teknik risk **"Negatif Anahtar Kelime Çelişkisi" (Negative Exclusion Conflict)** riskidir. Örneğin; sadece FinTech için hazırlanan bir şablonda *"milli savunma"* dışlama listesinde yer alabilir. Savunma ve FinTech aynı anda seçildiğinde savunma kararlarının filtrelenmemesi için akıllı çelişki giderme devreye girer:
+
+```mermaid
+graph TD
+    S1[🛡️ Savunma Sanayii Şablonu] --> M[merge_sector_presets]
+    S2[💳 FinTech & Bankacılık Şablonu] --> M
+    S3[💻 Yazılım & SaaS Şablonu] --> M
+    S4[🛒 E-Ticaret Şablonu] --> M
+    
+    M --> U1[NACE Kodları Birleşimi 30.30, 64.19, 62.01, 47.91]
+    M --> U2[Düzenleyici Otoriteler SSB, MSB, BDDK, TCMB, Sanayi Bak.]
+    M --> U3[Öncelikli Kelimeler milgem, 6493, 5746, etbis]
+    
+    M --> CR{Çelişki Giderme Motoru}
+    CR -->|Aktif Sektör Kelimesi mi?| P[Dışlama Listesinden Temizle]
+    CR -->|Evrensel Akademik Gürültü mü?| K[tez savunma, öğrenci, fakülte KORU]
+```
+
+* **Korunan Terimler (`protected_terms`):** Seçilen tüm aktif sektörlerin anahtar kelimeleri ile ticari kanun terimleri (`savunma`, `ödeme`, `ihale`, `yazılım`) asla negatif dışlama listesinde tutulmaz.
+* **Akademik Gürültü Filtresi:** Bileşik gürültü kalıpları (`tez savunma`, `öğrenci işleri`, `akademik kadro`) korunarak üniversite kararlarının elenmesi sağlanır.
+* **Çoklu Sektör Grid Arayüzü:** Web UI üzerinde şirketler tek tıkla diledikleri sektör kombinasyonunu seçip profillerine uygulayabilir.
+
+

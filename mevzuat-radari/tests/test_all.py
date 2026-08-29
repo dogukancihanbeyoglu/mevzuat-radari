@@ -299,3 +299,44 @@ def test_deep_content_and_company_impact_analysis():
     assert evaluation.key_articles_summary is not None
     assert "MADDE 1" in evaluation.key_articles_summary
     assert "yayımı tarihinde" in evaluation.compliance_deadlines.lower()
+
+
+def test_multi_sector_merge_and_evaluation():
+    """Verifies hybrid multi-sector aggregation and evaluation (Defense + FinTech + Software + E-Commerce)."""
+    from fastapi.testclient import TestClient
+    from src.web_app import app
+
+    client = TestClient(app)
+
+    # 1. Test POST /api/presets/merge endpoint
+    merge_resp = client.post("/api/presets/merge", json={
+        "preset_keys": ["defense_aerospace", "fintech_banking", "software_saas", "ecommerce_retail"]
+    })
+    assert merge_resp.status_code == 200
+    merged = merge_resp.json()
+
+    assert "Savunma" in merged["primary_sector"]
+    assert "Finans" in merged["primary_sector"] or "FinTech" in merged["primary_sector"]
+    assert "Bilgisayar" in merged["primary_sector"] or "SaaS" in merged["primary_sector"] or "Yazılım" in merged["primary_sector"]
+    assert "Ticaret" in merged["primary_sector"] or "E-Ticaret" in merged["primary_sector"]
+    
+    # NACE codes from multiple sectors merged
+    assert any("30.30" in c for c in merged["nace_codes"])
+    assert any("64.19" in c for c in merged["nace_codes"])
+    assert any("62.01" in c for c in merged["nace_codes"])
+    assert any("47.91" in c for c in merged["nace_codes"])
+
+    # Regulatory bodies merged
+    assert any("BDDK" in reg for reg in merged["regulatory_bodies"])
+    assert any("SSB" in reg for reg in merged["regulatory_bodies"])
+
+    # High priority keywords merged
+    assert any("6493" in kw for kw in merged["high_priority_keywords"])
+    assert any("milgem" in kw for kw in merged["high_priority_keywords"])
+    assert any("5746" in kw for kw in merged["high_priority_keywords"])
+
+    # Conflict resolution in negative keywords (no active sector term should be excluded as a standalone term)
+    assert "savunma" not in merged["excluded_keywords"]
+    assert "ödeme" not in merged["excluded_keywords"]
+    # Noise exclusion remains intact
+    assert "tez savunma" in merged["excluded_keywords"]

@@ -1,7 +1,7 @@
 company_profile:
   general:
     annual_turnover_tl: 10B+
-    employee_count: 2200
+    employee_count: 1000
     is_publicly_traded: false
     legal_type: Anonim Şirket
     name: STM Savunma Teknolojileri Mühendislik ve Ticaret A.Ş.
@@ -25,6 +25,7 @@ company_profile:
     - hastane
     - belediye
     - atama kararları
+    - kamulaştırma
     high_priority:
     - savunma sanayii
     - milli savunma

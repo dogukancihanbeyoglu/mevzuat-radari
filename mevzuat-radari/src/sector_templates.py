@@ -7,6 +7,7 @@ Provides:
 4. Vertical Sector Presets (Defense, FinTech, E-Commerce, Software, Energy)
 """
 from typing import Dict, Any, List
+from .utils import lower_tr
 
 # 1. Universal Public Administration Noise Keywords (Strictly internal academic / municipal procedures)
 UNIVERSAL_NOISE_KEYWORDS = [
@@ -360,12 +361,79 @@ SECTOR_PRESETS: Dict[str, Dict[str, Any]] = {
 
 
 def get_preset_list() -> List[Dict[str, str]]:
-    """Returns list of preset keys and labels for UI dropdown."""
+    """Returns list of preset keys and labels for UI dropdown and multi-select."""
     return [{"key": k, "name": v["name"]} for k, v in SECTOR_PRESETS.items()]
 
 
 def get_preset_data(preset_key: str) -> Dict[str, Any]:
-    """Retrieves full configuration dict for a selected preset."""
+    """Retrieves full configuration dict for a single selected preset."""
     if preset_key in SECTOR_PRESETS:
         return SECTOR_PRESETS[preset_key]
     return SECTOR_PRESETS["defense_aerospace"]
+
+
+def merge_sector_presets(preset_keys: List[str]) -> Dict[str, Any]:
+    """
+    Intelligently merges multiple sector presets into a unified hybrid company profile.
+    Performs conflict resolution on negative keywords so that no selected sector's keywords are blocked.
+    """
+    valid_keys = [k for k in preset_keys if k in SECTOR_PRESETS]
+    if not valid_keys:
+        return get_preset_data("defense_aerospace")
+
+    if len(valid_keys) == 1:
+        return get_preset_data(valid_keys[0])
+
+    merged_nace = set()
+    merged_regulators = set()
+    merged_high_kw = set()
+    merged_med_kw = set()
+    has_foreign = False
+    has_rd = False
+    has_ecom = False
+    sector_names = []
+
+    for k in valid_keys:
+        p = SECTOR_PRESETS[k]
+        sector_names.append(p.get("primary_sector", p["name"]))
+        for n in p.get("nace_codes", []):
+            merged_nace.add(n)
+        for r in p.get("regulatory_bodies", []):
+            merged_regulators.add(r)
+        for kw in p.get("high_priority_keywords", []):
+            merged_high_kw.add(kw)
+        for kw in p.get("medium_priority_keywords", []):
+            merged_med_kw.add(kw)
+        if p.get("has_foreign_trade"):
+            has_foreign = True
+        if p.get("has_rd_center"):
+            has_rd = True
+        if p.get("e_commerce_license"):
+            has_ecom = True
+
+    # Negative Exclusion Resolution: Start with universal noise
+    final_excluded = set(UNIVERSAL_NOISE_KEYWORDS)
+
+    # Collect other exclusions but PURGE any term that appears in high/medium keywords or sector names
+    protected_terms = {lower_tr(term) for term in (merged_high_kw | merged_med_kw | set(COMMERCIAL_OVERRIDE_TERMS))}
+    
+    for k in valid_keys:
+        p = SECTOR_PRESETS[k]
+        for exc in p.get("excluded_keywords", []):
+            exc_clean = lower_tr(exc.strip())
+            # Do not exclude if it is part of any active sector's terms
+            if not any(exc_clean in p_term for p_term in protected_terms):
+                final_excluded.add(exc)
+
+    return {
+        "name": " + ".join([SECTOR_PRESETS[k]["name"].split("(")[0].strip() for k in valid_keys]),
+        "primary_sector": " | ".join(sector_names),
+        "nace_codes": sorted(list(merged_nace)),
+        "regulatory_bodies": sorted(list(merged_regulators)),
+        "high_priority_keywords": sorted(list(merged_high_kw)),
+        "medium_priority_keywords": sorted(list(merged_med_kw)),
+        "excluded_keywords": sorted(list(final_excluded)),
+        "has_foreign_trade": has_foreign,
+        "has_rd_center": has_rd,
+        "e_commerce_license": has_ecom,
+    }

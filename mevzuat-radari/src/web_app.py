@@ -25,7 +25,7 @@ from src.evaluator import (
     score_item_relevance,
     evaluate_gazette_item,
 )
-from src.sector_templates import SECTOR_PRESETS, get_preset_list, get_preset_data
+from src.sector_templates import SECTOR_PRESETS, get_preset_list, get_preset_data, merge_sector_presets
 from src.pdf_generator import generate_pdf_report
 from src.notifier import dispatch_daily_audit_pdf
 from src.llm_engine import load_llm_config, save_llm_config, get_mcp_client_config
@@ -61,6 +61,10 @@ class ProfileUpdateRequest(BaseModel):
     e_commerce_license: bool = False
 
 
+class PresetMergeRequest(BaseModel):
+    preset_keys: List[str]
+
+
 class LLMConfigUpdateRequest(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
     
@@ -80,6 +84,12 @@ def list_industry_presets() -> List[Dict[str, str]]:
 def get_industry_preset_data(preset_key: str) -> Dict[str, Any]:
     """Returns full preset configuration for auto-filling the company profile form."""
     return get_preset_data(preset_key)
+
+
+@app.post("/api/presets/merge")
+def merge_industry_presets(req: PresetMergeRequest) -> Dict[str, Any]:
+    """Merges multiple selected sector presets into a unified hybrid profile."""
+    return merge_sector_presets(req.preset_keys)
 
 
 @app.get("/api/profile")
@@ -423,25 +433,61 @@ def index_page():
         <!-- ========================================== -->
         <section id="panel-profile" class="hidden space-y-6">
             
-            <!-- PRESET SELECTION BOX -->
-            <div class="bg-blue-950/30 border border-blue-900/50 rounded-xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h3 class="text-xs font-bold text-blue-300 uppercase tracking-wider font-mono">⚡ Hazır Sektörel Uyum Şablonu Yükle</h3>
-                    <p class="text-xs text-slate-400 mt-0.5">
-                        Başka bir sektör için tarama yapıyorsanız şablon seçin; tüm NACE kodları, düzenleyici kurumlar ve gürültü filtreleri otomatik doldurulur.
-                    </p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <select id="preset-selector" class="px-3 py-2 text-xs rounded-lg bg-slate-900 border border-blue-800/80 text-white focus:outline-none focus:border-blue-500">
-                        <option value="defense_aerospace">Savunma Sanayii & Askeri Sistemler</option>
-                        <option value="fintech_banking">FinTech, Bankacılık & Ödeme Sistemleri</option>
-                        <option value="ecommerce_retail">E-Ticaret & Pazaryeri</option>
-                        <option value="software_saas">Yazılım, SaaS & Ar-Ge</option>
-                        <option value="energy_utilities">Enerji & Elektrik Piyasası</option>
-                    </select>
-                    <button onclick="applySelectedPreset()" class="px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white whitespace-nowrap transition">
-                        Şablonu Uygula
+            <!-- MULTI-SECTOR CONGLOMERATE PRESET AGGREGATOR -->
+            <div class="bg-blue-950/30 border border-blue-900/50 rounded-xl p-5 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-900/40 pb-3">
+                    <div>
+                        <h3 class="text-xs font-bold text-blue-300 uppercase tracking-wider font-mono">⚡ Çoklu Sektör & Hibrit Faaliyet Modeli (Konglomerat & Teknoloji Grubu)</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">
+                            Şirketiniz birden fazla alanda faaliyet gösteriyorsa (örn: Savunma + FinTech + Yazılım + E-Ticaret) sektörleri işaretleyip tek tıkla birleştirin.
+                        </p>
+                    </div>
+                    <button onclick="applyMultiPresets()" class="px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white whitespace-nowrap transition shadow-sm">
+                        Seçili Sektörleri Birleştir & Profile Aktar
                     </button>
+                </div>
+
+                <!-- SECTOR CHECKBOX GRID -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                    <label class="flex items-start gap-2.5 p-3 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-blue-700/60 cursor-pointer transition select-none">
+                        <input type="checkbox" name="sector_preset_chk" value="defense_aerospace" checked class="mt-0.5 rounded bg-slate-950 border-slate-700 text-blue-600 focus:ring-0">
+                        <div>
+                            <span class="font-bold text-white block">🛡️ Savunma & Askeri Sistemler</span>
+                            <span class="text-[11px] text-slate-400">SSB, MSB, 5201/5202, İHA, MİLGEM, Askeri İhracat</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-2.5 p-3 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-blue-700/60 cursor-pointer transition select-none">
+                        <input type="checkbox" name="sector_preset_chk" value="fintech_banking" class="mt-0.5 rounded bg-slate-950 border-slate-700 text-blue-600 focus:ring-0">
+                        <div>
+                            <span class="font-bold text-white block">💳 Finans, Bankacılık & FinTech</span>
+                            <span class="text-[11px] text-slate-400">BDDK, TCMB, 6493, SPK, MASAK, FAST, Kripto</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-2.5 p-3 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-blue-700/60 cursor-pointer transition select-none">
+                        <input type="checkbox" name="sector_preset_chk" value="software_saas" class="mt-0.5 rounded bg-slate-950 border-slate-700 text-blue-600 focus:ring-0">
+                        <div>
+                            <span class="font-bold text-white block">💻 Yazılım, SaaS & Ar-Ge</span>
+                            <span class="text-[11px] text-slate-400">Sanayi Bakanlığı, BTK, 5746/4691, KVKK, Bulut</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-2.5 p-3 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-blue-700/60 cursor-pointer transition select-none">
+                        <input type="checkbox" name="sector_preset_chk" value="ecommerce_retail" class="mt-0.5 rounded bg-slate-950 border-slate-700 text-blue-600 focus:ring-0">
+                        <div>
+                            <span class="font-bold text-white block">🛒 E-Ticaret & Pazaryeri</span>
+                            <span class="text-[11px] text-slate-400">Ticaret Bakanlığı, ETBİS, 6563/6502, Rekabet</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-2.5 p-3 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-blue-700/60 cursor-pointer transition select-none">
+                        <input type="checkbox" name="sector_preset_chk" value="energy_utilities" class="mt-0.5 rounded bg-slate-950 border-slate-700 text-blue-600 focus:ring-0">
+                        <div>
+                            <span class="font-bold text-white block">⚡ Enerji & Elektrik Piyasası</span>
+                            <span class="text-[11px] text-slate-400">EPDK, TEİAŞ, 6446, YEKDEM, GES/RES</span>
+                        </div>
+                    </label>
                 </div>
             </div>
 
@@ -695,8 +741,41 @@ def index_page():
             }}
         }}
 
+        async function applyMultiPresets() {{
+            const checkboxes = document.querySelectorAll('input[name="sector_preset_chk"]:checked');
+            const selectedKeys = Array.from(checkboxes).map(cb => cb.value);
+
+            if (selectedKeys.length === 0) {{
+                alert('Lütfen en az bir faaliyet sektörü seçiniz.');
+                return;
+            }}
+
+            try {{
+                const res = await fetch('/api/presets/merge', {{
+                    method: 'POST',
+                    headers: {{ 'Content-Type': 'application/json' }},
+                    body: JSON.stringify({{ preset_keys: selectedKeys }})
+                }});
+                const p = await res.json();
+
+                document.getElementById('edit-primary-sector').value = p.primary_sector;
+                document.getElementById('edit-nace').value = p.nace_codes.join(', ');
+                document.getElementById('edit-regulators').value = p.regulatory_bodies.join(', ');
+                document.getElementById('edit-keywords').value = p.high_priority_keywords.join(', ');
+                document.getElementById('edit-excluded').value = p.excluded_keywords.join(', ');
+                
+                document.getElementById('edit-has-rd').checked = !!p.has_rd_center;
+                document.getElementById('edit-has-foreign').checked = !!p.has_foreign_trade;
+                document.getElementById('edit-has-ecom').checked = !!p.e_commerce_license;
+
+                alert(selectedKeys.length + ' adet sektör birleştirildi ve profile aktarıldı. Bilgileri gözden geçirip "Profili Kaydet & Uygula" butonuna basınız.');
+            }} catch(e) {{
+                alert('Sektörler birleştirilemedi: ' + e.message);
+            }}
+        }}
+
         async function applySelectedPreset() {{
-            const key = document.getElementById('preset-selector').value;
+            const key = document.getElementById('preset-selector') ? document.getElementById('preset-selector').value : 'defense_aerospace';
             try {{
                 const res = await fetch('/api/presets/' + key);
                 const p = await res.json();
