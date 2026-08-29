@@ -1,5 +1,5 @@
 """
-Unit and Integration Tests for Mevzuat Radarı.
+Unit and Integration Tests for Mevzuat Radarı (STM Savunma A.Ş. Profile).
 """
 import pytest
 import os
@@ -13,10 +13,6 @@ if project_root not in sys.path:
 
 from src.models import (
     CompanyProfile,
-    GeneralCompanyInfo,
-    SectorsAndNace,
-    OperationalTraits,
-    KeywordsConfig,
     GazetteItem,
     GazetteIndex,
 )
@@ -33,10 +29,10 @@ from src.templates import format_markdown_report, format_html_report
 
 def test_company_profile_loading():
     profile = load_company_profile("config/company_profile.yaml")
-    assert profile.general.name is not None
+    assert "STM" in profile.general.name
     assert len(profile.sectors_and_nace.nace_codes) > 0
-    assert len(profile.regulatory_bodies) > 0
-    assert "tax_and_finance" in profile.risk_priorities
+    assert "Cumhurbaşkanlığı Savunma Sanayii Başkanlığı (SSB)" in profile.regulatory_bodies
+    assert "defense_procurement_and_export_control" in profile.risk_priorities
 
 
 def test_gazette_url_formatting():
@@ -50,55 +46,53 @@ def test_parse_mock_gazette_html():
     <html>
     <head><title>Resmî Gazete</title></head>
     <body>
-        <div>Sayı : 33000</div>
-        <h3>YÖNETMELİKLER</h3>
-        <p>Ticaret Bakanlığından:</p>
-        <a href="/eskiler/2026/08/20260829-1.htm">Mesafeli Sözleşmeler Yönetmeliğinde Değişiklik Yapılmasına Dair Yönetmelik</a>
-        <a href="/eskiler/2026/08/20260829-2.pdf">Katma Değer Vergisi Genel Uygulama Tebliği</a>
+        <div>Sayı : 33355</div>
+        <h3>CUMHURBAŞKANI KARARLARI</h3>
+        <a href="/eskiler/2026/08/20260829-2.pdf">Sınırları Gösterilen Alanın “Milli Savunma Üniversitesi Teknoloji Geliştirme Bölgesi” Olarak Tespit Edilmesi Hakkında Karar (Karar Sayısı: 11679)</a>
+        <a href="/eskiler/2026/08/20260829-3.pdf">Sınırları Gösterilen Alanın İkinci Derece Kara Askeri Yasak Bölge İlan Edilmesi Hakkında Karar (Karar Sayısı: 11680)</a>
     </body>
     </html>
     """
     index = parse_gazette_index(mock_html, "2026-08-29")
-    assert index.gazette_number == "33000"
+    assert index.gazette_number == "33355"
     assert len(index.items) == 2
-    assert index.items[0].category == "Yönetmelik"
-    assert "Mesafeli" in index.items[0].title
-    assert index.items[1].is_pdf is True
+    assert "Milli Savunma Üniversitesi" in index.items[0].title
+    assert index.items[0].is_pdf is True
 
 
-def test_scoring_high_relevance_ecommerce():
+def test_scoring_high_relevance_defense():
     profile = load_company_profile("config/company_profile.yaml")
     item = GazetteItem(
-        title="Elektronik Ticarette Mesafeli Sözleşmeler ve Tüketici İadeleri Tebliği",
+        title="Sınırları Gösterilen Alanın “Milli Savunma Üniversitesi Teknoloji Geliştirme Bölgesi” Olarak Tespit Edilmesi Hakkında Karar",
         url="https://resmigazete.gov.tr/sample",
-        category="Tebliğ",
-        institution="Ticaret Bakanlığı",
+        category="Cumhurbaşkanı Kararı",
     )
     score, reasons, risk = score_item_relevance(item, profile)
-    assert score >= 75
+    assert score >= 70
     assert risk == "Kritik"
-    assert any("E-Ticaret" in r or "anahtar" in r for r in reasons)
+    assert any("Ar-Ge" in r or "Milli Savunma" in r or "Savunma" in r for r in reasons)
 
 
 def test_scoring_unrelated_item():
     profile = load_company_profile("config/company_profile.yaml")
     item = GazetteItem(
-        title="Orman Köylülerinin Kalkındırılması ve Ağaçlandırma İhalesi Tebliği",
+        title="Özel Hastaneler Yönetmeliğinde Değişiklik Yapılmasına Dair Yönetmelik",
         url="https://resmigazete.gov.tr/sample2",
-        category="Tebliğ",
-        institution="Tarım ve Orman Bakanlığı",
+        category="Yönetmelik",
+        institution="Sağlık Bakanlığı",
     )
     score, reasons, risk = score_item_relevance(item, profile)
     assert score == 0
     assert risk == "Bilgi"
 
 
-def test_affected_departments_inference():
-    deps = infer_affected_departments("Katma Değer Vergisi Fatura Düzenleme Tebliği", [])
-    assert "Mali İşler & Muhasebe" in deps
+def test_affected_departments_inference_defense():
+    deps = infer_affected_departments("Milli Savunma Üniversitesi Askeri Teknoloji ve İHA Kararı", [])
+    assert "Savunma Projeleri Yönetimi" in deps
+    assert "Ar-Ge & Teknoloji Yönetimi" in deps
 
-    deps_hr = infer_affected_departments("Asgari Ücret ve Kıdem Tazminatı Tavanı Genelgesi", [])
-    assert "İnsan Kaynakları" in deps_hr
+    deps_security = infer_affected_departments("İkinci Derece Kara Askeri Yasak Bölge İlanı", [])
+    assert "Tesis Güvenlik Koordinatörlüğü" in deps_security
 
 
 def test_checklist_generation():
@@ -110,16 +104,16 @@ def test_checklist_generation():
 def test_templates_rendering():
     profile = load_company_profile("config/company_profile.yaml")
     item = GazetteItem(
-        title="Ödeme Kuruluşları Bilgi Sistemleri Tebliği",
-        url="https://resmigazete.gov.tr/pay",
-        category="Tebliğ",
+        title="Milli Savunma Üniversitesi Teknoloji Geliştirme Bölgesi Kararı",
+        url="https://resmigazete.gov.tr/msu",
+        category="Karar",
     )
     evaluation = evaluate_gazette_item(item, profile)
     from src.models import DailyAuditReport
     report = DailyAuditReport(
         date="2026-08-29",
-        company_name="Mega Perakende A.Ş.",
-        total_scanned=10,
+        company_name=profile.general.name,
+        total_scanned=13,
         relevant_count=1,
         evaluations=[evaluation],
         generated_at="2026-08-29 12:00:00",
@@ -127,8 +121,8 @@ def test_templates_rendering():
 
     md = format_markdown_report(report)
     assert "Resmî Gazete İç Denetim & Uyum Bülteni" in md
-    assert "Ödeme Kuruluşları" in md
+    assert "Milli Savunma Üniversitesi" in md
 
     html = format_html_report(report)
     assert "<!DOCTYPE html>" in html
-    assert "Mega Perakende A.Ş." in html
+    assert "STM Savunma" in html
