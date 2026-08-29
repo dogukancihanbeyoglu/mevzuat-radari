@@ -1,0 +1,74 @@
+# ==========================================
+# ŞİRKET UYUM VE DENETİM PROFİLİ
+# ==========================================
+company_profile:
+  general:
+    name: "Mega Perakende & Fintek A.Ş."
+    legal_type: "Anonim Şirket"
+    scale: "Büyük Ölçekli" # KOBİ, Büyük Ölçekli, Halka Açık
+    employee_count: 750
+    annual_turnover_tl: "600M+" # VERBİS, Bağımsız Denetim ve E-Fatura eşikleri için kritik
+    is_publicly_traded: false # SPK mevzuatı zorunluluğu
+
+  sectors_and_nace:
+    primary_sector: "Perakende & E-Ticaret"
+    secondary_sectors:
+      - "Fintek / Ödeme Kuruluşu"
+      - "Lojistik & Kargo Taşımacılığı"
+      - "Yazılım ve Teknoloji Geliştirme"
+    nace_codes:
+      - "47.91.00" # Radyo, TV, posta veya internet üzerinden perakende ticaret
+      - "66.19.05" # Elektronik para ve ödeme hizmetleri
+      - "53.20.09" # Kurye ve paket taşımacılığı
+      - "62.01.01" # Bilgisayar programlama faaliyetleri
+
+  regulatory_bodies:
+    - "Ticaret Bakanlığı"
+    - "Hazine ve Maliye Bakanlığı"
+    - "Gelir İdaresi Başkanlığı"
+    - "Kişisel Verileri Koruma Kurumu (KVKK)"
+    - "Türkiye Cumhuriyet Merkez Bankası (TCMB)"
+    - "Bankacılık Düzenleme ve Denetleme Kurumu (BDDK)"
+    - "Çalışma ve Sosyal Güvenlik Bakanlığı"
+    - "Bilgi Teknolojileri ve İletişim Kurumu (BTK)"
+    - "Rekabet Kurumu"
+
+  operational_traits:
+    has_foreign_trade: true # Gümrük ve Kambiyo mevzuatı takibi
+    has_rd_center: true # 5746 sayılı Ar-Ge teşvikleri takibi
+    uses_subcontractors: true # Alt işveren / Taşeron ve İSG riskleri
+    e_commerce_license: true # ETBİS ve Mesafeli Satış Yönetmeliği
+    processes_special_category_data: true # KVKK hassas nitelikli veri (sağlık/biyometrik)
+
+  risk_priorities:
+    tax_and_finance: "Kritik"
+    data_privacy_kvkk: "Kritik"
+    payment_systems_fintech: "Kritik"
+    commercial_and_consumer: "Yüksek"
+    labor_and_sgk: "Yüksek"
+    information_security: "Yüksek"
+    environmental_and_isg: "Orta"
+
+  keywords:
+    high_priority:
+      - "e-ticaret"
+      - "mesafeli sözleşme"
+      - "ödeme hizmet"
+      - "elektronik para"
+      - "kişisel veri"
+      - "verbis"
+      - "katma değer vergisi"
+      - "kdv"
+      - "asgari ücret"
+      - "fatura"
+      - "tüketici"
+      - "ar-ge"
+      - "gümrük"
+    medium_priority:
+      - "iş sağlığı"
+      - "rekabet"
+      - "kambiyo"
+      - "harç"
+      - "damga vergisi"
+      - "ithalat"
+      - "ihracat"
