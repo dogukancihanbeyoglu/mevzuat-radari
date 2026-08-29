@@ -139,3 +139,42 @@ Web arayüzündeki **"Şirket Profili & Sektörel Şablonlar"** sekmesinden tek 
 * **Varsayılan Mod (Deterministic Rule-Based):** Dış API bağımlılığı olmadan, 0 ms gecikmeyle ve sıfır maliyetle çalışır.
 * **Yapay Zeka Modu (LLM Engine):** OpenAI (GPT-4o), Anthropic (Claude 3.5 Sonnet), Google Gemini veya Yerel LLM (Ollama/DeepSeek) bağlandığında metinlerin derin hukuki semantik analizini yaparak bülteni zenginleştirir.
 * **MCP Sunucu Desteği:** `src/server.py` üzerinden Cursor, Claude Desktop ve Antigravity IDE'ye doğrudan bağlanarak bir iç denetim ajanı olarak görev yapar.
+
+---
+
+## 🔬 7. Derin Karar İçeriği & Şirket Profili Semantik Etki Analizi
+
+Sistem, alarmları yalnızca karar başlıklarına bakarak üretmekle yetinmez; arka planda kararın **tam metin gövdesini (HTML ve PDF akışları)** doğrudan okuyarak şirket profiliyle çapraz etki analizine tabi tutar:
+
+```mermaid
+graph TD
+    A[Alarm Üretilen Karar URL'si] --> B{Belge Türü?}
+    B -->|PDF Belgesi .pdf| C[pypdf Bellek İçi Akış Ayrıştırıcı]
+    B -->|HTML Sayfası .htm| D[HTML DOM & Metin Temizleyici]
+    
+    C --> E[Ham Metin Gövdesi]
+    D --> E
+    
+    E --> F[Şirket Profili Çapraz Eşleşme Motoru]
+    
+    F --> G1[🎯 Şirket Profili Açısından Anlamı & Operasyonel Etki<br/>Ar-Ge Teşviki, İhracat/Gümrük, İK Bordro, İhale Sözleşmeleri]
+    F --> G2[🔍 Kritik Maddeler & Yasal Hükümler<br/>Madde 1-2, Parasal Hadler, İzin/Ruhsat Şartları]
+    F --> G3[⏱️ Uyum & Yürürlük Takvimi<br/>Geçiş Süreleri, Kesin Yürürlük Tarihleri]
+    F --> G4[⚠️ Yaptırım & Hukuki Risk<br/>Para Cezası, İSG İş Durdurma, Teminat Kaybı]
+```
+
+### 🧠 7.1. Şirket Profili Açısından Anlamı (`company_specific_impact`)
+Metindeki hükümler, şirketin YAML konfigürasyonundaki operasyonel özellikleriyle eşleştirilir:
+* **Savunma & Askeri Sistemler:** Taktik İHA (KARGU/ALPAGU) ve askeri denizcilik (MİLGEM) projeleri için saha test izinleri, tesis güvenlik belgesi (5201/5202) ve SSB/MSB onay süreçlerine etkisi.
+* **Vergi & Mali İşler:** Şirketin ölçeği ve cirosu çerçevesinde ERP faturalama, tevkifat oranları, 5746 Ar-Ge teşvikleri ve SSDF fon kesintileri yükümlülükleri.
+* **İş Hukuku & İK:** Şirketin çalışan sayısı ve mühendislik kadrosu için asgari ücret/tavan, SGK teşvikleri ve 6331 İSG risk analizi.
+* **KVKK & Bilgi Güvenliği:** İşlenen paydaş verileri ve USOM/BTK siber olay bildirim yükümlülükleri.
+* **Kamu İhaleleri:** 4734/4735 kapsamındaki sözleşmelerde fiyat farkı formülleri ve teminat oranları.
+* **Gümrük & Dış Ticaret:** GTİP tarife pozisyonları, Dahilde İşleme İzin Belgeleri (DİİB) ve kambiyo süreleri.
+
+### 🔍 7.2. Kritik Maddeler & Hüküm Çıkarımı (`key_articles_summary`)
+* Metindeki `MADDE 1 (Amaç)`, `MADDE 2 (Kapsam)`, `Dayanak`, parasal hadler, başvuru süreleri ve istisnalar otomatik ayıklanır.
+
+### ⏱️ 7.3. Uyum & Yürürlük Takvimi (`compliance_deadlines`)
+* Düzenlemenin yürürlüğe giriş tarihi, geçiş süreleri (Örn: *"Yayımı tarihinden itibaren 3 ay sonra"*, *"1/1/2026 tarihinden geçerli olmak üzere"*) metin içinden regex ve semantik kalıplarla tespit edilir.
+
