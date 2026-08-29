@@ -1,7 +1,10 @@
 """
 AI and Rules-based Regulatory Relevance and Internal Audit Evaluator Module.
-Matches Gazette items against Company Profile and produces structured audit evaluations.
-Supports both LLM-driven GenAI reasoning and deterministic local heuristic fallback.
+Features Advanced Contextual Rule-Based Engine:
+- Negative Keyword Exclusion Filters (suppresses academic, student, municipal false positives)
+- Strict Word-boundary Regex Matching (avoids substring false triggers like 'cihaz' matching 'iha')
+- Context & Entity Routing (distinguishes commercial/defense regulations from academic university rules)
+- Live GenAI LLM reasoning integration with graceful fallback
 """
 import os
 import re
@@ -18,6 +21,7 @@ from .models import (
 )
 from .scraper import fetch_gazette_index, fetch_gazette_date_range, fetch_regulation_content
 from .llm_engine import call_llm_evaluation
+from .utils import lower_tr
 
 
 def load_company_profile(profile_path: str = "config/company_profile.yaml") -> CompanyProfile:
@@ -38,62 +42,102 @@ def load_company_profile(profile_path: str = "config/company_profile.yaml") -> C
     return CompanyProfile(**data)
 
 
+def _contains_term(text: str, term: str) -> bool:
+    """Checks if a term matches either as a phrase or with word boundaries for short acronyms."""
+    term_lower = lower_tr(term.strip())
+    if not term_lower:
+        return False
+    if len(term_lower) <= 4:
+        pattern = rf"\b{re.escape(term_lower)}\b"
+        return bool(re.search(pattern, text))
+    return term_lower in text
+
+
 def score_item_relevance(item: GazetteItem, profile: CompanyProfile) -> Tuple[int, List[str], str]:
     """
-    Computes a heuristic relevance score (0-100) between a GazetteItem and CompanyProfile.
+    Computes an advanced contextual relevance score (0-100) between a GazetteItem and CompanyProfile.
+    Employs negative filtering, regex word boundaries, and institutional context routing.
     Returns (score, matched_reasons, risk_level).
     """
+    title_lower = lower_tr(item.title)
+    institution_lower = lower_tr(item.institution or "")
+    category_lower = lower_tr(item.category or "")
+    combined_text = f"{title_lower} {institution_lower} {category_lower}"
+
+    # 1. NEGATIVE EXCLUSION FILTER (Academic, Student, Medical, Municipal, Routine Appointments)
+    excluded_matches = [
+        exc for exc in profile.keywords.excluded 
+        if _contains_term(title_lower, exc) or _contains_term(institution_lower, exc)
+    ]
+    
+    # Overriding commercial/technological keywords (if present, allow evaluation)
+    commercial_override = any(
+        _contains_term(title_lower, term) 
+        for term in ["teknoloji geliştirme bölgesi", "tgb", "savunma sanayii", "askeri yasak bölge", "harp aracı", "ihracat kontrol", "5201", "5202", "ihale", "tedarik"]
+    )
+
+    if excluded_matches and not commercial_override:
+        return 0, [], "Bilgi"
+
+    # Suppress pure university academic/internal regulations
+    if "üniversite" in combined_text and not commercial_override:
+        academic_terms = ["eğitim", "öğretim", "sınav", "lisans", "enstitü", "fakülte", "disiplin", "burs", "yurt", "kayıt", "öğrenci", "akademik", "öğretim elemanı"]
+        if any(_contains_term(title_lower, term) for term in academic_terms):
+            return 0, [], "Bilgi"
+
+    # Suppress generic non-defense public appointments and routine personnel lists
+    if "atama kararları" in category_lower or "atama kararı" in title_lower:
+        if not any(_contains_term(title_lower, term) for term in ["savunma sanayii başkanlığı", "ssb", "milli savunma bakanlığı", "msb"]):
+            return 0, [], "Bilgi"
+
     score = 0
     reasons = []
-    title_lower = item.title.lower()
-    institution = (item.institution or "").lower()
 
-    # 1. Check High Priority Keywords
+    # 2. HIGH PRIORITY KEYWORDS
     for kw in profile.keywords.high_priority:
-        if kw.lower() in title_lower:
+        if _contains_term(title_lower, kw):
             score += 35
             reasons.append(f"Yüksek öncelikli anahtar kelime eşleşmesi: '{kw}'")
 
-    # 2. Check Medium Priority Keywords
+    # 3. MEDIUM PRIORITY KEYWORDS
     for kw in profile.keywords.medium_priority:
-        if kw.lower() in title_lower:
+        if _contains_term(title_lower, kw):
             score += 15
             reasons.append(f"Orta öncelikli anahtar kelime eşleşmesi: '{kw}'")
 
-    # 3. Check Regulatory Bodies Match
+    # 4. REGULATORY BODIES MATCH
     for reg in profile.regulatory_bodies:
-        reg_lower = reg.lower()
-        if reg_lower in title_lower or (institution and reg_lower in institution):
+        if _contains_term(title_lower, reg) or (institution_lower and _contains_term(institution_lower, reg)):
             score += 30
             reasons.append(f"Düzenleyici kurum yetki alanı eşleşmesi: '{reg}'")
 
-    # 4. Check Operational Traits
+    # 5. OPERATIONAL TRAITS MATCH
     if profile.operational_traits.has_rd_center:
-        if any(term in title_lower for term in ["ar-ge", "teknoloji geliştirme", "tgb", "5746", "teknokent", "tübitak"]):
+        if any(_contains_term(title_lower, term) for term in ["ar-ge", "teknoloji geliştirme", "tgb", "5746", "teknokent", "tübitak"]):
             score += 30
             reasons.append("Şirketin Ar-Ge Merkezi ve Teknoloji Geliştirme Bölgesi faaliyetleri ile doğrudan ilgili")
 
     if profile.operational_traits.has_foreign_trade:
-        if any(term in title_lower for term in ["gümrük", "ithalat", "ihracat", "kambiyo", "askeri ihracat", "stratejik malzeme"]):
+        if any(_contains_term(title_lower, term) for term in ["gümrük", "ithalat", "ihracat", "kambiyo", "askeri ihracat", "stratejik malzeme"]):
             score += 25
             reasons.append("Şirketin İhracat/İthalat ve Savunma Malzemesi Dolaşım operasyonlarını ilgilendiriyor")
 
     if profile.operational_traits.e_commerce_license:
-        if any(term in title_lower for term in ["e-ticaret", "mesafeli", "elektronik ticaret", "etbis", "tüketici"]):
+        if any(_contains_term(title_lower, term) for term in ["e-ticaret", "mesafeli", "elektronik ticaret", "etbis", "tüketici"]):
             score += 25
             reasons.append("Şirketin E-Ticaret faaliyeti ve ETBİS lisansı ile ilgili")
 
-    # 5. Check Sector / NACE alignment
-    primary_sec = profile.sectors_and_nace.primary_sector.lower()
+    # 6. SECTOR & NACE ALIGNMENT
+    primary_sec = lower_tr(profile.sectors_and_nace.primary_sector)
     if "savunma" in primary_sec or "askeri" in primary_sec:
-        if any(term in title_lower for term in ["milli savunma", "savunma sanayii", "askeri", "yasak bölge", "harp", "denizaltı", "iha"]):
+        defense_indicators = ["milli savunma", "savunma sanayii", "askeri", "askeri yasak bölge", "harp", "denizaltı", "iha", "5201", "5202"]
+        if any(_contains_term(title_lower, term) for term in defense_indicators):
             score += 35
             reasons.append("Savunma Sanayii, Askeri Projeler ve Güvenlik regülasyonları ile doğrudan ilgili")
 
-    if "fintek" in primary_sec or any("fintek" in s.lower() for s in profile.sectors_and_nace.secondary_sectors):
-        if any(term in title_lower for term in ["ödeme", "elektronik para", "tcmb", "bddk", "masak"]):
-            score += 30
-            reasons.append("Finansal teknolojiler ve ödeme sistemleri sektörü ile ilgili")
+    # If no core contextual reason was found, suppress false alarm
+    if not reasons:
+        return 0, [], "Bilgi"
 
     # Cap score at 100
     final_score = min(score, 100)
@@ -115,27 +159,27 @@ def score_item_relevance(item: GazetteItem, profile: CompanyProfile) -> Tuple[in
 
 def infer_affected_departments(title: str, matched_reasons: List[str]) -> List[str]:
     """Infers internal company departments affected by the regulation."""
-    t = title.lower()
+    t = lower_tr(title)
     deps = set()
 
-    if any(k in t for k in ["milli savunma", "askeri", "savunma", "harp", "deniz", "iha"]):
+    if any(_contains_term(t, k) for k in ["milli savunma", "askeri", "savunma", "harp", "deniz", "iha"]):
         deps.add("Savunma Projeleri Yönetimi")
         deps.add("Mühendislik & Sistem Entegrasyonu")
-    if any(k in t for k in ["yasak bölge", "tesis güvenlik", "güvenlik", "istihbarat", "gizli"]):
+    if any(_contains_term(t, k) for k in ["yasak bölge", "tesis güvenlik", "güvenlik", "istihbarat", "gizli"]):
         deps.add("Tesis Güvenlik Koordinatörlüğü")
         deps.add("İdari İşler & Güvenlik")
-    if any(k in t for k in ["teknoloji geliştirme", "ar-ge", "teknokent", "5746", "üniversite"]):
+    if any(_contains_term(t, k) for k in ["teknoloji geliştirme", "teknoloji", "ar-ge", "teknokent", "5746"]):
         deps.add("Ar-Ge & Teknoloji Yönetimi")
         deps.add("Teşvik ve Fon Yönetimi")
-    if any(k in t for k in ["siber", "bilgi sistem", "yazılım", "usom", "btk"]):
+    if any(_contains_term(t, k) for k in ["siber", "bilgi sistem", "yazılım", "usom", "btk"]):
         deps.add("Siber Güvenlik Operasyon Merkezi (SOC)")
         deps.add("Bilgi Teknolojileri (IT)")
-    if any(k in t for k in ["ihracat", "ithalat", "gümrük", "5201", "5202", "kontrole tabi"]):
+    if any(_contains_term(t, k) for k in ["ihracat", "ithalat", "gümrük", "5201", "5202", "kontrole tabi"]):
         deps.add("İhracat & Lojistik Operasyonları")
         deps.add("Sözleşmeler & İhracat Kontrol")
-    if any(k in t for k in ["vergi", "kdv", "fatura", "ssdf", "muhasebe", "mali"]):
+    if any(_contains_term(t, k) for k in ["vergi", "kdv", "fatura", "ssdf", "muhasebe", "mali"]):
         deps.add("Mali İşler & Muhasebe")
-    if any(k in t for k in ["iş kanunu", "asgari ücret", "sgk", "istihdam", "işçi"]):
+    if any(_contains_term(t, k) for k in ["iş kanunu", "asgari ücret", "sgk", "istihdam", "işçi"]):
         deps.add("İnsan Kaynakları")
 
     if not deps:
@@ -151,7 +195,7 @@ def infer_affected_departments(title: str, matched_reasons: List[str]) -> List[s
 def generate_action_checklist(title: str, category: str, risk_level: str) -> List[str]:
     """Generates practical internal audit checklist items."""
     checklist = []
-    t = title.lower()
+    t = lower_tr(title)
 
     if "teknoloji geliştirme" in t or "ar-ge" in t:
         checklist.append("Teknoloji Geliştirme Bölgesi (TGB) kapsamındaki Ar-Ge projelerinin ve teşvik şartlarının gözden geçirilmesi.")
@@ -161,14 +205,14 @@ def generate_action_checklist(title: str, category: str, risk_level: str) -> Lis
         checklist.append("Şirketin operasyon, saha testleri ve uçuş/seyir izin protokollerinin askeri bölge sınırları doğrultusunda güncellenmesi.")
         checklist.append("Tesis ve Saha Güvenliği Prosedürlerinin Askeri Yasak Bölgeler mevzuatına uyumunun denetlenmesi.")
 
-    if "yönetmelik" in t or category.lower() == "yönetmelik":
+    if "yönetmelik" in t or (category and "yönetmelik" in lower_tr(category)):
         checklist.append("Şirket içi ilgili yönerge ve süreç dokümanlarının revize edilmesi.")
         checklist.append("Mevcut iş süreçlerinin yeni mevzuat maddeleri ile GAP (fark) analizinin yapılması.")
 
-    if any(k in t for k in ["ihracat", "5201", "5202"]):
+    if any(_contains_term(t, k) for k in ["ihracat", "5201", "5202"]):
         checklist.append("MSB ve SSB izin prosedürlerinin ihracat kontrol listeleriyle doğrulanması.")
 
-    if any(k in t for k in ["vergi", "kdv", "fatura", "ssdf"]):
+    if any(_contains_term(t, k) for k in ["vergi", "kdv", "fatura", "ssdf"]):
         checklist.append("ERP ve muhasebe parametrelerinin/oranlarının sistemde güncellenmesi.")
         checklist.append("Vergi danışmanı görüşü alınarak beyanname ve fon kontrollerinin yapılması.")
 
@@ -181,7 +225,6 @@ def evaluate_gazette_item(item: GazetteItem, profile: CompanyProfile, content: O
     Constructs a complete AuditEvaluation for a single item.
     Leverages live LLM analysis if configured; otherwise uses deterministic local heuristics.
     """
-    # 1. Try GenAI LLM evaluation if an active LLM provider is configured
     llm_res = call_llm_evaluation(
         title=item.title,
         category=item.category,
@@ -199,7 +242,6 @@ def evaluate_gazette_item(item: GazetteItem, profile: CompanyProfile, content: O
         affected_deps = list(llm_res.get("affected_departments", []))
         checklist = list(llm_res.get("action_checklist", []))
     else:
-        # 2. Fallback to deterministic rules and heuristics
         score, matched_reasons, risk_level = score_item_relevance(item, profile)
         affected_deps = infer_affected_departments(item.title, matched_reasons)
         checklist = generate_action_checklist(item.title, item.category, risk_level)

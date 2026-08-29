@@ -172,3 +172,41 @@ def test_llm_config_endpoints():
 
     # Reset back to rule_based
     client.post("/api/llm-config", json={"active_provider": "rule_based"})
+
+
+def test_advanced_rule_based_negative_filtering():
+    """Verifies that academic/student university regulations are suppressed (score 0)."""
+    profile = load_company_profile("config/company_profile.yaml")
+    
+    # Academic/student regulation with 'Milli Savunma'
+    item_academic = GazetteItem(
+        title="Milli Savunma Üniversitesi Lisansüstü Eğitim-Öğretim ve Sınav Yönetmeliği",
+        url="https://resmigazete.gov.tr/sample3",
+        category="Yönetmelik",
+        institution="Milli Savunma Üniversitesi",
+    )
+    score, _, risk = score_item_relevance(item_academic, profile)
+    assert score == 0
+    assert risk == "Bilgi"
+
+    # Substring trap: 'cihaz' contains 'iha'
+    item_medical = GazetteItem(
+        title="Tıbbi Cihaz Satış ve Tanıtım Yönetmeliğinde Değişiklik",
+        url="https://resmigazete.gov.tr/sample4",
+        category="Yönetmelik",
+        institution="Sağlık Bakanlığı",
+    )
+    score_med, _, risk_med = score_item_relevance(item_medical, profile)
+    assert score_med == 0
+    assert risk_med == "Bilgi"
+
+    # Genuine defense UAV procurement
+    item_uav = GazetteItem(
+        title="Milli Savunma Bakanlığı Taktik İHA ve Askeri Yazılım Tedarik Tebliği",
+        url="https://resmigazete.gov.tr/sample5",
+        category="Tebliğ",
+        institution="Milli Savunma Bakanlığı",
+    )
+    score_uav, _, risk_uav = score_item_relevance(item_uav, profile)
+    assert score_uav >= 70
+    assert risk_uav == "Kritik"

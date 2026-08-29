@@ -1,7 +1,7 @@
 """
 Standalone Web Dashboard and REST API for Mevzuat Radarı.
 Executive SaaS-grade UI for Compliance and Internal Audit Management.
-Supports High-Speed Multi-Threaded Single-Date and Date-Range (Batch) Gazette Auditing.
+Supports Advanced Contextual Rule-Based Engine with Excluded/Negative Keywords.
 """
 import os
 import sys
@@ -33,7 +33,7 @@ from src.llm_engine import load_llm_config, save_llm_config, get_mcp_client_conf
 app = FastAPI(
     title="Mevzuat Radarı Web Paneli",
     description="Resmî Gazete İç Denetim & Uyum Radarı Yönetim Platformu",
-    version="2.5.0",
+    version="2.6.0",
 )
 
 
@@ -54,6 +54,7 @@ class ProfileUpdateRequest(BaseModel):
     nace_codes: str
     regulatory_bodies: str
     high_priority_keywords: str
+    excluded_keywords: str = ""
     has_rd_center: bool = False
     has_foreign_trade: bool = False
     e_commerce_license: bool = False
@@ -90,6 +91,7 @@ def update_profile(req: ProfileUpdateRequest) -> Dict[str, Any]:
     profile.sectors_and_nace.nace_codes = [c.strip() for c in req.nace_codes.split(",") if c.strip()]
     profile.regulatory_bodies = [r.strip() for r in req.regulatory_bodies.split(",") if r.strip()]
     profile.keywords.high_priority = [k.strip() for k in req.high_priority_keywords.split(",") if k.strip()]
+    profile.keywords.excluded = [k.strip() for k in req.excluded_keywords.split(",") if k.strip()]
 
     profile.operational_traits.has_rd_center = req.has_rd_center
     profile.operational_traits.has_foreign_trade = req.has_foreign_trade
@@ -411,7 +413,7 @@ def index_page():
                 <div class="border-b border-slate-800 pb-3">
                     <h2 class="text-sm font-bold text-white">Şirket Profili ve Denetim Kriterleri Düzenleyici</h2>
                     <p class="text-xs text-slate-400 mt-0.5">
-                        Başka bir şirket için tarama yapmak istiyorsanız bilgileri buradan güncelleyin. Değişiklikler anında YAML konfigürasyonuna işlenir.
+                        Yanlış alarmları (false-positive) engellemek için hariç tutulacak kelimeleri veya şirketinizin tabi olduğu kurumları buradan yönetin.
                     </p>
                 </div>
 
@@ -453,6 +455,11 @@ def index_page():
                     <div>
                         <label class="block text-slate-400 font-medium mb-1">Yüksek Öncelikli Anahtar Kelimeler (Virgülle ayırın):</label>
                         <textarea id="edit-keywords" rows="2" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-blue-500"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-rose-400 font-medium mb-1 font-mono">🚫 Hariç Tutulacak / Negatif Anahtar Kelimeler (Virgülle ayırın):</label>
+                        <textarea id="edit-excluded" rows="2" placeholder="öğrenci, lisansüstü, akademik, fakülte, enstitü, rektörlük, sağlık personeli..." class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-rose-900/50 text-rose-200 focus:outline-none focus:border-rose-500 font-mono"></textarea>
                     </div>
 
                     <div class="pt-2 border-t border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -662,6 +669,7 @@ def index_page():
             document.getElementById('edit-nace').value = cachedProfile.sectors_and_nace.nace_codes.join(', ');
             document.getElementById('edit-regulators').value = cachedProfile.regulatory_bodies.join(', ');
             document.getElementById('edit-keywords').value = cachedProfile.keywords.high_priority.join(', ');
+            document.getElementById('edit-excluded').value = (cachedProfile.keywords.excluded || []).join(', ');
             
             document.getElementById('edit-has-rd').checked = !!cachedProfile.operational_traits.has_rd_center;
             document.getElementById('edit-has-foreign').checked = !!cachedProfile.operational_traits.has_foreign_trade;
@@ -684,6 +692,7 @@ def index_page():
                 nace_codes: document.getElementById('edit-nace').value,
                 regulatory_bodies: document.getElementById('edit-regulators').value,
                 high_priority_keywords: document.getElementById('edit-keywords').value,
+                excluded_keywords: document.getElementById('edit-excluded').value,
                 has_rd_center: document.getElementById('edit-has-rd').checked,
                 has_foreign_trade: document.getElementById('edit-has-foreign').checked,
                 e_commerce_license: document.getElementById('edit-has-ecom').checked,
@@ -798,7 +807,7 @@ def index_page():
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-10 text-center text-slate-400">
                     <div class="inline-block animate-spin text-2xl mb-2">⟳</div>
                     <p class="text-xs font-medium">Resmî Gazete arşivi taranıyor ve şirket profili ile eşleştiriliyor...</p>
-                    <p class="text-[11px] text-slate-500 mt-1 font-mono">Çok iş parçacıklı motor çalışıyor...</p>
+                    <p class="text-[11px] text-slate-500 mt-1 font-mono">Gelişmiş bağlamsal kural motoru çalışıyor...</p>
                 </div>
             `;
 

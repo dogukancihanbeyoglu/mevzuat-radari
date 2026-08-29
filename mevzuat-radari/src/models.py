@@ -1,5 +1,6 @@
 """
 Data models for Mevzuat Radarı (Resmî Gazete İç Denetim & Uyum Radarı).
+Includes support for Negative/Exclusion Keywords and Contextual Filtering.
 """
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
@@ -29,8 +30,9 @@ class OperationalTraits(BaseModel):
 
 
 class KeywordsConfig(BaseModel):
-    high_priority: List[str] = Field(default_factory=list)
-    medium_priority: List[str] = Field(default_factory=list)
+    high_priority: List[str] = Field(default_factory=list, description="Yüksek öncelikli anahtar kelimeler")
+    medium_priority: List[str] = Field(default_factory=list, description="Orta öncelikli anahtar kelimeler")
+    excluded: List[str] = Field(default_factory=list, description="Negatif / Hariç tutulacak kelimeler (öğrenci, akademik, vb.)")
 
 
 class CompanyProfile(BaseModel):
