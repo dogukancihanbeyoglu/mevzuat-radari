@@ -2,8 +2,9 @@
 High-Performance Resmî Gazete Scraper and Content Parser Module.
 Features:
 - Multi-threaded parallel fetching for fast date-range batch scans
-- Local disk caching for historical Gazettes (instant retrieval, zero network strain)
-- Robust error tolerance (auto-skips missing archives/holidays without crashing)
+- Accurate URL resolution for historical archive PDF/HTM links
+- Local disk caching for historical Gazettes
+- Robust error tolerance
 - Precise Gazette date, issue number, and hierarchical section breadcrumbs
 """
 import os
@@ -49,7 +50,6 @@ def _load_from_cache(date_str: str) -> Optional[GazetteIndex]:
 
 def _save_to_cache(index: GazetteIndex) -> None:
     """Saves parsed GazetteIndex to disk cache (historical issues never change)."""
-    # Do not cache today's issue as it may receive mükerrer / additional updates during the day
     today_str = datetime.now().strftime("%Y-%m-%d")
     if index.date == today_str:
         return
@@ -137,8 +137,10 @@ def get_gazette_url_for_date(date_str: Optional[str] = None) -> Tuple[str, str]:
     return archive_url, formatted_date
 
 
-def parse_gazette_index(html: str, target_date: str) -> GazetteIndex:
-    """Parse Resmî Gazete fihrist HTML and extract structured items with precise locations."""
+def parse_gazette_index(html: str, target_date: str, page_url: str = BASE_URL) -> GazetteIndex:
+    """
+    Parse Resmî Gazete fihrist HTML and extract structured items with accurate absolute URLs.
+    """
     soup = BeautifulSoup(html, "html.parser")
     
     gazette_number = None
@@ -189,10 +191,11 @@ def parse_gazette_index(html: str, target_date: str) -> GazetteIndex:
         if element.name == "a" and element.get("href"):
             href = element["href"].strip()
             
-            if href.startswith("#") or "fihrist" in href or "tarih" in href or href == "/":
+            if href.startswith("#") or "fihrist" in href or "tarih" in href or href == "/" or href.startswith("javascript"):
                 continue
 
-            full_url = urljoin(BASE_URL, href)
+            # Correctly join with page_url (not just root BASE_URL)
+            full_url = urljoin(page_url, href)
             is_pdf = full_url.lower().endswith(".pdf")
             is_htm = full_url.lower().endswith(".htm") or full_url.lower().endswith(".html")
 
@@ -260,7 +263,7 @@ def fetch_gazette_index(date_str: Optional[str] = None) -> GazetteIndex:
 
     try:
         html, _ = _fetch_html(url)
-        idx = parse_gazette_index(html, target_date)
+        idx = parse_gazette_index(html, target_date, page_url=url)
         if idx.total_items > 0:
             _save_to_cache(idx)
         return idx
@@ -284,18 +287,15 @@ def fetch_gazette_date_range(
     if start_dt > end_dt:
         start_dt, end_dt = end_dt, start_dt
 
-    # Generate all dates in range
     date_list: List[str] = []
     curr = start_dt
     while curr <= end_dt:
         date_list.append(curr.strftime("%Y-%m-%d"))
         curr += timedelta(days=1)
 
-    # Safety guard: cap max dates to prevent unbounded memory usage
     if len(date_list) > max_days:
         date_list = date_list[-max_days:]
 
-    # Parallel Execution with ThreadPoolExecutor
     indices_dict = {}
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         future_to_date = {executor.submit(fetch_gazette_index, d): d for d in date_list}
@@ -308,7 +308,6 @@ def fetch_gazette_date_range(
             except Exception:
                 pass
 
-    # Sort results chronologically
     sorted_indices = [indices_dict[d] for d in date_list if d in indices_dict]
     return sorted_indices
 
