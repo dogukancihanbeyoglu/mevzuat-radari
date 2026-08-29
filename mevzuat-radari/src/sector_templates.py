@@ -1,41 +1,73 @@
 """
-Universal Industry Presets and Multi-Layered Compliance Taxonomy for Mevzuat Radarı.
+Universal Industry Presets, Systematic Hierarchy & Multi-Tier Regulatory Risk Taxonomy for Mevzuat Radarı.
 Provides:
 1. Universal Public Administration Noise Classifier (filters student/academic/municipal noise)
-2. Horizontal Corporate Compliance Domains (Tax, Labor/HR, KVKK, Customs, Public Procurement, Corporate Law)
-3. Vertical Sector Presets (Defense, FinTech, E-Commerce, Software, Energy)
+2. High-Impact Systematic Norms & Legal Hierarchy (Presidential Decrees, Constitutional Court, High Court Precedents)
+3. Cross-Cutting Corporate Regulatory Domains (Tax, Labor, KVKK, Tenders, Customs, Incentives, Environment, Industrial Standards)
+4. Vertical Sector Presets (Defense, FinTech, E-Commerce, Software, Energy)
 """
 from typing import Dict, Any, List
 
-# 1. Universal Public Administration Noise Keywords (Suppressed unless explicit commercial override)
+# 1. Universal Public Administration Noise Keywords (Strictly internal academic / municipal procedures)
 UNIVERSAL_NOISE_KEYWORDS = [
-    # Academic & University Internal Affairs
+    # Academic & University Student / Course Affairs
     "öğrenci", "lisans", "lisansüstü", "yüksek lisans", "doktora", "fakülte",
     "enstitü", "rektörlük", "akademik", "öğretim elemanı", "öğretim üyesi",
     "öğretim görevlisi", "müfredat", "sınav yönetmeliği", "öğrenci işleri",
     "yaz okulu", "kayıt kabul", "önlisans", "diploma", "tez savunma", "araştırma görevlisi",
-    # Civil Servant Internal HR & Routine Discipline
+    # Civil Servant Internal HR & Routine Internal Discipline
     "görevde yükselme", "unvan değişikliği", "disiplin amirleri", "memur disiplin",
     "personel yer değiştirme", "hizmet içi eğitim", "zabıta yönetmeliği", "itfaiye personeli",
-    # Professional Chambers Internal Affairs
+    # Professional Chambers Internal Routine (Unless trade/industry related)
     "tabip odası", "veteriner hekimler", "baro levhası", "noter stajyer", "oda aidatı",
-    # Municipal Internal Budgets & Local Tariffs
+    # Municipal Internal Budgets & Local Transit Tariffs
     "belediye meclisi kararı", "belediye bütçesi", "il özel idaresi bütçe", "taksi dolmuş tarifesi",
 ]
 
 # 2. Universal Commercial & Regulatory Override Terms
 COMMERCIAL_OVERRIDE_TERMS = [
+    # High-Level Legal Hierarchy
+    "cumhurbaşkanlığı kararnamesi", "kararname", "anayasa mahkemesi", "danıştay", "yargıtay",
+    "içtihadı birleştirme", "kamulaştırma", "acele kamulaştırma", "özelleştirme",
+    # Business & Industry Overrides
     "teknoloji geliştirme bölgesi", "tgb", "savunma sanayii", "askeri yasak bölge",
     "harp aracı", "ihracat kontrol", "5201", "5202", "kamu ihale", "ihale", "tedarik",
     "vergi muafiyeti", "ar-ge merkezi", "5746", "ithalat kotası", "kambiyo", "gümrük",
     "rekabet kurulu", "spk", "bddk", "epdk", "masak", "kvkk", "kişisel veri", "kişisel veriler",
     "veri aktarımı", "veri sorumlusu", "verbis", "asgari ücret", "kdv", "katma değer vergisi",
     "kurumlar vergisi", "gelir vergisi", "vergi usul", "sgk", "iş kanunu", "iş sağlığı ve güvenliği",
-    "fiyat farkı", "ticaret sicili", "türk ticaret kanunu", "ttk",
+    "fiyat farkı", "ticaret sicili", "türk ticaret kanunu", "ttk", "yatırım teşvik", "devlet yardımları",
+    "çevre izin", "çed", "sıfır atık", "karbon", "sanayi sicil", "tse", "türk standardı",
+    "organize sanayi", "osb", "patent", "marka tescil", "konkordato", "iflas",
 ]
 
-# 3. Horizontal Corporate Compliance Domains (Affects EVERY Turkish Commercial Entity)
-HORIZONTAL_CORPORATE_DOMAINS: Dict[str, Dict[str, Any]] = {
+# 3. Comprehensive Multi-Layered Compliance & Criticality Taxonomy (Horizontal & Systemic)
+SYSTEMATIC_COMPLIANCE_DOMAINS: Dict[str, Dict[str, Any]] = {
+    # --- LEVEL A: CONSTITUTIONAL & SYSTEMIC LEGAL HIERARCHY ---
+    "presidential_decrees": {
+        "domain_name": "Cumhurbaşkanlığı Kararnameleri & Sistemik Düzenlemeler",
+        "badge_label": "CUMHURBAŞKANLIĞI KARARNAMESİ",
+        "badge_color": "rose",
+        "keywords": ["cumhurbaşkanlığı kararnamesi", "kararname numarası", "bakanlıkların kuruluş", "genel kadro ve usulü"],
+        "default_departments": ["Üst Yönetim", "Hukuk & Uyum", "Stratejik Planlama"],
+        "checklist": [
+            "Devlet teşkilat yapısı ve bakanlıkların yetki alanlarındaki değişikliklerin analiz edilmesi.",
+            "Şirketimizin tabi olduğu kamu kurumları ve idari prosedürlerin güncellenmesi.",
+            "Yürürlük tarihi itibarıyla şirket faaliyetlerine doğrudan/dolaylı hukuki etkilerin raporlanması."
+        ]
+    },
+    "constitutional_and_high_courts": {
+        "domain_name": "Anayasa Mahkemesi & Yüksek Yargı İçtihatları",
+        "badge_label": "YARGI & AYM İÇTİHAT",
+        "badge_color": "fuchsia",
+        "keywords": ["anayasa mahkemesi", "içtihadı birleştirme kararı", "danıştay dava daireleri", "yargıtay içtihadı"],
+        "default_departments": ["Hukuk & Dava Takip", "Mali İşler", "İnsan Kaynakları", "İç Denetim"],
+        "checklist": [
+            "İptal edilen veya içtihadı birleştirilen kanun hükmünün devam eden dava ve uyuşmazlıklara etkisinin incelenmesi.",
+            "Şirketin sözleşme, vergi ve personel politikalarının güncel yargı içtihatlarına göre revize edilmesi."
+        ]
+    },
+    # --- LEVEL B: CORE CORPORATE HORIZONTAL DOMAINS ---
     "tax_and_finance": {
         "domain_name": "Mali İşler & Vergi Mevzuatı",
         "badge_label": "VERGİ & MALİYE",
@@ -118,6 +150,52 @@ HORIZONTAL_CORPORATE_DOMAINS: Dict[str, Dict[str, Any]] = {
             "Gümrük tarife pozisyonları (GTİP) ve ithalat gözetim/vergi oranlarının kontrol edilmesi.",
             "Dahilde İşleme İzin Belgeleri (DİİB) ve ihracat taahhüt sürelerinin incelenmesi.",
             "İhracat bedellerinin yurda getirilmesi ve kambiyo kapanış sürelerinin takibe alınması."
+        ]
+    },
+    "investments_and_incentives": {
+        "domain_name": "Yatırım Teşvikleri & Devlet Yardımları",
+        "badge_label": "YATIRIM & TEŞVİK",
+        "badge_color": "teal",
+        "keywords": [
+            "yatırımlarda devlet yardımları", "yatırım teşvik", "cazibe merkezleri", "proje bazlı destek",
+            "faiz desteği", "kdv istisnası belgesi", "gümrük vergisi muafiyeti", "bölgesel teşvik",
+            "stratejik yatırım", "hibe programı", "sanayi ve teknoloji bakanlığı teşvik",
+        ],
+        "default_departments": ["Yatırım & Finansman", "Stratejik Planlama", "Mali İşler", "Ar-Ge Yönetimi"],
+        "checklist": [
+            "Şirketin mevcut veya planlanan yatırım projelerinin yeni teşvik mevzuatına uygunluğunun incelenmesi.",
+            "Yatırım Teşvik Belgesi (YTB) başvuru kriterleri ve indirimli kurumlar vergisi oranlarının hesaplanması.",
+            "Makine-teçhizat ithalatı ve KDV istisnası avantajlarının finansal fizibilitelere işlenmesi."
+        ]
+    },
+    "environment_and_sustainability": {
+        "domain_name": "Çevre, Sıfır Atık & Yeşil Dönüşüm (ESG)",
+        "badge_label": "ÇEVRE & SÜRDÜRÜLEBİLİRLİK",
+        "badge_color": "lime",
+        "keywords": [
+            "çevre izin ve lisans", "çed", "çevresel etki değerlendirmesi", "sıfır atık", "emisyon ticareti",
+            "karbon vergisi", "sera gazı", "endüstriyel atık", "atıksu arıtma", "tehlikeli atık", "iklim değişikliği",
+        ],
+        "default_departments": ["İş Sağlığı, Güvenliği & Çevre (İSG-Ç)", "Tesis Yönetimi & İdari İşler", "Üretim / Saha Operasyonları"],
+        "checklist": [
+            "Tesislerin Çevre İzin ve Lisans belgelerinin güncellik durumunun denetlenmesi.",
+            "Sıfır Atık Belgesi ve atık yönetim beyanlarının Çevre Şehircilik Bakanlığı sistemine zamanında girişi.",
+            "Karbon ayak izi ve Yeşil Dönüşüm kriterlerinin tedarik zinciri süreçlerine entegrasyonu."
+        ]
+    },
+    "industrial_standards_and_quality": {
+        "domain_name": "Sanayi, Üretim & Standartlar (TSE / CE)",
+        "badge_label": "SANAYİ & STANDARTLAR",
+        "badge_color": "yellow",
+        "keywords": [
+            "sanayi sicil", "sanayi sicil tebliği", "uygunluk değerlendirmesi", "ce işareti", "türk standardı",
+            "tse", "piyasa gözetimi ve denetimi", "üretim standardı", "tip onayı", "organize sanayi bölgesi", "osb",
+        ],
+        "default_departments": ["Kalite Güvence & Standardizasyon", "Üretim & Mühendislik", "Satınalma"],
+        "checklist": [
+            "Sanayi Sicil Belgesi yıllık işletme cetvellerinin yasal süresi içinde verilmesi.",
+            "Ürün ve üretim hatlarının güncellenen TSE / CE ve uluslararası standartlara uyumunun kontrolü.",
+            "Tedarikçilerden temin edilen hammaddelerin uygunluk değerlendirme sertifikalarının incelenmesi."
         ]
     },
     "corporate_and_commercial": {
