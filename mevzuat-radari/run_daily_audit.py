@@ -1,30 +1,32 @@
 #!/usr/bin/env python3
 """
 CLI Runner for Mevzuat Radarı.
-Executes daily audit pipeline, generates reports and saves them to reports/ directory.
+Executes daily audit pipeline, generates reports (MD, HTML, PDF) and dispatches emails.
 Usage:
-    python run_daily_audit.py [--date YYYY-MM-DD] [--min-score 30] [--profile config/company_profile.yaml]
+    python run_daily_audit.py [--date YYYY-MM-DD] [--email denetim@stm.com.tr,uyum@stm.com.tr]
 """
 import os
 import sys
 import argparse
 from datetime import datetime
 
-# Add package directory to python path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
 from src.evaluator import generate_daily_audit_report
 from src.templates import format_markdown_report, format_html_report
+from src.pdf_generator import generate_pdf_report
+from src.notifier import EmailNotifier
 
 
 def main():
     parser = argparse.ArgumentParser(description="Resmî Gazete İç Denetim & Uyum Radarı")
-    parser.add_argument("--date", type=str, default=None, help="Taranacak tarih (YYYY-MM-DD veya DD.MM.YYYY, varsayılan: bugün)")
+    parser.add_argument("--date", type=str, default=None, help="Taranacak tarih (YYYY-MM-DD veya DD.MM.YYYY)")
     parser.add_argument("--min-score", type=int, default=30, help="Raporlanacak minimum alaka skoru (0-100, varsayılan: 30)")
-    parser.add_argument("--profile", type=str, default="config/company_profile.yaml", help="Şirket profili YAML dosyası yolu")
-    parser.add_argument("--no-save", action="store_true", help="Raporları diske kaydetme, sadece ekrana bas")
+    parser.add_argument("--profile", type=str, default="config/company_profile.yaml", help="Şirket profili YAML dosyası")
+    parser.add_argument("--email", type=str, default=None, help="PDF raporunun gönderileceği e-posta adresleri (virgülle ayrılmış)")
+    parser.add_argument("--no-save", action="store_true", help="Raporları diske kaydetme")
 
     args = parser.parse_args()
 
@@ -49,7 +51,7 @@ def main():
         print(f"📄 Toplam Taranan Madde: {report.total_scanned}")
         print(f"🎯 İlgili / Aksiyon Gerektiren Karar Sayısı: {report.relevant_count}\n")
 
-        # Save to reports directory if requested
+        pdf_path = None
         if not args.no_save:
             reports_dir = os.path.join(current_dir, "reports")
             os.makedirs(reports_dir, exist_ok=True)
@@ -57,6 +59,7 @@ def main():
             clean_date = report.date.replace("/", "-").replace(".", "-")
             md_path = os.path.join(reports_dir, f"{clean_date}.md")
             html_path = os.path.join(reports_dir, f"{clean_date}.html")
+            pdf_path = os.path.join(reports_dir, f"{clean_date}.pdf")
 
             with open(md_path, "w", encoding="utf-8") as f:
                 f.write(md_output)
@@ -64,8 +67,21 @@ def main():
             with open(html_path, "w", encoding="utf-8") as f:
                 f.write(html_output)
 
-            print(f"💾 Markdown Raporu Kaydedildi: {md_path}")
-            print(f"💾 HTML Bülteni Kaydedildi: {html_path}")
+            generate_pdf_report(report, pdf_path)
+
+            print(f"💾 Markdown Raporu: {md_path}")
+            print(f"💾 HTML Bülteni: {html_path}")
+            print(f"💾 PDF Bülteni: {pdf_path}")
+
+        # Dispatch Email if requested
+        if args.email:
+            recipients = [e.strip() for e in args.email.split(",") if e.strip()]
+            print(f"\n📧 E-Posta Raporu Dağıtımı Başlatılıyor ({len(recipients)} alıcı)...")
+            notifier = EmailNotifier()
+            result = notifier.send_report_email(report, recipients, pdf_path=pdf_path)
+            print(f"   ✓ Durum: {result.get('status')}")
+            print(f"   ✓ Mod: {result.get('mode')}")
+            print(f"   ✓ Mesaj: {result.get('message')}")
 
         print("\n" + "="*50)
         print("📋 RAPOR ÖZETİ")

@@ -5,7 +5,7 @@ Provides interactive tools and resources for AI Agents (Antigravity, Claude Desk
 import os
 import sys
 import json
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
 # Ensure project src is in path
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -30,6 +30,8 @@ from src.evaluator import (
     generate_daily_audit_report,
 )
 from src.templates import format_markdown_report
+from src.pdf_generator import generate_pdf_report
+from src.notifier import dispatch_daily_audit_pdf, EmailNotifier
 
 
 # Initialize MCP Server
@@ -76,13 +78,50 @@ def evaluate_daily_gazette(date: str = "", min_relevance_score: int = 30) -> str
     """
     Günün (veya verilen tarihin) Resmî Gazetesini şirket profiliyle eşleştirir, 
     risk ve etki analizi yaparak eksiksiz bir İç Denetim & Uyum Bülteni (Markdown) üretir.
-    Parametreler:
-        date: Tarih (YYYY-MM-DD). Boş bırakılırsa bugün taranır.
-        min_relevance_score: Raporlanacak minimum alaka puanı (0-100, varsayılan 30).
     """
     target_date = date.strip() if date and date.strip() else None
     report = generate_daily_audit_report(date_str=target_date, min_score=min_relevance_score)
     return format_markdown_report(report)
+
+
+@app.tool()
+def generate_audit_pdf(date: str = "", min_relevance_score: int = 30) -> Dict[str, Any]:
+    """
+    Günün (veya verilen tarihin) iç denetim değerlendirmesini kurumsal PDF bülteni olarak üretir ve dosya yolunu döner.
+    """
+    target_date = date.strip() if date and date.strip() else None
+    report = generate_daily_audit_report(date_str=target_date, min_score=min_relevance_score)
+    
+    reports_dir = os.path.join(project_root, "reports")
+    clean_date = report.date.replace("/", "-").replace(".", "-")
+    pdf_path = os.path.join(reports_dir, f"{clean_date}.pdf")
+    
+    saved_path = generate_pdf_report(report, pdf_path)
+    return {
+        "status": "success",
+        "date": report.date,
+        "company_name": report.company_name,
+        "relevant_items": report.relevant_count,
+        "pdf_path": saved_path,
+        "pdf_size_bytes": os.path.getsize(saved_path),
+    }
+
+
+@app.tool()
+def send_audit_report_pdf(recipients: List[str], date: str = "", min_relevance_score: int = 30) -> Dict[str, Any]:
+    """
+    İç Denetim & Uyum bültenini PDF ekiyle birlikte belirtilen e-posta adreslerine raporlar.
+    Parametreler:
+        recipients: E-posta adresleri listesi (örn: ["denetim@sirket.com", "uyum@sirket.com"])
+        date: Tarih (YYYY-MM-DD)
+        min_relevance_score: Minimum alaka eşiği (varsayılan 30)
+    """
+    target_date = date.strip() if date and date.strip() else None
+    return dispatch_daily_audit_pdf(
+        recipient_emails=recipients,
+        date_str=target_date,
+        min_score=min_relevance_score,
+    )
 
 
 @app.tool()
