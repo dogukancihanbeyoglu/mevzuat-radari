@@ -3,8 +3,8 @@ High-Performance Resmî Gazete Scraper and Content Parser Module.
 Features:
 - Multi-threaded parallel fetching for fast date-range batch scans
 - Accurate URL resolution for historical archive PDF/HTM links
+- Robust text cleaning (strips \r, \n, tabs, and excess whitespace)
 - Local disk caching for historical Gazettes
-- Robust error tolerance
 - Precise Gazette date, issue number, and hierarchical section breadcrumbs
 """
 import os
@@ -139,13 +139,13 @@ def get_gazette_url_for_date(date_str: Optional[str] = None) -> Tuple[str, str]:
 
 def parse_gazette_index(html: str, target_date: str, page_url: str = BASE_URL) -> GazetteIndex:
     """
-    Parse Resmî Gazete fihrist HTML and extract structured items with accurate absolute URLs.
+    Parse Resmî Gazete fihrist HTML and extract structured items with clean titles and accurate URLs.
     """
     soup = BeautifulSoup(html, "html.parser")
     
     gazette_number = None
     text_content = soup.get_text()
-    match = re.search(r"Sayı\s*:\s*(\d+)", text_content, re.IGNORECASE)
+    match = re.search(r"Sayı\s*[:\s]\s*(\d+)", text_content, re.IGNORECASE)
     if match:
         gazette_number = match.group(1)
 
@@ -194,14 +194,16 @@ def parse_gazette_index(html: str, target_date: str, page_url: str = BASE_URL) -
             if href.startswith("#") or "fihrist" in href or "tarih" in href or href == "/" or href.startswith("javascript"):
                 continue
 
-            # Correctly join with page_url (not just root BASE_URL)
             full_url = urljoin(page_url, href)
             is_pdf = full_url.lower().endswith(".pdf")
             is_htm = full_url.lower().endswith(".htm") or full_url.lower().endswith(".html")
 
-            if (is_pdf or is_htm) and len(txt) > 5 and not txt.startswith("PDF Görüntüle") and not txt.startswith("Önceki Sayı"):
-                clean_title = re.sub(r"^[–\-—\s]+", "", txt).strip()
+            # Clean raw text from newlines, tabs, and excess spaces
+            raw_text = element.get_text(separator=" ")
+            clean_title = re.sub(r"^[–\-—\s]+", "", raw_text).strip()
+            clean_title = re.sub(r"\s+", " ", clean_title)
 
+            if (is_pdf or is_htm) and len(clean_title) > 5 and not clean_title.startswith("PDF Görüntüle") and not clean_title.startswith("Önceki Sayı"):
                 cat = current_category
                 if "Yönetmeliği" in clean_title or "Yönetmelik" in clean_title:
                     cat = "Yönetmelik"
@@ -256,7 +258,6 @@ def fetch_gazette_index(date_str: Optional[str] = None) -> GazetteIndex:
     """
     url, target_date = get_gazette_url_for_date(date_str)
     
-    # Try cache first
     cached = _load_from_cache(target_date)
     if cached:
         return cached
