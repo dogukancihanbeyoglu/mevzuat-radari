@@ -126,3 +126,33 @@ def test_templates_rendering():
     html = format_html_report(report)
     assert "<!DOCTYPE html>" in html
     assert "STM Savunma" in html
+
+def test_web_api_endpoints():
+    from fastapi.testclient import TestClient
+    from src.web_app import app
+
+    client = TestClient(app)
+
+    # 1. Profile Endpoint
+    resp = client.get("/api/profile")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "general" in data
+    assert "STM" in data["general"]["name"]
+
+    # 2. Simulate Endpoint
+    sim_payload = {
+        "title": "Milli Savunma Üniversitesi TGB ve Askeri Yazılım Kararı",
+        "category": "Karar",
+        "institution": "MSB"
+    }
+    sim_resp = client.post("/api/simulate", json=sim_payload)
+    assert sim_resp.status_code == 200
+    sim_data = sim_resp.json()
+    assert sim_data["relevance_score"] >= 70
+    assert sim_data["risk_level"] == "Kritik"
+
+    # 3. Index Page HTML
+    html_resp = client.get("/")
+    assert html_resp.status_code == 200
+    assert "Resmî Gazete" in html_resp.text
