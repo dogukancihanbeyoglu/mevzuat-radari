@@ -1,11 +1,11 @@
 """
 Resmî Gazete Scraper and Content Parser Module.
-Fetches daily index, regulation details and formats clean text for AI analysis.
+Fetches daily index, date range indices, regulation details and formats clean text for AI analysis.
 """
 import re
 import ssl
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, List, Tuple
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
@@ -38,7 +38,6 @@ def _fetch_html(url: str, encoding: Optional[str] = None) -> Tuple[str, str]:
         raw = resp.read()
         content_type = resp.headers.get("content-type", "").lower()
         
-        # Determine encoding
         used_encoding = "utf-8"
         if encoding:
             used_encoding = encoding
@@ -47,7 +46,6 @@ def _fetch_html(url: str, encoding: Optional[str] = None) -> Tuple[str, str]:
         elif "charset=iso-8859-9" in content_type:
             used_encoding = "iso-8859-9"
         else:
-            # Check meta tag in raw html
             if b"windows-1254" in raw.lower() or b"iso-8859-9" in raw.lower():
                 used_encoding = "windows-1254"
 
@@ -69,7 +67,6 @@ def get_gazette_url_for_date(date_str: Optional[str] = None) -> Tuple[str, str]:
         formatted_date = target_date.strftime("%Y-%m-%d")
         return BASE_URL, formatted_date
 
-    # Try parsing date formats
     parsed_date = None
     for fmt in ("%Y-%m-%d", "%d.%m.%Y", "%Y/%m/%d"):
         try:
@@ -86,11 +83,9 @@ def get_gazette_url_for_date(date_str: Optional[str] = None) -> Tuple[str, str]:
     month = parsed_date.strftime("%m")
     day_str = parsed_date.strftime("%Y%m%d")
 
-    # If it's today's date, base URL is preferred
     if parsed_date.date() == datetime.now().date():
         return BASE_URL, formatted_date
 
-    # Historical archive URL
     archive_url = f"{BASE_URL}/eskiler/{year}/{month}/{day_str}.htm"
     return archive_url, formatted_date
 
@@ -99,7 +94,6 @@ def parse_gazette_index(html: str, target_date: str) -> GazetteIndex:
     """Parse Resmî Gazete fihrist HTML and extract structured items."""
     soup = BeautifulSoup(html, "html.parser")
     
-    # Extract Gazette Number (e.g. Sayı: 33355)
     gazette_number = None
     text_content = soup.get_text()
     match = re.search(r"Sayı\s*:\s*(\d+)", text_content, re.IGNORECASE)
@@ -107,13 +101,10 @@ def parse_gazette_index(html: str, target_date: str) -> GazetteIndex:
         gazette_number = match.group(1)
 
     items: List[GazetteItem] = []
-    
-    # Track current section and category while parsing
     current_section = "Yürütme ve İdare"
     current_category = "Genel"
     current_institution = None
 
-    # Categories we actively look for in text blocks
     known_sections = ["YASAMA BÖLÜMÜ", "YÜRÜTME VE İDARE BÖLÜMÜ", "YARGI BÖLÜMÜ", "İLAN BÖLÜMÜ"]
     known_categories = [
         "CUMHURBAŞKANI KARARLARI",
@@ -135,27 +126,22 @@ def parse_gazette_index(html: str, target_date: str) -> GazetteIndex:
 
         upper_txt = txt.upper()
 
-        # Check section change
         for s in known_sections:
             if s in upper_txt and len(upper_txt) < 40:
                 current_section = s
                 break
 
-        # Check category change
         for c in known_categories:
             if c in upper_txt and len(upper_txt) < 50:
                 current_category = c.capitalize()
                 break
 
-        # Check institution (e.g., "Sağlık Bakanlığından:", "Ticaret Bakanlığından:")
         if txt.endswith("Bakanlığından:") or txt.endswith("Kurumundan:") or txt.endswith("Kurulundan:"):
             current_institution = txt.replace(":", "").strip()
 
-        # Process links pointing to documents
         if element.name == "a" and element.get("href"):
             href = element["href"].strip()
             
-            # Skip navigation links or anchor jumps
             if href.startswith("#") or "fihrist" in href or "tarih" in href or href == "/":
                 continue
 
@@ -163,11 +149,9 @@ def parse_gazette_index(html: str, target_date: str) -> GazetteIndex:
             is_pdf = full_url.lower().endswith(".pdf")
             is_htm = full_url.lower().endswith(".htm") or full_url.lower().endswith(".html")
 
-            # Check if it's an actual gazette item
             if (is_pdf or is_htm) and len(txt) > 5 and not txt.startswith("PDF Görüntüle") and not txt.startswith("Önceki Sayı"):
                 clean_title = re.sub(r"^[–\-—\s]+", "", txt).strip()
 
-                # Infer category from title if not set
                 cat = current_category
                 if "Yönetmeliği" in clean_title or "Yönetmelik" in clean_title:
                     cat = "Yönetmelik"
@@ -176,7 +160,6 @@ def parse_gazette_index(html: str, target_date: str) -> GazetteIndex:
                 elif "Kararı" in clean_title or "Kararlar" in clean_title:
                     cat = "Karar"
 
-                # Check for document number in title (e.g., Karar Sayısı: 11678 or Tebliğ No: 32)
                 doc_num = None
                 doc_match = re.search(r"\((Karar|Tebliğ|Sayı)\s*(?:Sayısı|No)?\s*:\s*([^)]+)\)", clean_title, re.IGNORECASE)
                 if doc_match:
@@ -191,7 +174,6 @@ def parse_gazette_index(html: str, target_date: str) -> GazetteIndex:
                     doc_number=doc_num,
                     is_pdf=is_pdf,
                 )
-                # Avoid duplicates
                 if not any(existing.url == item.url for existing in items):
                     items.append(item)
 
@@ -206,8 +188,33 @@ def parse_gazette_index(html: str, target_date: str) -> GazetteIndex:
 def fetch_gazette_index(date_str: Optional[str] = None) -> GazetteIndex:
     """Public function to fetch and parse Gazette Index for a given date."""
     url, target_date = get_gazette_url_for_date(date_str)
-    html, _ = _fetch_html(url)
-    return parse_gazette_index(html, target_date)
+    try:
+        html, _ = _fetch_html(url)
+        return parse_gazette_index(html, target_date)
+    except Exception:
+        return GazetteIndex(date=target_date, total_items=0, items=[])
+
+
+def fetch_gazette_date_range(start_date_str: str, end_date_str: str) -> List[GazetteIndex]:
+    """
+    Fetches Gazette Indices for all days in the range [start_date, end_date].
+    """
+    start_dt = datetime.strptime(start_date_str, "%Y-%m-%d")
+    end_dt = datetime.strptime(end_date_str, "%Y-%m-%d")
+
+    if start_dt > end_dt:
+        start_dt, end_dt = end_dt, start_dt
+
+    indices: List[GazetteIndex] = []
+    curr = start_dt
+    while curr <= end_dt:
+        d_str = curr.strftime("%Y-%m-%d")
+        idx = fetch_gazette_index(d_str)
+        if idx.total_items > 0:
+            indices.append(idx)
+        curr += timedelta(days=1)
+
+    return indices
 
 
 def fetch_regulation_content(url: str) -> str:
@@ -218,11 +225,9 @@ def fetch_regulation_content(url: str) -> str:
     html, _ = _fetch_html(url)
     soup = BeautifulSoup(html, "html.parser")
 
-    # Remove script, style and header/footer elements
     for s in soup(["script", "style", "nav", "header", "footer"]):
         s.extract()
 
     text = soup.get_text(separator="\n")
-    # Clean multiple empty lines
     cleaned_lines = [line.strip() for line in text.split("\n") if line.strip()]
     return "\n".join(cleaned_lines)

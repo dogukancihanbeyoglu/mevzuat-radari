@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """
 CLI Runner for Mevzuat Radarı.
-Executes daily audit pipeline, generates reports (MD, HTML, PDF) and dispatches emails.
+Executes audit pipeline for a single date or date range, generates reports and dispatches emails.
 Usage:
-    python run_daily_audit.py [--date YYYY-MM-DD] [--email denetim@stm.com.tr,uyum@stm.com.tr]
+    # Single Date:
+    python run_daily_audit.py [--date YYYY-MM-DD] [--email denetim@stm.com.tr]
+    
+    # Date Range (Batch / Archive):
+    python run_daily_audit.py --start-date 2026-08-01 --end-date 2026-08-29
 """
 import os
 import sys
@@ -14,7 +18,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
-from src.evaluator import generate_daily_audit_report
+from src.evaluator import generate_daily_audit_report, generate_range_audit_report
 from src.templates import format_markdown_report, format_html_report
 from src.pdf_generator import generate_pdf_report
 from src.notifier import EmailNotifier
@@ -22,7 +26,9 @@ from src.notifier import EmailNotifier
 
 def main():
     parser = argparse.ArgumentParser(description="Resmî Gazete İç Denetim & Uyum Radarı")
-    parser.add_argument("--date", type=str, default=None, help="Taranacak tarih (YYYY-MM-DD veya DD.MM.YYYY)")
+    parser.add_argument("--date", type=str, default=None, help="Taranacak tek tarih (YYYY-MM-DD)")
+    parser.add_argument("--start-date", type=str, default=None, help="Aralık taraması başlangıç tarihi (YYYY-MM-DD)")
+    parser.add_argument("--end-date", type=str, default=None, help="Aralık taraması bitiş tarihi (YYYY-MM-DD)")
     parser.add_argument("--min-score", type=int, default=30, help="Raporlanacak minimum alaka skoru (0-100, varsayılan: 30)")
     parser.add_argument("--profile", type=str, default="config/company_profile.yaml", help="Şirket profili YAML dosyası")
     parser.add_argument("--email", type=str, default=None, help="PDF raporunun gönderileceği e-posta adresleri (virgülle ayrılmış)")
@@ -32,16 +38,27 @@ def main():
 
     print("================================================================")
     print("🏛️  Resmî Gazete İç Denetim & Uyum Radarı Başlatılıyor...")
-    print(f"📌 Tarih: {args.date or 'Bugün'}")
+    if args.start_date and args.end_date:
+        print(f"📌 Tarama Modu: Tarih Aralığı ({args.start_date} → {args.end_date})")
+    else:
+        print(f"📌 Tarama Modu: Tek Tarih ({args.date or 'Bugün'})")
     print(f"📌 Minimum Alaka Eşiği: %{args.min_score}")
     print("================================================================")
 
     try:
-        report = generate_daily_audit_report(
-            date_str=args.date,
-            min_score=args.min_score,
-            profile_path=args.profile,
-        )
+        if args.start_date and args.end_date:
+            report = generate_range_audit_report(
+                start_date=args.start_date,
+                end_date=args.end_date,
+                min_score=args.min_score,
+                profile_path=args.profile,
+            )
+        else:
+            report = generate_daily_audit_report(
+                date_str=args.date,
+                min_score=args.min_score,
+                profile_path=args.profile,
+            )
 
         md_output = format_markdown_report(report)
         html_output = format_html_report(report)
@@ -56,7 +73,7 @@ def main():
             reports_dir = os.path.join(current_dir, "reports")
             os.makedirs(reports_dir, exist_ok=True)
             
-            clean_date = report.date.replace("/", "-").replace(".", "-")
+            clean_date = report.date.replace("/", "-").replace(".", "-").replace(" ", "_")
             md_path = os.path.join(reports_dir, f"{clean_date}.md")
             html_path = os.path.join(reports_dir, f"{clean_date}.html")
             pdf_path = os.path.join(reports_dir, f"{clean_date}.pdf")

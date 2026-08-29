@@ -1,6 +1,7 @@
 """
 AI and Rules-based Regulatory Relevance and Internal Audit Evaluator Module.
 Matches Gazette items against Company Profile and produces structured audit evaluations.
+Supports both single-date and date-range batch audits.
 """
 import os
 import re
@@ -15,7 +16,7 @@ from .models import (
     AuditEvaluation,
     DailyAuditReport,
 )
-from .scraper import fetch_gazette_index, fetch_regulation_content
+from .scraper import fetch_gazette_index, fetch_gazette_date_range, fetch_regulation_content
 
 
 def load_company_profile(profile_path: str = "config/company_profile.yaml") -> CompanyProfile:
@@ -116,7 +117,6 @@ def infer_affected_departments(title: str, matched_reasons: List[str]) -> List[s
     t = title.lower()
     deps = set()
 
-    # Defense & Security specific departments
     if any(k in t for k in ["milli savunma", "askeri", "savunma", "harp", "deniz", "iha"]):
         deps.add("Savunma Projeleri Yönetimi")
         deps.add("Mühendislik & Sistem Entegrasyonu")
@@ -214,7 +214,7 @@ def generate_daily_audit_report(
     profile_path: str = "config/company_profile.yaml",
 ) -> DailyAuditReport:
     """
-    Main pipeline: Scrapes Gazette index, evaluates against company profile,
+    Main pipeline for a single date: Scrapes Gazette index, evaluates against company profile,
     fetches detail content for relevant items, and generates structured report.
     """
     profile = load_company_profile(profile_path)
@@ -240,6 +240,50 @@ def generate_daily_audit_report(
         gazette_number=index.gazette_number,
         company_name=profile.general.name,
         total_scanned=index.total_items,
+        relevant_count=len(evaluations),
+        evaluations=evaluations,
+        generated_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    )
+
+
+def generate_range_audit_report(
+    start_date: str,
+    end_date: str,
+    min_score: int = 30,
+    profile_path: str = "config/company_profile.yaml",
+) -> DailyAuditReport:
+    """
+    Date Range pipeline: Scrapes Gazette indices across [start_date, end_date],
+    evaluates all items against company profile, and aggregates into a combined report.
+    """
+    profile = load_company_profile(profile_path)
+    indices = fetch_gazette_date_range(start_date, end_date)
+
+    total_scanned = sum(idx.total_items for idx in indices)
+    evaluations: List[AuditEvaluation] = []
+
+    for idx in indices:
+        for item in idx.items:
+            score, _, _ = score_item_relevance(item, profile)
+            if score >= min_score:
+                content = None
+                if not item.is_pdf:
+                    try:
+                        content = fetch_regulation_content(item.url)
+                    except Exception:
+                        content = None
+                eval_res = evaluate_gazette_item(item, profile, content)
+                evaluations.append(eval_res)
+
+    # Sort by relevance score descending
+    evaluations.sort(key=lambda x: x.relevance_score, reverse=True)
+
+    range_label = f"{start_date} - {end_date}"
+    return DailyAuditReport(
+        date=range_label,
+        gazette_number=f"{len(indices)} Sayı Taranmıştır",
+        company_name=profile.general.name,
+        total_scanned=total_scanned,
         relevant_count=len(evaluations),
         evaluations=evaluations,
         generated_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),

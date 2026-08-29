@@ -1,11 +1,12 @@
 """
 Standalone Web Dashboard and REST API for Mevzuat Radarı.
 Executive SaaS-grade UI for Compliance and Internal Audit Management.
+Supports Single-Date and Date-Range (Batch) Gazette Auditing.
 """
 import os
 import sys
 import yaml
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, Query, HTTPException, Body
 from fastapi.responses import HTMLResponse, FileResponse
@@ -20,6 +21,7 @@ from src.models import GazetteItem, CompanyProfile
 from src.evaluator import (
     load_company_profile,
     generate_daily_audit_report,
+    generate_range_audit_report,
     score_item_relevance,
     evaluate_gazette_item,
 )
@@ -31,13 +33,15 @@ from src.llm_engine import load_llm_config, save_llm_config, get_mcp_client_conf
 app = FastAPI(
     title="Mevzuat Radarı Web Paneli",
     description="Resmî Gazete İç Denetim & Uyum Radarı Yönetim Platformu",
-    version="2.0.0",
+    version="2.1.0",
 )
 
 
 class EmailDispatchRequest(BaseModel):
     emails: List[str]
     date: Optional[str] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
     min_score: int = 30
 
 
@@ -87,7 +91,6 @@ def update_profile(req: ProfileUpdateRequest) -> Dict[str, Any]:
     profile.general.annual_turnover_tl = req.annual_turnover_tl
     profile.sectors_and_nace.primary_sector = req.primary_sector
 
-    # Parse comma separated fields
     profile.sectors_and_nace.nace_codes = [c.strip() for c in req.nace_codes.split(",") if c.strip()]
     profile.regulatory_bodies = [r.strip() for r in req.regulatory_bodies.split(",") if r.strip()]
     profile.keywords.high_priority = [k.strip() for k in req.high_priority_keywords.split(",") if k.strip()]
@@ -131,18 +134,24 @@ def update_llm_configuration(req: LLMConfigUpdateRequest) -> Dict[str, Any]:
 
 @app.get("/api/scan")
 def run_scan(
-    date: Optional[str] = Query(None, description="Tarih: YYYY-MM-DD"),
+    mode: str = Query("single", description="Tarama modu: 'single' veya 'range'"),
+    date: Optional[str] = Query(None, description="Tek tarih: YYYY-MM-DD"),
+    start_date: Optional[str] = Query(None, description="Başlangıç: YYYY-MM-DD"),
+    end_date: Optional[str] = Query(None, description="Bitiş: YYYY-MM-DD"),
     min_score: int = Query(30, description="Minimum alaka skoru (0-100)"),
 ) -> Dict[str, Any]:
-    """Executes live Gazette scan and audit evaluation."""
-    target_date = date.strip() if date and date.strip() else datetime.now().strftime("%Y-%m-%d")
+    """Executes live Gazette scan (Single date or Date Range)."""
     try:
-        report = generate_daily_audit_report(date_str=target_date, min_score=min_score)
+        if mode == "range" and start_date and end_date:
+            report = generate_range_audit_report(start_date=start_date.strip(), end_date=end_date.strip(), min_score=min_score)
+        else:
+            target_date = date.strip() if date and date.strip() else datetime.now().strftime("%Y-%m-%d")
+            report = generate_daily_audit_report(date_str=target_date, min_score=min_score)
         
         # Ensure PDF is generated in reports directory
         reports_dir = os.path.join(project_root, "reports")
         os.makedirs(reports_dir, exist_ok=True)
-        clean_date = report.date.replace("/", "-").replace(".", "-")
+        clean_date = report.date.replace("/", "-").replace(".", "-").replace(" ", "_")
         pdf_path = os.path.join(reports_dir, f"{clean_date}.pdf")
         try:
             generate_pdf_report(report, pdf_path)
@@ -153,9 +162,9 @@ def run_scan(
     except Exception as e:
         profile = load_company_profile()
         return {
-            "date": target_date,
+            "date": date or f"{start_date} - {end_date}",
             "company_name": profile.general.name,
-            "total_scanned": 13,
+            "total_scanned": 0,
             "relevant_count": 0,
             "evaluations": [],
             "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -166,9 +175,10 @@ def run_scan(
 def send_email_report(req: EmailDispatchRequest) -> Dict[str, Any]:
     """Dispatches audit PDF report to requested email addresses."""
     try:
+        target_date = req.date or (f"{req.start_date} - {req.end_date}" if req.start_date and req.end_date else None)
         res = dispatch_daily_audit_pdf(
             recipient_emails=req.emails,
-            date_str=req.date,
+            date_str=target_date,
             min_score=req.min_score,
         )
         return res
@@ -182,18 +192,26 @@ def send_email_report(req: EmailDispatchRequest) -> Dict[str, Any]:
 
 
 @app.get("/api/reports/pdf")
-def download_pdf(date: Optional[str] = Query(None)):
+def download_pdf(
+    mode: str = Query("single"),
+    date: Optional[str] = Query(None),
+    start_date: Optional[str] = Query(None),
+    end_date: Optional[str] = Query(None),
+):
     """Downloads the generated PDF report with full Turkish character support."""
-    target_date = date or datetime.now().strftime("%Y-%m-%d")
-    clean_date = target_date.replace("/", "-").replace(".", "-")
-    pdf_path = os.path.join(project_root, "reports", f"{clean_date}.pdf")
-    
-    if not os.path.exists(pdf_path):
-        try:
+    if mode == "range" and start_date and end_date:
+        target_label = f"{start_date.strip()}_{end_date.strip()}"
+        pdf_path = os.path.join(project_root, "reports", f"{start_date.strip()}_-_{end_date.strip()}.pdf")
+        if not os.path.exists(pdf_path):
+            report = generate_range_audit_report(start_date=start_date.strip(), end_date=end_date.strip(), min_score=30)
+            generate_pdf_report(report, pdf_path)
+    else:
+        target_date = date or datetime.now().strftime("%Y-%m-%d")
+        clean_date = target_date.replace("/", "-").replace(".", "-")
+        pdf_path = os.path.join(project_root, "reports", f"{clean_date}.pdf")
+        if not os.path.exists(pdf_path):
             report = generate_daily_audit_report(date_str=target_date, min_score=30)
             generate_pdf_report(report, pdf_path)
-        except Exception:
-            pass
 
     if not os.path.exists(pdf_path):
         existing = [f for f in os.listdir(os.path.join(project_root, "reports")) if f.endswith(".pdf")]
@@ -205,7 +223,7 @@ def download_pdf(date: Optional[str] = Query(None)):
     return FileResponse(
         pdf_path,
         media_type="application/pdf",
-        filename=f"Resmi_Gazete_Denetim_Bulteni_{clean_date}.pdf",
+        filename=os.path.basename(pdf_path),
     )
 
 
@@ -236,7 +254,10 @@ def simulate_regulation(req: SimulateRequest) -> Dict[str, Any]:
 @app.get("/", response_class=HTMLResponse)
 def index_page():
     """Serves the modern, professional compliance management platform."""
-    today_str = datetime.now().strftime("%Y-%m-%d")
+    today_dt = datetime.now()
+    today_str = today_dt.strftime("%Y-%m-%d")
+    week_ago_str = (today_dt - timedelta(days=7)).strftime("%Y-%m-%d")
+
     return f"""<!DOCTYPE html>
 <html lang="tr" class="dark">
 <head>
@@ -326,40 +347,85 @@ def index_page():
         </nav>
 
         <!-- ========================================== -->
-        <!-- TAB 1: SCAN & AUDIT -->
+        <!-- TAB 1: SCAN & AUDIT (SINGLE + RANGE) -->
         <!-- ========================================== -->
         <section id="panel-scan" class="space-y-6">
             <!-- CONTROL BAR -->
-            <div class="bg-slate-900 border border-slate-800/90 rounded-xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div class="flex flex-wrap items-center gap-3">
-                    <div>
-                        <label class="block text-[11px] font-medium text-slate-400 mb-1 font-mono uppercase">Tarih</label>
-                        <input id="scan-date" type="date" value="{today_str}" class="px-3 py-1.5 text-xs rounded-lg bg-slate-950 border border-slate-700 text-slate-100 focus:outline-none focus:border-blue-500 font-mono">
+            <div class="bg-slate-900 border border-slate-800/90 rounded-xl p-4 sm:p-5 space-y-4">
+                
+                <!-- MODE TOGGLE -->
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] font-mono uppercase text-slate-400 mr-1">Tarama Modu:</span>
+                        <button onclick="setScanMode('single')" id="mode-btn-single" class="px-3 py-1 text-xs font-semibold rounded bg-blue-600 text-white transition">
+                            Tek Gün Taraması
+                        </button>
+                        <button onclick="setScanMode('range')" id="mode-btn-range" class="px-3 py-1 text-xs font-semibold rounded bg-slate-800 text-slate-400 hover:text-white transition">
+                            Tarih Aralığı Taraması (Toplu / Arşiv)
+                        </button>
                     </div>
-                    <div>
-                        <label class="block text-[11px] font-medium text-slate-400 mb-1 font-mono uppercase">Alaka Eşiği</label>
-                        <select id="min-score" class="px-3 py-1.5 text-xs rounded-lg bg-slate-950 border border-slate-700 text-slate-100 focus:outline-none focus:border-blue-500">
-                            <option value="30" selected>%30 (Önerilen)</option>
-                            <option value="50">%50 (Yüksek & Kritik)</option>
-                            <option value="70">%70 (Yalnızca Kritik)</option>
-                            <option value="10">%10 (Tüm Kayıtlar)</option>
-                        </select>
-                    </div>
-                    <div class="pt-5">
-                        <button onclick="executeLiveScan()" id="btn-scan" class="px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition flex items-center gap-2 shadow-sm">
-                            <span>Taramayı Başlat</span>
+
+                    <!-- QUICK RANGE BUTTONS -->
+                    <div id="quick-range-container" class="hidden flex items-center gap-1.5 text-xs">
+                        <button onclick="setQuickRange(7)" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">
+                            Son 7 Gün
+                        </button>
+                        <button onclick="setQuickRange(14)" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">
+                            Son 14 Gün
+                        </button>
+                        <button onclick="setQuickRange(30)" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">
+                            Son 30 Gün
                         </button>
                     </div>
                 </div>
 
-                <div class="pt-2 md:pt-5 flex items-center gap-2">
-                    <button onclick="downloadCurrentPdf()" class="px-3.5 py-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
-                        <span>PDF Bülteni İndir</span>
-                    </button>
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex flex-wrap items-center gap-3">
+                        
+                        <!-- SINGLE DATE INPUT -->
+                        <div id="single-date-box">
+                            <label class="block text-[11px] font-medium text-slate-400 mb-1 font-mono uppercase">Tarih</label>
+                            <input id="scan-date" type="date" value="{today_str}" class="px-3 py-1.5 text-xs rounded-lg bg-slate-950 border border-slate-700 text-slate-100 focus:outline-none focus:border-blue-500 font-mono">
+                        </div>
+
+                        <!-- DATE RANGE INPUTS -->
+                        <div id="range-date-box" class="hidden flex items-center gap-2">
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-400 mb-1 font-mono uppercase">Başlangıç Tarihi</label>
+                                <input id="start-date" type="date" value="{week_ago_str}" class="px-3 py-1.5 text-xs rounded-lg bg-slate-950 border border-slate-700 text-slate-100 focus:outline-none focus:border-blue-500 font-mono">
+                            </div>
+                            <span class="pt-5 text-slate-500 font-mono">→</span>
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-400 mb-1 font-mono uppercase">Bitiş Tarihi</label>
+                                <input id="end-date" type="date" value="{today_str}" class="px-3 py-1.5 text-xs rounded-lg bg-slate-950 border border-slate-700 text-slate-100 focus:outline-none focus:border-blue-500 font-mono">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-medium text-slate-400 mb-1 font-mono uppercase">Alaka Eşiği</label>
+                            <select id="min-score" class="px-3 py-1.5 text-xs rounded-lg bg-slate-950 border border-slate-700 text-slate-100 focus:outline-none focus:border-blue-500">
+                                <option value="30" selected>%30 (Önerilen)</option>
+                                <option value="50">%50 (Yüksek & Kritik)</option>
+                                <option value="70">%70 (Yalnızca Kritik)</option>
+                                <option value="10">%10 (Tüm Kayıtlar)</option>
+                            </select>
+                        </div>
+                        <div class="pt-5">
+                            <button onclick="executeLiveScan()" id="btn-scan" class="px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition flex items-center gap-2 shadow-sm">
+                                <span>Taramayı Başlat</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 md:pt-5 flex items-center gap-2">
+                        <button onclick="downloadCurrentPdf()" class="px-3.5 py-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
+                            <span>PDF Bülteni İndir</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <!-- RESULTS -->
+            <!-- RESULTS AREA -->
             <div id="results-area" class="space-y-4">
                 <!-- Injected via JavaScript -->
             </div>
@@ -578,8 +644,36 @@ def index_page():
 
     <!-- JAVASCRIPT APP LOGIC -->
     <script>
+        let currentScanMode = 'single';
         let cachedProfile = null;
         let cachedLLM = null;
+
+        function setScanMode(mode) {{
+            currentScanMode = mode;
+            if (mode === 'single') {{
+                document.getElementById('mode-btn-single').className = 'px-3 py-1 text-xs font-semibold rounded bg-blue-600 text-white transition';
+                document.getElementById('mode-btn-range').className = 'px-3 py-1 text-xs font-semibold rounded bg-slate-800 text-slate-400 hover:text-white transition';
+                document.getElementById('single-date-box').classList.remove('hidden');
+                document.getElementById('range-date-box').classList.add('hidden');
+                document.getElementById('quick-range-container').classList.add('hidden');
+            }} else {{
+                document.getElementById('mode-btn-single').className = 'px-3 py-1 text-xs font-semibold rounded bg-slate-800 text-slate-400 hover:text-white transition';
+                document.getElementById('mode-btn-range').className = 'px-3 py-1 text-xs font-semibold rounded bg-blue-600 text-white transition';
+                document.getElementById('single-date-box').classList.add('hidden');
+                document.getElementById('range-date-box').classList.remove('hidden');
+                document.getElementById('quick-range-container').classList.remove('hidden');
+            }}
+        }}
+
+        function setQuickRange(days) {{
+            const today = new Date();
+            const past = new Date();
+            past.setDate(today.getDate() - days);
+
+            document.getElementById('start-date').value = past.toISOString().split('T')[0];
+            document.getElementById('end-date').value = today.toISOString().split('T')[0];
+            executeLiveScan();
+        }}
 
         function switchTab(tabId) {{
             const tabs = ['scan', 'simulate', 'profile', 'llm', 'dispatch'];
@@ -742,23 +836,33 @@ def index_page():
         }}
 
         async function executeLiveScan() {{
-            const date = document.getElementById('scan-date').value;
             const minScore = document.getElementById('min-score').value;
             const btn = document.getElementById('btn-scan');
             const resultsArea = document.getElementById('results-area');
 
-            btn.innerText = 'Taranıyor...';
+            let url = '';
+            if (currentScanMode === 'range') {{
+                const start = document.getElementById('start-date').value;
+                const end = document.getElementById('end-date').value;
+                url = `/api/scan?mode=range&start_date=${{start}}&end_date=${{end}}&min_score=${{minScore}}`;
+                btn.innerText = 'Aralık Taranıyor...';
+            }} else {{
+                const date = document.getElementById('scan-date').value;
+                url = `/api/scan?mode=single&date=${{date}}&min_score=${{minScore}}`;
+                btn.innerText = 'Taranıyor...';
+            }}
+            
             btn.disabled = true;
 
             resultsArea.innerHTML = `
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-10 text-center text-slate-400">
                     <div class="inline-block animate-spin text-2xl mb-2">⟳</div>
-                    <p class="text-xs font-medium">Resmî Gazete taranıyor ve şirket profili ile eşleştiriliyor...</p>
+                    <p class="text-xs font-medium">Resmî Gazete sayıları taranıyor ve şirket profili ile eşleştiriliyor...</p>
                 </div>
             `;
 
             try {{
-                const res = await fetch(`/api/scan?date=${{date}}&min_score=${{minScore}}`);
+                const res = await fetch(url);
                 const data = await res.json();
                 renderScanResults(data);
             }} catch (e) {{
@@ -775,7 +879,7 @@ def index_page():
             if (!data.evaluations || data.evaluations.length === 0) {{
                 container.innerHTML = `
                     <div class="bg-slate-900 border border-slate-800 rounded-xl p-8 text-center space-y-2">
-                        <h3 class="text-sm font-semibold text-white">Bu Tarih İçin Şirketi İlgilendiren Kritik Karar Bulunmadı</h3>
+                        <h3 class="text-sm font-semibold text-white">Belirtilen Dönemde Şirketi İlgilendiren Kritik Karar Bulunmadı</h3>
                         <p class="text-xs text-slate-400 max-w-md mx-auto">
                             Taranan <strong>${{data.total_scanned || 13}}</strong> madde arasında şirketinizin faaliyet alanına doğrudan temas eden bir yükümlülük tespit edilmemiştir.
                         </p>
@@ -919,7 +1023,6 @@ def index_page():
 
         async function sendEmailReport() {{
             const emailsStr = document.getElementById('dispatch-emails').value;
-            const date = document.getElementById('scan-date').value;
             const statusBox = document.getElementById('dispatch-status-box');
             const btn = document.getElementById('btn-dispatch-send');
 
@@ -934,11 +1037,19 @@ def index_page():
             statusBox.className = 'text-xs p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-300 block';
             statusBox.innerHTML = 'PDF derleniyor ve dağıtım gerçekleştiriliyor...';
 
+            let payload = {{ emails: emails }};
+            if (currentScanMode === 'range') {{
+                payload.start_date = document.getElementById('start-date').value;
+                payload.end_date = document.getElementById('end-date').value;
+            }} else {{
+                payload.date = document.getElementById('scan-date').value;
+            }}
+
             try {{
                 const res = await fetch('/api/send-email', {{
                     method: 'POST',
                     headers: {{ 'Content-Type': 'application/json' }},
-                    body: JSON.stringify({{ emails, date }})
+                    body: JSON.stringify(payload)
                 }});
                 const data = await res.json();
                 statusBox.className = 'text-xs p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 block';
@@ -953,8 +1064,14 @@ def index_page():
         }}
 
         function downloadCurrentPdf() {{
-            const date = document.getElementById('scan-date').value;
-            window.location.href = `/api/reports/pdf?date=${{date}}`;
+            if (currentScanMode === 'range') {{
+                const start = document.getElementById('start-date').value;
+                const end = document.getElementById('end-date').value;
+                window.location.href = `/api/reports/pdf?mode=range&start_date=${{start}}&end_date=${{end}}`;
+            }} else {{
+                const date = document.getElementById('scan-date').value;
+                window.location.href = `/api/reports/pdf?mode=single&date=${{date}}`;
+            }}
         }}
 
         // Initial Load
