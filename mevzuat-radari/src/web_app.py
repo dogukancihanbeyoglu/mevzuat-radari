@@ -1,7 +1,7 @@
 """
 Standalone Web Dashboard and REST API for Mevzuat Radarı.
 Executive SaaS-grade UI for Compliance and Internal Audit Management.
-Supports Single-Date and Date-Range (Batch) Gazette Auditing.
+Supports Single-Date and Date-Range (Batch) Gazette Auditing with precise source locations.
 """
 import os
 import sys
@@ -33,7 +33,7 @@ from src.llm_engine import load_llm_config, save_llm_config, get_mcp_client_conf
 app = FastAPI(
     title="Mevzuat Radarı Web Paneli",
     description="Resmî Gazete İç Denetim & Uyum Radarı Yönetim Platformu",
-    version="2.1.0",
+    version="2.2.0",
 )
 
 
@@ -200,7 +200,6 @@ def download_pdf(
 ):
     """Downloads the generated PDF report with full Turkish character support."""
     if mode == "range" and start_date and end_date:
-        target_label = f"{start_date.strip()}_{end_date.strip()}"
         pdf_path = os.path.join(project_root, "reports", f"{start_date.strip()}_-_{end_date.strip()}.pdf")
         if not os.path.exists(pdf_path):
             report = generate_range_audit_report(start_date=start_date.strip(), end_date=end_date.strip(), min_score=30)
@@ -236,6 +235,9 @@ def simulate_regulation(req: SimulateRequest) -> Dict[str, Any]:
         url="https://www.resmigazete.gov.tr/mevzuat",
         category=req.category,
         institution=req.institution if req.institution else None,
+        gazette_date=datetime.now().strftime("%Y-%m-%d"),
+        section="Yürütme ve İdare Bölümü",
+        location_breadcrumb=f"Canlı Test > Yürütme ve İdare Bölümü > {req.category}" + (f" > {req.institution}" if req.institution else ""),
     )
     score, reasons, risk = score_item_relevance(item, profile)
     ev = evaluate_gazette_item(item, profile)
@@ -248,6 +250,7 @@ def simulate_regulation(req: SimulateRequest) -> Dict[str, Any]:
         "executive_summary": ev.executive_summary,
         "penalty_and_legal_risk": ev.penalty_and_legal_risk,
         "action_checklist": ev.action_checklist,
+        "location_breadcrumb": item.location_breadcrumb,
     }
 
 
@@ -892,6 +895,9 @@ def index_page():
                 const isCrit = ev.risk_level === 'Kritik';
                 const badgeColor = isCrit ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20';
 
+                const locationBreadcrumb = ev.item.location_breadcrumb || 
+                    `${{ev.item.gazette_date || data.date}} Resmî Gazete ${{ev.item.gazette_number ? '(Sayı: ' + ev.item.gazette_number + ')' : ''}} > ${{ev.item.section || 'Yürütme ve İdare Bölümü'}} > ${{ev.item.category}}`;
+
                 return `
                     <div class="bg-slate-900 border border-slate-800/90 rounded-xl p-5 space-y-3.5">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
@@ -901,12 +907,18 @@ def index_page():
                                 </span>
                                 <span class="text-xs font-semibold text-slate-300">${{ev.item.category}}</span>
                                 <span class="text-xs text-slate-600">•</span>
-                                <span class="text-xs text-slate-400 truncate max-w-[240px]">${{ev.item.institution || 'Resmî Gazete'}}</span>
+                                <span class="text-xs font-medium text-slate-400 truncate max-w-[240px]">${{ev.item.institution || 'Resmî Gazete'}}</span>
                             </div>
                             <div class="flex items-center gap-2 text-xs">
                                 <span class="text-slate-400">Alaka Skoru:</span>
                                 <span class="font-mono font-bold text-white">%${{ev.relevance_score}}</span>
                             </div>
+                        </div>
+
+                        <!-- PRECISE GAZETTE LOCATION BREADCRUMB -->
+                        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-950/40 border border-blue-900/50 text-[11px] text-blue-300 font-mono">
+                            <span class="text-blue-400 font-bold">📍 Konum:</span>
+                            <span class="truncate">${{locationBreadcrumb}}</span>
                         </div>
 
                         <h3 class="text-sm font-bold text-white leading-snug">
@@ -995,6 +1007,10 @@ def index_page():
                                 ${{data.risk_level.toUpperCase()}}
                             </span>
                             <span class="text-xs font-mono font-bold text-white">Alaka Skoru: %${{data.relevance_score}}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-950/40 border border-blue-900/50 text-[11px] text-blue-300 font-mono">
+                            <span class="text-blue-400 font-bold">📍 Konum:</span>
+                            <span class="truncate">${{data.location_breadcrumb}}</span>
                         </div>
                         <h4 class="text-sm font-bold text-white">${{data.title}}</h4>
                         <div class="text-xs bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1">

@@ -1,6 +1,7 @@
 """
 Resmî Gazete Scraper and Content Parser Module.
 Fetches daily index, date range indices, regulation details and formats clean text for AI analysis.
+Tracks exact Gazette issue date, issue number, and hierarchical section breadcrumbs.
 """
 import re
 import ssl
@@ -91,7 +92,7 @@ def get_gazette_url_for_date(date_str: Optional[str] = None) -> Tuple[str, str]:
 
 
 def parse_gazette_index(html: str, target_date: str) -> GazetteIndex:
-    """Parse Resmî Gazete fihrist HTML and extract structured items."""
+    """Parse Resmî Gazete fihrist HTML and extract structured items with precise locations."""
     soup = BeautifulSoup(html, "html.parser")
     
     gazette_number = None
@@ -101,7 +102,7 @@ def parse_gazette_index(html: str, target_date: str) -> GazetteIndex:
         gazette_number = match.group(1)
 
     items: List[GazetteItem] = []
-    current_section = "Yürütme ve İdare"
+    current_section = "Yürütme ve İdare Bölümü"
     current_category = "Genel"
     current_institution = None
 
@@ -128,12 +129,12 @@ def parse_gazette_index(html: str, target_date: str) -> GazetteIndex:
 
         for s in known_sections:
             if s in upper_txt and len(upper_txt) < 40:
-                current_section = s
+                current_section = s.title()
                 break
 
         for c in known_categories:
             if c in upper_txt and len(upper_txt) < 50:
-                current_category = c.capitalize()
+                current_category = c.title()
                 break
 
         if txt.endswith("Bakanlığından:") or txt.endswith("Kurumundan:") or txt.endswith("Kurulundan:"):
@@ -165,6 +166,18 @@ def parse_gazette_index(html: str, target_date: str) -> GazetteIndex:
                 if doc_match:
                     doc_num = doc_match.group(2).strip()
 
+                # Build precise location breadcrumb
+                loc_parts = []
+                loc_parts.append(f"{target_date} Tarihli Resmî Gazete" + (f" (Sayı: {gazette_number})" if gazette_number else ""))
+                loc_parts.append(current_section)
+                loc_parts.append(cat)
+                if current_institution:
+                    loc_parts.append(current_institution)
+                if doc_num:
+                    loc_parts.append(f"No: {doc_num}")
+
+                breadcrumb = " > ".join(loc_parts)
+
                 item = GazetteItem(
                     title=clean_title,
                     url=full_url,
@@ -172,6 +185,9 @@ def parse_gazette_index(html: str, target_date: str) -> GazetteIndex:
                     institution=current_institution,
                     section=current_section,
                     doc_number=doc_num,
+                    gazette_date=target_date,
+                    gazette_number=gazette_number,
+                    location_breadcrumb=breadcrumb,
                     is_pdf=is_pdf,
                 )
                 if not any(existing.url == item.url for existing in items):

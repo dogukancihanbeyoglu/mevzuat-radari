@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 class GeneralCompanyInfo(BaseModel):
     name: str = Field(default="Anonim Şirket", description="Şirket unvanı")
     legal_type: str = Field(default="Anonim Şirket", description="Şirket türü")
-    scale: str = Field(default="Büyük Ölçekli", description="Şirket ölçeği (KOBİ / Büyük / Halka Açık)")
+    scale: str = Field(default="Büyük Ölçekli", description="Şirket ölçeği")
     employee_count: int = Field(default=100, description="Çalışan sayısı")
     annual_turnover_tl: str = Field(default="100M+", description="Yıllık ciro skalası")
     is_publicly_traded: bool = Field(default=False, description="Halka açık mı?")
@@ -47,8 +47,11 @@ class GazetteItem(BaseModel):
     url: str = Field(..., description="Detay URL bağlantısı (.htm veya .pdf)")
     category: str = Field(default="Genel", description="Kategori: Yönetmelik, Tebliğ, Kurul Kararı, CB Kararı vb.")
     institution: Optional[str] = Field(default=None, description="Düzenleyici Kurum / Bakanlık")
-    section: str = Field(default="Yürütme ve İdare", description="Bölüm: Yürütme ve İdare, Yargı, vb.")
+    section: str = Field(default="Yürütme ve İdare Bölümü", description="Bölüm: Yürütme ve İdare, Yargı, vb.")
     doc_number: Optional[str] = Field(default=None, description="Tebliğ/Karar/Sayı No")
+    gazette_date: Optional[str] = Field(default=None, description="Gazetenin yayım tarihi (YYYY-MM-DD)")
+    gazette_number: Optional[str] = Field(default=None, description="Resmî Gazete sayısı")
+    location_breadcrumb: Optional[str] = Field(default=None, description="Gazetedeki tam konumu")
     is_pdf: bool = Field(default=False, description="Belge PDF formatında mı?")
 
 
@@ -64,7 +67,7 @@ class AuditEvaluation(BaseModel):
     relevance_score: int = Field(..., ge=0, le=100, description="0-100 arası alaka skoru")
     risk_level: str = Field(..., description="Risk Seviyesi: Kritik, Yüksek, Orta, Düşük, Bilgi")
     matched_reasons: List[str] = Field(default_factory=list, description="Neden şirketle alakalı?")
-    executive_summary: str = Field(..., description="Yönetici özeti (2-3 cümle)")
+    executive_summary: str = Field(..., description="Yönetici özeti")
     penalty_and_legal_risk: Optional[str] = Field(default=None, description="Cezai ve hukuki yaptırım riski")
     affected_departments: List[str] = Field(default_factory=list, description="Etkilenen departmanlar")
     action_checklist: List[str] = Field(default_factory=list, description="İç denetim kontrol/aksiyon listesi")
