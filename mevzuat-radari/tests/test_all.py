@@ -156,3 +156,26 @@ def test_web_api_endpoints():
     html_resp = client.get("/")
     assert html_resp.status_code == 200
     assert "Resmî Gazete" in html_resp.text
+
+def test_llm_config_endpoints():
+    from fastapi.testclient import TestClient
+    from src.web_app import app
+
+    client = TestClient(app)
+    resp = client.get("/api/llm-config")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "config" in data
+    assert "mcp_snippet" in data
+
+    # Test update LLM
+    update_resp = client.post("/api/llm-config", json={
+        "active_provider": "openai",
+        "model_name": "gpt-4o",
+        "api_key": "sk-test123"
+    })
+    assert update_resp.status_code == 200
+    assert update_resp.json()["status"] == "success"
+
+    # Reset back to rule_based
+    client.post("/api/llm-config", json={"active_provider": "rule_based"})

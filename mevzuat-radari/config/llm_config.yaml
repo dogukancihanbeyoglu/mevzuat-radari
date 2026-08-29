@@ -1,0 +1,34 @@
+llm_config:
+  active_provider: rule_based
+  mcp_settings:
+    command: python
+    script_relative_path: src/server.py
+    server_name: mevzuat-radari
+    transport: stdio
+  providers:
+    anthropic:
+      api_key: ''
+      model_name: claude-3-5-sonnet-20241022
+      name: Anthropic Claude
+      temperature: 0.2
+    gemini:
+      api_key: ''
+      model_name: gemini-2.0-flash
+      name: Google Gemini
+      temperature: 0.2
+    ollama_custom:
+      api_key: ollama
+      base_url: http://localhost:11434/v1
+      model_name: deepseek-r1:8b
+      name: Yerel LLM (Ollama / DeepSeek / vLLM)
+      temperature: 0.2
+    openai:
+      api_key: sk-test123
+      base_url: https://api.openai.com/v1
+      model_name: gpt-4o
+      name: OpenAI GPT
+      temperature: 0.2
+    rule_based:
+      description: Hızlı, deterministik ve API anahtarı gerektirmeyen yerel motor.
+      model_name: RuleBased-v1
+      name: Yerel Kural Tabanlı Motor
