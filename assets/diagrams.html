@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true, theme:'dark', fontFamily:'Inter, system-ui, sans-serif'});</script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0b0f17; color: #f8fafc; font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="p-8 space-y-12">
+    <!-- DIAGRAM 1 -->
+    <div id="diag-norms" class="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-5xl mx-auto shadow-2xl">
+        <h2 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+            <span>🏛️</span> <span>4 Kademeli Normlar Hiyerarşisi & Sistemik Uyum</span>
+        </h2>
+        <p class="text-xs text-slate-400 mb-6">T.C. Hukuk Sistematiği ve Şirket İç Denetim Eşleme Modeli</p>
+        <div class="mermaid">
+        graph TD
+            subgraph KADEME_1["🏛️ KADEME 1: ANASİSTEM & KAMU TEŞKİLATI"]
+                A1["Cumhurbaşkanlığı Kararnameleri"]
+                A2["Anayasa Mahkemesi İptal Kararları"]
+                A3["Danıştay & Yargıtay İçtihatları"]
+            end
+
+            subgraph KADEME_2["🛡️ KADEME 2: SEKTÖREL DİKEY REGÜLASYON"]
+                B1["Savunma Sanayii SSB, MSB, 5201/5202"]
+                B2["FinTech & Bankacılık BDDK, TCMB, 6493"]
+                B3["Yazılım & Ar-Ge Sanayi Bak., 5746/4691"]
+                B4["E-Ticaret Ticaret Bak., ETBİS, 6563"]
+                B5["Enerji Piyasası EPDK, 6446, YEKDEM"]
+            end
+
+            subgraph KADEME_3["🏢 KADEME 3: KURUMSAL YATAY MEVZUAT"]
+                C1["Vergi & Mali Mevzuat VUK, KDV, SSDF"]
+                C2["İş Hukuku & İSG Asgari Ücret, SGK, 6331"]
+                C3["KVKK & Bilgi Güvenliği 6698, USOM"]
+                C4["Kamu İhale & Sözleşmeler 4734, Fiyat Farkı"]
+                C5["Dış Ticaret & Gümrük GTİP, İhracat"]
+            end
+
+            subgraph KADEME_4["🌳 KADEME 4: SANAYİ, ÇEVRE & ESG"]
+                D1["Sanayi Sicil & TSE Standartları"]
+                D2["Çevre, Sıfır Atık & Yeşil Dönüşüm"]
+                D3["Yatırım Teşvik Belgeleri YTB"]
+            end
+
+            KADEME_1 --> E["🧠 Uyum Motoru & Alaka Puanlaması"]
+            KADEME_2 --> E
+            KADEME_3 --> E
+            KADEME_4 --> E
+        </div>
+    </div>
+
+    <!-- DIAGRAM 2 -->
+    <div id="diag-impact" class="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-5xl mx-auto shadow-2xl">
+        <h2 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+            <span>🧠</span> <span>Derin Karar Metni & Şirket Profili Semantik Etki Analizi</span>
+        </h2>
+        <p class="text-xs text-slate-400 mb-6">Bellek İçi PDF/HTML Ayrıştırma ve Operasyonel Yükümlülük Çıkarımı</p>
+        <div class="mermaid">
+        graph LR
+            A["Resmî Gazete Karar Linki"] --> B{"Belge Türü?"}
+            B -->|"PDF (.pdf)"| C["pypdf Bellek İçi Akış"]
+            B -->|"HTML (.htm)"| D["DOM & Metin Ayıklayıcı"]
+            
+            C --> E["Ham Metin Gövdesi"]
+            D --> E
+            
+            E --> F["Şirket Profili Çapraz Eşleşme"]
+            
+            F --> G1["🎯 Şirket İçin Anlamı & Etki"]
+            F --> G2["🔍 Kritik Maddeler 1-2 & Hadler"]
+            F --> G3["⏱️ Uyum & Yürürlük Takvimi"]
+            F --> G4["⚠️ Yaptırım & Ceza Riski"]
+        </div>
+    </div>
+
+    <!-- DIAGRAM 3 -->
+    <div id="diag-merge" class="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-5xl mx-auto shadow-2xl">
+        <h2 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+            <span>⚡</span> <span>Çoklu Sektör & Çelişkisiz Birleştirme Motoru (Multi-Sector Conglomerate)</span>
+        </h2>
+        <p class="text-xs text-slate-400 mb-6">Savunma + FinTech + SaaS + E-Ticaret için Otomatik Negatif Çelişki Giderme</p>
+        <div class="mermaid">
+        graph TD
+            S1["🛡️ Savunma Sanayii Şablonu"] --> M["merge_sector_presets"]
+            S2["💳 FinTech & Bankacılık Şablonu"] --> M
+            S3["💻 Yazılım & SaaS Şablonu"] --> M
+            S4["🛒 E-Ticaret Şablonu"] --> M
+            
+            M --> U1["NACE Kodları Birleşimi: 30.30, 64.19, 62.01, 47.91"]
+            M --> U2["Otoriteler: SSB, MSB, BDDK, TCMB, Sanayi Bak."]
+            M --> U3["Anahtar Kelimeler: milgem, 6493, 5746, etbis"]
+            
+            M --> CR{"Çelişki Giderme Motoru"}
+            CR -->|"Aktif Sektör Terimi mi?"| P["Dışlama Listesinden Temizle"]
+            CR -->|"Akademik/İdari Gürültü mü?"| K["'tez savunma', 'öğrenci', 'rektörlük' KORU"]
+        </div>
+    </div>
+</body>
+</html>
