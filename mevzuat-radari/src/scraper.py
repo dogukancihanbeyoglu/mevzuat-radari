@@ -1,11 +1,18 @@
 """
-Resmî Gazete Scraper and Content Parser Module.
-Fetches daily index, date range indices, regulation details and formats clean text for AI analysis.
-Tracks exact Gazette issue date, issue number, and hierarchical section breadcrumbs.
+High-Performance Resmî Gazete Scraper and Content Parser Module.
+Features:
+- Multi-threaded parallel fetching for fast date-range batch scans
+- Local disk caching for historical Gazettes (instant retrieval, zero network strain)
+- Robust error tolerance (auto-skips missing archives/holidays without crashing)
+- Precise Gazette date, issue number, and hierarchical section breadcrumbs
 """
+import os
 import re
 import ssl
+import json
 import urllib.request
+import urllib.error
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from typing import Optional, List, Tuple
 from urllib.parse import urljoin
@@ -15,6 +22,45 @@ from .models import GazetteIndex, GazetteItem
 
 
 BASE_URL = "https://www.resmigazete.gov.tr"
+CACHE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "cache")
+
+
+def _get_cache_path(date_str: str) -> str:
+    """Returns local cache filepath for a given date."""
+    parts = date_str.split("-")
+    if len(parts) == 3:
+        year, month, _ = parts
+        return os.path.join(CACHE_DIR, year, month, f"{date_str}.json")
+    return os.path.join(CACHE_DIR, "misc", f"{date_str}.json")
+
+
+def _load_from_cache(date_str: str) -> Optional[GazetteIndex]:
+    """Loads parsed GazetteIndex from disk cache if exists."""
+    path = _get_cache_path(date_str)
+    if os.path.exists(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            return GazetteIndex(**data)
+        except Exception:
+            return None
+    return None
+
+
+def _save_to_cache(index: GazetteIndex) -> None:
+    """Saves parsed GazetteIndex to disk cache (historical issues never change)."""
+    # Do not cache today's issue as it may receive mükerrer / additional updates during the day
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    if index.date == today_str:
+        return
+
+    path = _get_cache_path(index.date)
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(index.model_dump(), f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
 
 
 def _create_ssl_context() -> ssl.SSLContext:
@@ -25,7 +71,7 @@ def _create_ssl_context() -> ssl.SSLContext:
     return ctx
 
 
-def _fetch_html(url: str, encoding: Optional[str] = None) -> Tuple[str, str]:
+def _fetch_html(url: str, encoding: Optional[str] = None, timeout: int = 8) -> Tuple[str, str]:
     """Fetch HTML content with robust error handling and encoding detection."""
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -35,7 +81,7 @@ def _fetch_html(url: str, encoding: Optional[str] = None) -> Tuple[str, str]:
     req = urllib.request.Request(url, headers=headers)
     ctx = _create_ssl_context()
 
-    with urllib.request.urlopen(req, context=ctx, timeout=15) as resp:
+    with urllib.request.urlopen(req, context=ctx, timeout=timeout) as resp:
         raw = resp.read()
         content_type = resp.headers.get("content-type", "").lower()
         
@@ -166,9 +212,8 @@ def parse_gazette_index(html: str, target_date: str) -> GazetteIndex:
                 if doc_match:
                     doc_num = doc_match.group(2).strip()
 
-                # Build precise location breadcrumb
                 loc_parts = []
-                loc_parts.append(f"{target_date} Tarihli Resmî Gazete" + (f" (Sayı: {gazette_number})" if gazette_number else ""))
+                loc_parts.append(f"{target_date} Resmî Gazete" + (f" (Sayı: {gazette_number})" if gazette_number else ""))
                 loc_parts.append(current_section)
                 loc_parts.append(cat)
                 if current_institution:
@@ -202,18 +247,36 @@ def parse_gazette_index(html: str, target_date: str) -> GazetteIndex:
 
 
 def fetch_gazette_index(date_str: Optional[str] = None) -> GazetteIndex:
-    """Public function to fetch and parse Gazette Index for a given date."""
+    """
+    Public function to fetch and parse Gazette Index for a given date.
+    Leverages local disk cache when available.
+    """
     url, target_date = get_gazette_url_for_date(date_str)
+    
+    # Try cache first
+    cached = _load_from_cache(target_date)
+    if cached:
+        return cached
+
     try:
         html, _ = _fetch_html(url)
-        return parse_gazette_index(html, target_date)
+        idx = parse_gazette_index(html, target_date)
+        if idx.total_items > 0:
+            _save_to_cache(idx)
+        return idx
     except Exception:
         return GazetteIndex(date=target_date, total_items=0, items=[])
 
 
-def fetch_gazette_date_range(start_date_str: str, end_date_str: str) -> List[GazetteIndex]:
+def fetch_gazette_date_range(
+    start_date_str: str,
+    end_date_str: str,
+    max_workers: int = 15,
+    max_days: int = 730,
+) -> List[GazetteIndex]:
     """
-    Fetches Gazette Indices for all days in the range [start_date, end_date].
+    High-speed parallel fetch of Gazette Indices across [start_date, end_date].
+    Uses ThreadPoolExecutor for concurrent web downloads and local caching.
     """
     start_dt = datetime.strptime(start_date_str, "%Y-%m-%d")
     end_dt = datetime.strptime(end_date_str, "%Y-%m-%d")
@@ -221,16 +284,33 @@ def fetch_gazette_date_range(start_date_str: str, end_date_str: str) -> List[Gaz
     if start_dt > end_dt:
         start_dt, end_dt = end_dt, start_dt
 
-    indices: List[GazetteIndex] = []
+    # Generate all dates in range
+    date_list: List[str] = []
     curr = start_dt
     while curr <= end_dt:
-        d_str = curr.strftime("%Y-%m-%d")
-        idx = fetch_gazette_index(d_str)
-        if idx.total_items > 0:
-            indices.append(idx)
+        date_list.append(curr.strftime("%Y-%m-%d"))
         curr += timedelta(days=1)
 
-    return indices
+    # Safety guard: cap max dates to prevent unbounded memory usage
+    if len(date_list) > max_days:
+        date_list = date_list[-max_days:]
+
+    # Parallel Execution with ThreadPoolExecutor
+    indices_dict = {}
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_to_date = {executor.submit(fetch_gazette_index, d): d for d in date_list}
+        for future in as_completed(future_to_date):
+            d = future_to_date[future]
+            try:
+                idx = future.result()
+                if idx and idx.total_items > 0:
+                    indices_dict[d] = idx
+            except Exception:
+                pass
+
+    # Sort results chronologically
+    sorted_indices = [indices_dict[d] for d in date_list if d in indices_dict]
+    return sorted_indices
 
 
 def fetch_regulation_content(url: str) -> str:
@@ -238,12 +318,15 @@ def fetch_regulation_content(url: str) -> str:
     if url.lower().endswith(".pdf"):
         return f"[PDF Belgesi] Bu mevzuat PDF formatındadır. Doğrudan bağlantı: {url}"
 
-    html, _ = _fetch_html(url)
-    soup = BeautifulSoup(html, "html.parser")
+    try:
+        html, _ = _fetch_html(url, timeout=6)
+        soup = BeautifulSoup(html, "html.parser")
 
-    for s in soup(["script", "style", "nav", "header", "footer"]):
-        s.extract()
+        for s in soup(["script", "style", "nav", "header", "footer"]):
+            s.extract()
 
-    text = soup.get_text(separator="\n")
-    cleaned_lines = [line.strip() for line in text.split("\n") if line.strip()]
-    return "\n".join(cleaned_lines)
+        text = soup.get_text(separator="\n")
+        cleaned_lines = [line.strip() for line in text.split("\n") if line.strip()]
+        return "\n".join(cleaned_lines)
+    except Exception:
+        return ""

@@ -1,7 +1,7 @@
 """
 Standalone Web Dashboard and REST API for Mevzuat Radarı.
 Executive SaaS-grade UI for Compliance and Internal Audit Management.
-Supports Single-Date and Date-Range (Batch) Gazette Auditing with precise source locations.
+Supports High-Speed Multi-Threaded Single-Date and Date-Range (Batch) Gazette Auditing.
 """
 import os
 import sys
@@ -33,7 +33,7 @@ from src.llm_engine import load_llm_config, save_llm_config, get_mcp_client_conf
 app = FastAPI(
     title="Mevzuat Radarı Web Paneli",
     description="Resmî Gazete İç Denetim & Uyum Radarı Yönetim Platformu",
-    version="2.3.0",
+    version="2.4.0",
 )
 
 
@@ -134,7 +134,7 @@ def run_scan(
     end_date: Optional[str] = Query(None, description="Bitiş: YYYY-MM-DD"),
     min_score: int = Query(30, description="Minimum alaka skoru (0-100)"),
 ) -> Dict[str, Any]:
-    """Executes live Gazette scan (Single date or Date Range)."""
+    """Executes high-speed Gazette scan (Single date or Date Range)."""
     try:
         if mode == "range" and start_date and end_date:
             report = generate_range_audit_report(start_date=start_date.strip(), end_date=end_date.strip(), min_score=min_score)
@@ -142,7 +142,6 @@ def run_scan(
             target_date = date.strip() if date and date.strip() else datetime.now().strftime("%Y-%m-%d")
             report = generate_daily_audit_report(date_str=target_date, min_score=min_score)
         
-        # Ensure PDF is generated in reports directory
         reports_dir = os.path.join(project_root, "reports")
         os.makedirs(reports_dir, exist_ok=True)
         clean_date = report.date.replace("/", "-").replace(".", "-").replace(" ", "_")
@@ -194,9 +193,11 @@ def download_pdf(
 ):
     """Downloads the generated PDF report with full Turkish character support."""
     if mode == "range" and start_date and end_date:
-        pdf_path = os.path.join(project_root, "reports", f"{start_date.strip()}_-_{end_date.strip()}.pdf")
+        clean_start = start_date.strip()
+        clean_end = end_date.strip()
+        pdf_path = os.path.join(project_root, "reports", f"{clean_start}_-_{clean_end}.pdf")
         if not os.path.exists(pdf_path):
-            report = generate_range_audit_report(start_date=start_date.strip(), end_date=end_date.strip(), min_score=30)
+            report = generate_range_audit_report(start_date=clean_start, end_date=clean_end, min_score=30)
             generate_pdf_report(report, pdf_path)
     else:
         target_date = date or datetime.now().strftime("%Y-%m-%d")
@@ -327,7 +328,7 @@ def index_page():
                             Tek Gün Taraması
                         </button>
                         <button onclick="setScanMode('range')" id="mode-btn-range" class="px-3 py-1 text-xs font-semibold rounded bg-slate-800 text-slate-400 hover:text-white transition">
-                            Tarih Aralığı Taraması (Toplu / Arşiv)
+                            Tarih Aralığı Taraması (Arşiv / Dönemsel)
                         </button>
                     </div>
 
@@ -336,11 +337,14 @@ def index_page():
                         <button onclick="setQuickRange(7)" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">
                             Son 7 Gün
                         </button>
-                        <button onclick="setQuickRange(14)" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">
-                            Son 14 Gün
-                        </button>
                         <button onclick="setQuickRange(30)" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">
                             Son 30 Gün
+                        </button>
+                        <button onclick="setQuickRange(90)" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">
+                            Son 3 Ay
+                        </button>
+                        <button onclick="setCustomYearRange('2024-01-01', '2024-12-31')" class="px-2.5 py-1 text-[11px] bg-blue-900/40 hover:bg-blue-800/60 text-blue-300 rounded border border-blue-700/60">
+                            2024 Yılı
                         </button>
                     </div>
                 </div>
@@ -604,6 +608,12 @@ def index_page():
             executeLiveScan();
         }}
 
+        function setCustomYearRange(start, end) {{
+            document.getElementById('start-date').value = start;
+            document.getElementById('end-date').value = end;
+            executeLiveScan();
+        }}
+
         function switchTab(tabId) {{
             const tabs = ['scan', 'profile', 'llm', 'dispatch'];
             tabs.forEach(t => {{
@@ -773,7 +783,7 @@ def index_page():
                 const start = document.getElementById('start-date').value;
                 const end = document.getElementById('end-date').value;
                 url = `/api/scan?mode=range&start_date=${{start}}&end_date=${{end}}&min_score=${{minScore}}`;
-                btn.innerText = 'Aralık Taranıyor...';
+                btn.innerText = 'Arşiv Taranıyor...';
             }} else {{
                 const date = document.getElementById('scan-date').value;
                 url = `/api/scan?mode=single&date=${{date}}&min_score=${{minScore}}`;
@@ -785,7 +795,8 @@ def index_page():
             resultsArea.innerHTML = `
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-10 text-center text-slate-400">
                     <div class="inline-block animate-spin text-2xl mb-2">⟳</div>
-                    <p class="text-xs font-medium">Resmî Gazete sayıları taranıyor ve şirket profili ile eşleştiriliyor...</p>
+                    <p class="text-xs font-medium">Resmî Gazete arşivi taranıyor ve şirket profili ile eşleştiriliyor...</p>
+                    <p class="text-[11px] text-slate-500 mt-1 font-mono">Çok iş parçacıklı (parallel) motor çalışıyor...</p>
                 </div>
             `;
 
@@ -809,7 +820,7 @@ def index_page():
                     <div class="bg-slate-900 border border-slate-800 rounded-xl p-8 text-center space-y-2">
                         <h3 class="text-sm font-semibold text-white">Belirtilen Dönemde Şirketi İlgilendiren Kritik Karar Bulunmadı</h3>
                         <p class="text-xs text-slate-400 max-w-md mx-auto">
-                            Taranan <strong>${{data.total_scanned || 13}}</strong> madde arasında şirketinizin faaliyet alanına doğrudan temas eden bir yükümlülük tespit edilmemiştir.
+                            Taranan <strong>${{data.total_scanned || 0}}</strong> madde arasında şirketinizin faaliyet alanına doğrudan temas eden bir yükümlülük tespit edilmemiştir.
                         </p>
                     </div>
                 `;
@@ -896,7 +907,7 @@ def index_page():
 
             container.innerHTML = `
                 <div class="flex items-center justify-between text-xs text-slate-400 px-1 font-mono">
-                    <span>${{data.total_scanned || 13}} MADDE TARANDI / ${{data.relevant_count || data.evaluations.length}} AKSİYON GEREKTİREN MADDE</span>
+                    <span>${{data.total_scanned || 0}} MADDE TARANDI / ${{data.relevant_count || data.evaluations.length}} AKSİYON GEREKTİREN MADDE</span>
                     <span>${{data.date}}</span>
                 </div>
                 ${{cards}}
