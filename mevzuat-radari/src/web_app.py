@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, Query, HTTPException, Body
 from fastapi.responses import HTMLResponse, FileResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(current_dir)
@@ -33,7 +33,7 @@ from src.llm_engine import load_llm_config, save_llm_config, get_mcp_client_conf
 app = FastAPI(
     title="Mevzuat Radarı Web Paneli",
     description="Resmî Gazete İç Denetim & Uyum Radarı Yönetim Platformu",
-    version="2.4.0",
+    version="2.5.0",
 )
 
 
@@ -60,6 +60,8 @@ class ProfileUpdateRequest(BaseModel):
 
 
 class LLMConfigUpdateRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    
     active_provider: str
     model_name: Optional[str] = None
     api_key: Optional[str] = None
@@ -796,7 +798,7 @@ def index_page():
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-10 text-center text-slate-400">
                     <div class="inline-block animate-spin text-2xl mb-2">⟳</div>
                     <p class="text-xs font-medium">Resmî Gazete arşivi taranıyor ve şirket profili ile eşleştiriliyor...</p>
-                    <p class="text-[11px] text-slate-500 mt-1 font-mono">Çok iş parçacıklı (parallel) motor çalışıyor...</p>
+                    <p class="text-[11px] text-slate-500 mt-1 font-mono">Çok iş parçacıklı motor çalışıyor...</p>
                 </div>
             `;
 

@@ -1,16 +1,17 @@
 """
 High-Performance Resmî Gazete Scraper and Content Parser Module.
 Features:
-- Multi-threaded parallel fetching for fast date-range batch scans
+- Multi-threaded parallel fetching with thread-safe disk caching
 - Accurate URL resolution for historical archive PDF/HTM links
-- Robust text cleaning (strips \r, \n, tabs, and excess whitespace)
-- Local disk caching for historical Gazettes
+- Turkish-aware title and category formatting
+- Robust text cleaning and sanitization
 - Precise Gazette date, issue number, and hierarchical section breadcrumbs
 """
 import os
 import re
 import ssl
 import json
+import threading
 import urllib.request
 import urllib.error
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -20,10 +21,12 @@ from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 
 from .models import GazetteIndex, GazetteItem
+from .utils import title_tr
 
 
 BASE_URL = "https://www.resmigazete.gov.tr"
 CACHE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "cache")
+_CACHE_LOCK = threading.Lock()
 
 
 def _get_cache_path(date_str: str) -> str:
@@ -36,12 +39,13 @@ def _get_cache_path(date_str: str) -> str:
 
 
 def _load_from_cache(date_str: str) -> Optional[GazetteIndex]:
-    """Loads parsed GazetteIndex from disk cache if exists."""
+    """Loads parsed GazetteIndex from disk cache if exists (thread-safe read)."""
     path = _get_cache_path(date_str)
     if os.path.exists(path):
         try:
-            with open(path, "r", encoding="utf-8") as f:
-                data = json.load(f)
+            with _CACHE_LOCK:
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
             return GazetteIndex(**data)
         except Exception:
             return None
@@ -49,16 +53,17 @@ def _load_from_cache(date_str: str) -> Optional[GazetteIndex]:
 
 
 def _save_to_cache(index: GazetteIndex) -> None:
-    """Saves parsed GazetteIndex to disk cache (historical issues never change)."""
+    """Saves parsed GazetteIndex to disk cache (thread-safe write)."""
     today_str = datetime.now().strftime("%Y-%m-%d")
     if index.date == today_str:
         return
 
     path = _get_cache_path(index.date)
     try:
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(index.model_dump(), f, ensure_ascii=False, indent=2)
+        with _CACHE_LOCK:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(index.model_dump(), f, ensure_ascii=False, indent=2)
     except Exception:
         pass
 
@@ -177,12 +182,12 @@ def parse_gazette_index(html: str, target_date: str, page_url: str = BASE_URL) -
 
         for s in known_sections:
             if s in upper_txt and len(upper_txt) < 40:
-                current_section = s.title()
+                current_section = title_tr(s)
                 break
 
         for c in known_categories:
             if c in upper_txt and len(upper_txt) < 50:
-                current_category = c.title()
+                current_category = title_tr(c)
                 break
 
         if txt.endswith("Bakanlığından:") or txt.endswith("Kurumundan:") or txt.endswith("Kurulundan:"):
@@ -198,7 +203,6 @@ def parse_gazette_index(html: str, target_date: str, page_url: str = BASE_URL) -
             is_pdf = full_url.lower().endswith(".pdf")
             is_htm = full_url.lower().endswith(".htm") or full_url.lower().endswith(".html")
 
-            # Clean raw text from newlines, tabs, and excess spaces
             raw_text = element.get_text(separator=" ")
             clean_title = re.sub(r"^[–\-—\s]+", "", raw_text).strip()
             clean_title = re.sub(r"\s+", " ", clean_title)
@@ -280,7 +284,7 @@ def fetch_gazette_date_range(
 ) -> List[GazetteIndex]:
     """
     High-speed parallel fetch of Gazette Indices across [start_date, end_date].
-    Uses ThreadPoolExecutor for concurrent web downloads and local caching.
+    Uses ThreadPoolExecutor for concurrent web downloads and thread-safe caching.
     """
     start_dt = datetime.strptime(start_date_str, "%Y-%m-%d")
     end_dt = datetime.strptime(end_date_str, "%Y-%m-%d")
