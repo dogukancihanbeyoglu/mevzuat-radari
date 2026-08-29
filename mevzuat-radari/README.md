@@ -1,41 +1,54 @@
 # 🏛️ Resmî Gazete İç Denetim & Uyum Radarı (`mevzuat-radari`)
 
-> T.C. Resmî Gazete'yi günlük olarak tarayan, şirketin faaliyet alanı, ölçeği ve tabi olduğu regülasyonlara göre alaka analizi yapan, **Model Context Protocol (MCP)** tabanlı yapay zeka uyum ve iç denetim asistanı.
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg)](https://fastapi.tiangolo.com)
+[![MCP Compliant](https://img.shields.io/badge/MCP-Standard%20v1.0-8A2BE2.svg)](https://modelcontextprotocol.io/)
+[![Tests Passing](https://img.shields.io/badge/tests-15%20passed-brightgreen.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+> **T.C. Resmî Gazete'yi** günlük ve geriye dönük (arşiv) olarak tarayan; şirketin unvanı, sermaye büyüklüğü, çalışan sayısı, Ar-Ge/ihracat yetkinlikleri ve tabi olduğu regülatörlere göre derinlemesine analiz eden **Model Context Protocol (MCP)** tabanlı kurumsal iç denetim ve uyum platformu.
 
 ---
 
-## 🌟 Öne Çıkan Özellikler
+## 🌟 Öne Çıkan Yetenekler
 
-* 🏛️ **4 Kademeli Uyum & Normlar Hiyerarşisi:** Yalnızca dar sektörel kelimeleri değil; Cumhurbaşkanlığı Kararnameleri, Anayasa Mahkemesi Kararları, Yüksek Yargı İçtihatları, Yatırım Teşvikleri, Vergi/Maliye, İK/İSG, KVKK/Siber, Kamu İhale, Çevre/ESG ve Sanayi/TSE standartlarını kapsar. *(Detaylar için: [`COMPLIANCE_ARCHITECTURE.md`](file:///Users/dogukancihanbeyoglu/Gemini/mevzuat-radari/COMPLIANCE_ARCHITECTURE.md))*
-* 🎯 **Şirket Odaklı Akıllı Filtreleme:** Kararları genel olarak değil; şirketin NACE kodlarına, cirosuna, düzenleyici otoritelerine ve operasyonel özelliklerine göre puanlar (0-100).
-* 🛡️ **Evrensel Gürültü Süzgeci:** Resmî Gazete'deki öğrenci sınav, memur terfi ve yerel belediye bütçesi gibi gürültüleri otomatik eler; ticari/yasal zorunlulukları istisna kapısıyla korur.
-* ⚡ **Hazır Sektörel Uyum Şablonları:** Savunma Sanayii, FinTech, E-Ticaret, Yazılım/SaaS ve Enerji sektörleri için 1-tıkla yüklenebilen ön-tanımlı uyum profilleri.
-* 📑 **İç Denetim Perspektifi:** Yalnızca metin özeti sunmaz; **Risk Derecesi (Kritik/Yüksek/Orta)**, **Yaptırım & Ceza Riski**, **Etkilenen Departmanlar** ve **Aksiyon Kontrol Listesi (Checklist)** üretir.
-* 🌐 **Modern Web Yönetim Paneli:** FastAPI ve Tailwind CSS ile canlı tarama, tarih aralığı sorgulama, şirket profili kalibrasyonu ve PDF rapor indirme.
-* 🤖 **MCP Sunucu Desteği:** Claude Desktop, Cursor, Antigravity IDE gibi yapay zeka araçlarına doğrudan bağlanabilir.
-* 📄 **Kurumsal PDF & E-Posta:** Türkçe tipografi (Arial TTF) destekli profesyonel bülten üretimi ve dağıtımı.
+* 🏛️ **4 Kademeli Normlar Hiyerarşisi & Sistemik Uyum:** Sadece dar sektörel anahtar kelimeleri değil; *Cumhurbaşkanlığı Kararnameleri*, *Anayasa Mahkemesi İptal Kararları*, *Yüksek Yargı İçtihatları*, *Vergi/Maliye*, *İş Hukuku/İK*, *KVKK/Siber Güvenlik*, *Kamu İhale/Fiyat Farkı*, *Yatırım Teşvik*, *Dış Ticaret/Gümrük* ve *Çevre/Sürdürülebilirlik* boyutlarını eksiksiz kapsar.
+* 🏢 **Çoklu Sektör & Hibrit Faaliyet Modeli (Multi-Sector Conglomerate Mode):** Savunma, FinTech, Yazılım/SaaS, E-Ticaret ve Enerji alanlarında aynı anda faaliyet gösteren holding ve büyük teknoloji şirketleri için **otomatik çelişki gidermeli (Conflict-Free)** şablon birleştirme motoru.
+* 🧠 **Derin Karar Metni & Şirket Profili Etki Analizi:** Alarm üretilen kararların PDF ve HTML metin gövdelerini (`pypdf` bellek içi akışıyla) ayrıştırarak kararın **şirket ölçeği, cirosu ve projeleri açısından operasyonel anlamını**, **madde bazlı özetlerini** ve **kesin yürürlük takvimini** çıkarır.
+* 🛡️ **Evrensel Gürültü Sınıflandırıcısı:** Üniversite sınavları, memur atamaları ve yerel belediye bütçesi gibi gürültüleri otomatik eler; ticari/yasal zorunlulukları istisna koruma kurallarıyla güvenceye alır.
+* 📑 **İç Denetim Perspektifli Çıktılar:** Yalnızca metin özeti sunmaz; **Risk Seviyesi (Kritik/Yüksek/Orta)**, **Hukuki Yaptırım & Ceza Riski**, **Etkilenen Departmanlar** ve **Aksiyon Kontrol Listesi (Checklist)** üretir.
+* 🌐 **Modern Web Yönetim Dashboard'u:** FastAPI ve Tailwind CSS ile canlı fihrist tarama, arşiv taraması (örn: 2024-2026), interaktif şirket profili düzenleme ve tek tıkla PDF bülten indirme.
+* 🤖 **MCP (Model Context Protocol) Server:** Claude Desktop, Cursor IDE ve Antigravity AI asistanlarına sıfır konfigürasyonla bağlanan yerel zeka katmanı.
+* 📄 **Kurumsal PDF & E-Posta Dağıtımı:** Türkçe tipografi (Arial TTF) destekli profesyonel bülten üretimi ve şirket içi paydaşlara otomatik e-posta gönderimi.
 
 ---
 
-## 🏗️ Proje Mimarisi
+## 🏗️ Proje Mimarisi & Dosya Yapısı
+
+Detaylı teknik mimari, algoritmalar ve karar matrisleri için lütfen [**`COMPLIANCE_ARCHITECTURE.md`**](COMPLIANCE_ARCHITECTURE.md) dosyasını inceleyiniz.
 
 ```text
 mevzuat-radari/
-├── COMPLIANCE_ARCHITECTURE.md     # 4 Kademeli Regülasyon ve Uyum Mimarisi Dokümantasyonu
+├── COMPLIANCE_ARCHITECTURE.md     # 8 Bölümlük Kapsamlı Uyum ve Regülasyon Mimarisi
+├── README.md                      # Proje genel tanıtımı ve kullanım kılavuzu
 ├── config/
-│   └── company_profile.yaml       # Şirket profili, NACE kodları ve kural parametreleri
+│   ├── company_profile.yaml       # Şirket profili, NACE kodları ve kural parametreleri
+│   └── llm_config.json            # YZ modeli sağlayıcı ve API yapılandırması
 ├── src/
-│   ├── models.py                  # Pydantic veri modelleri
-│   ├── scraper.py                 # Resmî Gazete fihrist ve karar metni çekici
-│   ├── evaluator.py               # 4 Kademeli eşleştirme, puanlama ve etki analiz motoru
-│   ├── sector_templates.py        # Sektörel şablonlar ve gürültü taksonomisi
-│   ├── web_app.py                 # FastAPI web dashboard ve REST API
+│   ├── models.py                  # Pydantic v2 veri modelleri
+│   ├── scraper.py                 # Resmî Gazete fihrist ve PDF/HTML karar metni çekici
+│   ├── evaluator.py               # 4 Kademeli eşleştirme, puanlama ve derin etki analiz motoru
+│   ├── sector_templates.py        # Çoklu sektör şablonları ve çelişki giderme motoru
+│   ├── web_app.py                 # FastAPI web dashboard ve REST API (Port: 8000)
 │   ├── pdf_generator.py           # ReportLab Türkçe tipografili PDF raporlayıcı
 │   ├── email_sender.py            # SMTP e-posta rapor dağıtım servisi
-│   ├── templates.py               # Markdown ve HTML rapor şablonları
-│   └── server.py                  # FastMCP / MCPServer araç sağlayıcısı
+│   ├── notifier.py                # Dağıtım orkestrasyon motoru
+│   ├── templates.py               # Markdown ve HTML bülten şablonları
+│   ├── llm_engine.py              # LLM çağrı köprüsü ve sağlayıcı yönetimi
+│   └── server.py                  # FastMCP / MCP Server araç sağlayıcısı
 ├── reports/                       # Üretilen günlük denetim raporları arşivi
-├── tests/                         # Birim ve entegrasyon testleri (13 test)
+├── tests/
+│   └── test_all.py                # 15/15 Uçtan Uca Birim & Entegrasyon Testleri
 ├── run_web.py                     # Web dashboard başlatıcı (port: 8000)
 ├── run_daily_audit.py             # CLI çalıştırma scripti
 └── requirements.txt               # Bağımlılıklar
@@ -55,28 +68,19 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 2. Şirket Profilini Düzenleme
-`config/company_profile.yaml` dosyasını kendi şirketinizin sektör ve yasal kriterlerine göre güncelleyin:
-```yaml
-company_profile:
-  general:
-    name: "Şirketinizin Adı A.Ş."
-    scale: "Büyük Ölçekli"
-    employee_count: 500
-    annual_turnover_tl: "500M+"
-  sectors_and_nace:
-    primary_sector: "Perakende & E-Ticaret"
-    nace_codes:
-      - "47.91.00"
-  regulatory_bodies:
-    - "Ticaret Bakanlığı"
-    - "Hazine ve Maliye Bakanlığı"
-    - "KVKK"
-```
-
-### 3. Günlük Taramayı Çalıştırma
+### 2. Web Yönetim Paneli
 ```bash
-# Bugünün Resmî Gazetesini tara ve rapor üret:
+python run_web.py --port 8000
+```
+Tarayıcınızdan `http://localhost:8000` adresini açarak:
+* Günlük veya tarih aralıklı Resmî Gazete taraması yapabilir,
+* Şirketinizin faaliyet sektörlerini tek tıkla birleştirebilir (Savunma + FinTech + SaaS + E-Ticaret),
+* YZ modelinizi seçebilir (Yerel Kural Tabanlı Motor / GPT-4o / Claude 3.5 / Gemini / DeepSeek),
+* Kurumsal PDF denetim bültenini indirebilir veya e-posta ile dağıtabilirsiniz.
+
+### 3. CLI Üzerinden Günlük Tarama
+```bash
+# Bugünün Resmî Gazetesini tara:
 python run_daily_audit.py
 
 # Belirli bir tarihi tara (Örn: 2026-08-29):
@@ -85,36 +89,42 @@ python run_daily_audit.py --date 2026-08-29 --min-score 30
 
 ---
 
-## 🔌 MCP (Model Context Protocol) Sunucusu Olarak Kullanım
+## 🔌 MCP (Model Context Protocol) Entegrasyonu
 
-Yapay zeka asistanınıza (Claude Desktop, Cursor, Antigravity) eklemek için konfigürasyonunuza şunu ekleyin:
+Claude Desktop, Cursor veya Antigravity IDE içerisine eklemek için konfigürasyon JSON dosyanıza ekleyin:
 
 ```json
 {
   "mcpServers": {
     "mevzuat-radari": {
       "command": "python",
-      "args": ["/tam/yol/mevzuat-radari/src/server.py"]
+      "args": ["/tam/proje/yolu/mevzuat-radari/src/server.py"]
     }
   }
 }
 ```
 
-### Sunulan MCP Araçları (Tools):
-* `get_company_profile()`: Şirket profilini döner.
-* `fetch_gazette_fihrist(date)`: Belirtilen tarihin gazete fihristini listeler.
-* `read_regulation_text(url)`: Belirtilen kararın/tebliğin tam metnini okur.
-* `evaluate_daily_gazette(date, min_score)`: Günün gazetesini tarayıp analiz eder ve eksiksiz Markdown denetim bülteni üretir.
-* `test_regulation_relevance(title, category)`: Belirli bir mevzuat başlığının şirket üzerindeki etkisini anlık test eder.
+### Kullanılabilir MCP Araçları:
+| Tool Adı | Açıklama |
+| :--- | :--- |
+| `get_company_profile()` | Aktif şirket profilini, NACE kodlarını ve parametrelerini getirir. |
+| `fetch_gazette_fihrist(date)` | Belirtilen tarihin Resmî Gazete fihristini listeler. |
+| `read_regulation_text(url)` | İlgili karar/tebliğin tam metnini (PDF/HTML) bellek içinde okur. |
+| `evaluate_daily_gazette(date, min_score)` | Günlük bülteni tarar, derin analizini yapar ve Markdown rapor üretir. |
+| `test_regulation_relevance(title, category)` | Verilen bir başlığın şirket profili üzerindeki etkisini anlık test eder. |
 
 ---
 
 ## 🧪 Testleri Çalıştırma
+
+Tüm modüller (scraper, scoring, deep content analyzer, horizontal compliance, negative noise filtering, multi-sector merge, MCP server) 15 otomatik test ile doğrulanmaktadır:
+
 ```bash
-pytest tests/
+pytest tests/ -v
 ```
 
 ---
 
 ## 📄 Lisans
-MIT License.
+MIT License - Açık Kaynak ve Kurumsal Kullanıma Uygundur.
+
