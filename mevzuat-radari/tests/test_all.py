@@ -58,6 +58,7 @@ def test_parse_mock_gazette_html():
     assert len(index.items) == 2
     assert "Milli Savunma Üniversitesi" in index.items[0].title
     assert index.items[0].is_pdf is True
+    assert "33355" in (index.items[0].location_breadcrumb or "")
 
 
 def test_scoring_high_relevance_defense():
@@ -107,6 +108,7 @@ def test_templates_rendering():
         title="Milli Savunma Üniversitesi Teknoloji Geliştirme Bölgesi Kararı",
         url="https://resmigazete.gov.tr/msu",
         category="Karar",
+        location_breadcrumb="2026-08-29 Resmî Gazete > Yürütme ve İdare > Cumhurbaşkanı Kararları",
     )
     evaluation = evaluate_gazette_item(item, profile)
     from src.models import DailyAuditReport
@@ -122,10 +124,12 @@ def test_templates_rendering():
     md = format_markdown_report(report)
     assert "Resmî Gazete İç Denetim & Uyum Bülteni" in md
     assert "Milli Savunma Üniversitesi" in md
+    assert "Resmî Gazete Konumu" in md
 
     html = format_html_report(report)
     assert "<!DOCTYPE html>" in html
     assert "STM Savunma" in html
+
 
 def test_web_api_endpoints():
     from fastapi.testclient import TestClient
@@ -140,22 +144,11 @@ def test_web_api_endpoints():
     assert "general" in data
     assert "STM" in data["general"]["name"]
 
-    # 2. Simulate Endpoint
-    sim_payload = {
-        "title": "Milli Savunma Üniversitesi TGB ve Askeri Yazılım Kararı",
-        "category": "Karar",
-        "institution": "MSB"
-    }
-    sim_resp = client.post("/api/simulate", json=sim_payload)
-    assert sim_resp.status_code == 200
-    sim_data = sim_resp.json()
-    assert sim_data["relevance_score"] >= 70
-    assert sim_data["risk_level"] == "Kritik"
-
-    # 3. Index Page HTML
+    # 2. Index Page HTML
     html_resp = client.get("/")
     assert html_resp.status_code == 200
     assert "Resmî Gazete" in html_resp.text
+
 
 def test_llm_config_endpoints():
     from fastapi.testclient import TestClient

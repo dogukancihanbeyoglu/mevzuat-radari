@@ -33,7 +33,7 @@ from src.llm_engine import load_llm_config, save_llm_config, get_mcp_client_conf
 app = FastAPI(
     title="Mevzuat Radarı Web Paneli",
     description="Resmî Gazete İç Denetim & Uyum Radarı Yönetim Platformu",
-    version="2.2.0",
+    version="2.3.0",
 )
 
 
@@ -43,12 +43,6 @@ class EmailDispatchRequest(BaseModel):
     start_date: Optional[str] = None
     end_date: Optional[str] = None
     min_score: int = 30
-
-
-class SimulateRequest(BaseModel):
-    title: str
-    category: str = "Tebliğ"
-    institution: str = ""
 
 
 class ProfileUpdateRequest(BaseModel):
@@ -226,34 +220,6 @@ def download_pdf(
     )
 
 
-@app.post("/api/simulate")
-def simulate_regulation(req: SimulateRequest) -> Dict[str, Any]:
-    """Simulates relevance and impact of a custom regulation."""
-    profile = load_company_profile()
-    item = GazetteItem(
-        title=req.title,
-        url="https://www.resmigazete.gov.tr/mevzuat",
-        category=req.category,
-        institution=req.institution if req.institution else None,
-        gazette_date=datetime.now().strftime("%Y-%m-%d"),
-        section="Yürütme ve İdare Bölümü",
-        location_breadcrumb=f"Canlı Test > Yürütme ve İdare Bölümü > {req.category}" + (f" > {req.institution}" if req.institution else ""),
-    )
-    score, reasons, risk = score_item_relevance(item, profile)
-    ev = evaluate_gazette_item(item, profile)
-    return {
-        "title": req.title,
-        "relevance_score": score,
-        "risk_level": risk,
-        "matched_reasons": reasons,
-        "affected_departments": ev.affected_departments,
-        "executive_summary": ev.executive_summary,
-        "penalty_and_legal_risk": ev.penalty_and_legal_risk,
-        "action_checklist": ev.action_checklist,
-        "location_breadcrumb": item.location_breadcrumb,
-    }
-
-
 @app.get("/", response_class=HTMLResponse)
 def index_page():
     """Serves the modern, professional compliance management platform."""
@@ -334,9 +300,6 @@ def index_page():
         <nav class="flex border-b border-slate-800 space-x-1">
             <button onclick="switchTab('scan')" id="tab-scan" class="px-4 py-3 text-xs font-semibold border-b-2 border-blue-500 text-blue-400 flex items-center gap-2 transition">
                 <span>Mevzuat Denetimi & Tarama</span>
-            </button>
-            <button onclick="switchTab('simulate')" id="tab-simulate" class="px-4 py-3 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition">
-                <span>Anlık Karar Testi</span>
             </button>
             <button onclick="switchTab('profile')" id="tab-profile" class="px-4 py-3 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition">
                 <span>Şirket Profili Ayarları</span>
@@ -435,44 +398,7 @@ def index_page():
         </section>
 
         <!-- ========================================== -->
-        <!-- TAB 2: INSTANT SIMULATOR -->
-        <!-- ========================================== -->
-        <section id="panel-simulate" class="hidden space-y-6">
-            <div class="bg-slate-900 border border-slate-800/90 rounded-xl p-5 space-y-4">
-                <div>
-                    <h2 class="text-sm font-bold text-white">Mevzuat Alaka ve Etki Analizi Testi</h2>
-                    <p class="text-xs text-slate-400 mt-1">
-                        Resmî Gazete'de yayımlanması muhtemel veya geçmiş bir karar başlığını şirket profili ve denetim kuralları üzerinden anında test edin.
-                    </p>
-                </div>
-
-                <div class="space-y-3">
-                    <input id="sim-title" type="text" value="5201 Sayılı Harp Araç ve Gereçleri İhracatı Kontrolü ve Son Kullanıcı Belgesi Tebliği" placeholder="Karar, Tebliğ veya Yönetmelik Başlığı..." class="w-full px-3.5 py-2 text-xs rounded-lg bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-blue-500">
-                    <div class="flex flex-wrap gap-2">
-                        <span class="text-[11px] text-slate-500 py-1 font-mono">Örnek Senaryolar:</span>
-                        <button onclick="quickSimulate('5201 Sayılı Harp Araç ve Gereçleri İhracatı Kontrolü ve Son Kullanıcı Belgesi Tebliği')" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">
-                            Askeri İhracat Kontrolü
-                        </button>
-                        <button onclick="quickSimulate('Milli Savunma Üniversitesi Teknoloji Geliştirme Bölgesi Kararı')" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">
-                            MSÜ TGB İlanı
-                        </button>
-                        <button onclick="quickSimulate('Kritik Altyapılarda Bilgi Güvenliği ve Siber Olaylara Müdahale Tebliği')" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">
-                            Siber Güvenlik / SOME
-                        </button>
-                    </div>
-                    <div class="pt-2">
-                        <button onclick="runSimulation()" id="btn-simulate" class="px-5 py-2 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition">
-                            Analiz Et
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="sim-result-box" class="space-y-4"></div>
-        </section>
-
-        <!-- ========================================== -->
-        <!-- TAB 3: EDITABLE COMPANY PROFILE -->
+        <!-- TAB 2: EDITABLE COMPANY PROFILE -->
         <!-- ========================================== -->
         <section id="panel-profile" class="hidden space-y-6">
             <div class="bg-slate-900 border border-slate-800/90 rounded-xl p-5 space-y-5">
@@ -549,7 +475,7 @@ def index_page():
         </section>
 
         <!-- ========================================== -->
-        <!-- TAB 4: LLM MODEL & MCP MANAGEMENT -->
+        <!-- TAB 3: LLM MODEL & MCP MANAGEMENT -->
         <!-- ========================================== -->
         <section id="panel-llm" class="hidden space-y-6">
             <div class="bg-slate-900 border border-slate-800/90 rounded-xl p-5 space-y-5">
@@ -613,7 +539,7 @@ def index_page():
         </section>
 
         <!-- ========================================== -->
-        <!-- TAB 5: REPORT DISPATCH & PDF -->
+        <!-- TAB 4: REPORT DISPATCH & PDF -->
         <!-- ========================================== -->
         <section id="panel-dispatch" class="hidden space-y-6">
             <div class="bg-slate-900 border border-slate-800/90 rounded-xl p-5 space-y-4">
@@ -679,7 +605,7 @@ def index_page():
         }}
 
         function switchTab(tabId) {{
-            const tabs = ['scan', 'simulate', 'profile', 'llm', 'dispatch'];
+            const tabs = ['scan', 'profile', 'llm', 'dispatch'];
             tabs.forEach(t => {{
                 document.getElementById('panel-' + t).classList.add('hidden');
                 document.getElementById('tab-' + t).className = 'px-4 py-3 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition';
@@ -688,7 +614,6 @@ def index_page():
             document.getElementById('panel-' + tabId).classList.remove('hidden');
             document.getElementById('tab-' + tabId).className = 'px-4 py-3 text-xs font-semibold border-b-2 border-blue-500 text-blue-400 flex items-center gap-2 transition';
 
-            if (tabId === 'simulate') runSimulation();
             if (tabId === 'profile') fillProfileForm();
             if (tabId === 'llm') fillLLMForm();
         }}
@@ -976,65 +901,6 @@ def index_page():
                 </div>
                 ${{cards}}
             `;
-        }}
-
-        function quickSimulate(title) {{
-            document.getElementById('sim-title').value = title;
-            runSimulation();
-        }}
-
-        async function runSimulation() {{
-            const title = document.getElementById('sim-title').value;
-            const btn = document.getElementById('btn-simulate');
-            const box = document.getElementById('sim-result-box');
-
-            if (!title) return;
-            btn.innerText = 'Analiz Ediliyor...';
-            btn.disabled = true;
-
-            try {{
-                const res = await fetch('/api/simulate', {{
-                    method: 'POST',
-                    headers: {{ 'Content-Type': 'application/json' }},
-                    body: JSON.stringify({{ title }})
-                }});
-                const data = await res.json();
-                
-                box.innerHTML = `
-                    <div class="bg-slate-900 border border-slate-800/90 rounded-xl p-5 space-y-3.5">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                            <span class="px-2 py-0.5 rounded text-[11px] font-bold border bg-red-500/10 text-red-400 border-red-500/20 font-mono">
-                                ${{data.risk_level.toUpperCase()}}
-                            </span>
-                            <span class="text-xs font-mono font-bold text-white">Alaka Skoru: %${{data.relevance_score}}</span>
-                        </div>
-                        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-950/40 border border-blue-900/50 text-[11px] text-blue-300 font-mono">
-                            <span class="text-blue-400 font-bold">📍 Konum:</span>
-                            <span class="truncate">${{data.location_breadcrumb}}</span>
-                        </div>
-                        <h4 class="text-sm font-bold text-white">${{data.title}}</h4>
-                        <div class="text-xs bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1">
-                            <span class="font-semibold text-slate-300 block">Eşleşme Gerekçeleri:</span>
-                            <ul class="list-disc list-inside text-slate-400">
-                                ${{data.matched_reasons.map(r => `<li>${{r}}</li>`).join('')}}
-                            </ul>
-                        </div>
-                        <div class="text-xs space-y-1">
-                            <span class="font-semibold text-slate-300">Özet:</span>
-                            <p class="text-slate-400">${{data.executive_summary}}</p>
-                        </div>
-                        <div class="text-xs flex flex-wrap items-center gap-1.5">
-                            <span class="font-semibold text-slate-400">Etkilenen Departmanlar:</span>
-                            ${{data.affected_departments.map(d => `<span class="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-300 font-mono text-[11px]">${{d}}</span>`).join('')}}
-                        </div>
-                    </div>
-                `;
-            }} catch(e) {{
-                box.innerHTML = `<div class="p-4 bg-red-500/10 text-red-400 rounded-xl text-xs">Hata: ${{e.message}}</div>`;
-            }} finally {{
-                btn.innerText = 'Analiz Et';
-                btn.disabled = false;
-            }}
         }}
 
         async function sendEmailReport() {{
