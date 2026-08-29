@@ -1,7 +1,7 @@
 """
 AI and Rules-based Regulatory Relevance and Internal Audit Evaluator Module.
 Matches Gazette items against Company Profile and produces structured audit evaluations.
-Supports both single-date and date-range batch audits.
+Supports both LLM-driven GenAI reasoning and deterministic local heuristic fallback.
 """
 import os
 import re
@@ -17,6 +17,7 @@ from .models import (
     DailyAuditReport,
 )
 from .scraper import fetch_gazette_index, fetch_gazette_date_range, fetch_regulation_content
+from .llm_engine import call_llm_evaluation
 
 
 def load_company_profile(profile_path: str = "config/company_profile.yaml") -> CompanyProfile:
@@ -39,7 +40,7 @@ def load_company_profile(profile_path: str = "config/company_profile.yaml") -> C
 
 def score_item_relevance(item: GazetteItem, profile: CompanyProfile) -> Tuple[int, List[str], str]:
     """
-    Computes a relevance score (0-100) between a GazetteItem and CompanyProfile.
+    Computes a heuristic relevance score (0-100) between a GazetteItem and CompanyProfile.
     Returns (score, matched_reasons, risk_level).
     """
     score = 0
@@ -176,18 +177,40 @@ def generate_action_checklist(title: str, category: str, risk_level: str) -> Lis
 
 
 def evaluate_gazette_item(item: GazetteItem, profile: CompanyProfile, content: Optional[str] = None) -> AuditEvaluation:
-    """Constructs a complete AuditEvaluation for a single item."""
-    score, reasons, risk_level = score_item_relevance(item, profile)
-    affected_deps = infer_affected_departments(item.title, reasons)
-    checklist = generate_action_checklist(item.title, item.category, risk_level)
+    """
+    Constructs a complete AuditEvaluation for a single item.
+    Leverages live LLM analysis if configured; otherwise uses deterministic local heuristics.
+    """
+    # 1. Try GenAI LLM evaluation if an active LLM provider is configured
+    llm_res = call_llm_evaluation(
+        title=item.title,
+        category=item.category,
+        institution=item.institution,
+        raw_content=content,
+        company_profile_dict=profile.model_dump(),
+    )
 
-    doc_info = f" ({item.doc_number})" if item.doc_number else ""
-    institution_info = f" ({item.institution})" if item.institution else ""
-    summary = f"{item.category}{institution_info} kapsamındaki '{item.title}' düzenlemesi yayımlanmıştır.{doc_info} Düzenleme şirketin savunma sanayii, Ar-Ge ve askeri operasyonel süreçleri açısından doğrudan etki doğurmaktadır."
+    if llm_res and isinstance(llm_res, dict) and "relevance_score" in llm_res:
+        score = int(llm_res.get("relevance_score", 0))
+        risk_level = str(llm_res.get("risk_level", "Orta"))
+        matched_reasons = list(llm_res.get("matched_reasons", []))
+        summary = str(llm_res.get("executive_summary", ""))
+        penalty_risk = llm_res.get("penalty_and_legal_risk")
+        affected_deps = list(llm_res.get("affected_departments", []))
+        checklist = list(llm_res.get("action_checklist", []))
+    else:
+        # 2. Fallback to deterministic rules and heuristics
+        score, matched_reasons, risk_level = score_item_relevance(item, profile)
+        affected_deps = infer_affected_departments(item.title, matched_reasons)
+        checklist = generate_action_checklist(item.title, item.category, risk_level)
 
-    penalty_risk = None
-    if risk_level in ("Kritik", "Yüksek"):
-        penalty_risk = "Milli Savunma / SSB mevzuatı, Tesis Güvenlik Belgesi gereksinimleri ve ilgili kanunlar uyarınca idari yaptırım, faaliyet kısıtı ve sözleşme fesih riski bulunmaktadır."
+        doc_info = f" ({item.doc_number})" if item.doc_number else ""
+        institution_info = f" ({item.institution})" if item.institution else ""
+        summary = f"{item.category}{institution_info} kapsamındaki '{item.title}' düzenlemesi yayımlanmıştır.{doc_info} Düzenleme şirketin savunma sanayii, Ar-Ge ve askeri operasyonel süreçleri açısından doğrudan etki doğurmaktadır."
+
+        penalty_risk = None
+        if risk_level in ("Kritik", "Yüksek"):
+            penalty_risk = "Milli Savunma / SSB mevzuatı, Tesis Güvenlik Belgesi gereksinimleri ve ilgili kanunlar uyarınca idari yaptırım, faaliyet kısıtı ve sözleşme fesih riski bulunmaktadır."
 
     effective_date = "Yayımı tarihinde"
     if content:
@@ -199,7 +222,7 @@ def evaluate_gazette_item(item: GazetteItem, profile: CompanyProfile, content: O
         item=item,
         relevance_score=score,
         risk_level=risk_level,
-        matched_reasons=reasons,
+        matched_reasons=matched_reasons,
         executive_summary=summary,
         penalty_and_legal_risk=penalty_risk,
         affected_departments=affected_deps,
@@ -275,7 +298,6 @@ def generate_range_audit_report(
                 eval_res = evaluate_gazette_item(item, profile, content)
                 evaluations.append(eval_res)
 
-    # Sort by relevance score descending
     evaluations.sort(key=lambda x: x.relevance_score, reverse=True)
 
     range_label = f"{start_date} - {end_date}"
