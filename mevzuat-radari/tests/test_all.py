@@ -210,3 +210,28 @@ def test_advanced_rule_based_negative_filtering():
     score_uav, _, risk_uav = score_item_relevance(item_uav, profile)
     assert score_uav >= 70
     assert risk_uav == "Kritik"
+
+
+def test_sector_presets_api():
+    from fastapi.testclient import TestClient
+    from src.web_app import app
+    from src.sector_templates import get_preset_list, get_preset_data
+
+    client = TestClient(app)
+    
+    # 1. Presets List Endpoint
+    r1 = client.get("/api/presets")
+    assert r1.status_code == 200
+    presets = r1.json()
+    assert len(presets) >= 4
+    keys = [p["key"] for p in presets]
+    assert "defense_aerospace" in keys
+    assert "fintech_banking" in keys
+    assert "ecommerce_retail" in keys
+
+    # 2. Preset Detail Endpoint
+    r2 = client.get("/api/presets/fintech_banking")
+    assert r2.status_code == 200
+    pdata = r2.json()
+    assert "6493" in pdata["high_priority_keywords"]
+    assert "BDDK" in str(pdata["regulatory_bodies"])

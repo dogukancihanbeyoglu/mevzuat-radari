@@ -1,7 +1,7 @@
 """
 Standalone Web Dashboard and REST API for Mevzuat Radarı.
 Executive SaaS-grade UI for Compliance and Internal Audit Management.
-Supports Advanced Contextual Rule-Based Engine with Excluded/Negative Keywords.
+Features Universal Industry Presets & Noise-Reduction Auto-Tuning.
 """
 import os
 import sys
@@ -25,6 +25,7 @@ from src.evaluator import (
     score_item_relevance,
     evaluate_gazette_item,
 )
+from src.sector_templates import SECTOR_PRESETS, get_preset_list, get_preset_data
 from src.pdf_generator import generate_pdf_report
 from src.notifier import dispatch_daily_audit_pdf
 from src.llm_engine import load_llm_config, save_llm_config, get_mcp_client_config
@@ -33,7 +34,7 @@ from src.llm_engine import load_llm_config, save_llm_config, get_mcp_client_conf
 app = FastAPI(
     title="Mevzuat Radarı Web Paneli",
     description="Resmî Gazete İç Denetim & Uyum Radarı Yönetim Platformu",
-    version="2.6.0",
+    version="2.7.0",
 )
 
 
@@ -67,6 +68,18 @@ class LLMConfigUpdateRequest(BaseModel):
     model_name: Optional[str] = None
     api_key: Optional[str] = None
     base_url: Optional[str] = None
+
+
+@app.get("/api/presets")
+def list_industry_presets() -> List[Dict[str, str]]:
+    """Returns list of pre-configured standard Turkish industry presets."""
+    return get_preset_list()
+
+
+@app.get("/api/presets/{preset_key}")
+def get_industry_preset_data(preset_key: str) -> Dict[str, Any]:
+    """Returns full preset configuration for auto-filling the company profile form."""
+    return get_preset_data(preset_key)
 
 
 @app.get("/api/profile")
@@ -307,7 +320,7 @@ def index_page():
                 <span>Mevzuat Denetimi & Tarama</span>
             </button>
             <button onclick="switchTab('profile')" id="tab-profile" class="px-4 py-3 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition">
-                <span>Şirket Profili Ayarları</span>
+                <span>Şirket Profili & Sektörel Şablonlar</span>
             </button>
             <button onclick="switchTab('llm')" id="tab-llm" class="px-4 py-3 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition">
                 <span>YZ Model & MCP Yönetimi</span>
@@ -406,14 +419,37 @@ def index_page():
         </section>
 
         <!-- ========================================== -->
-        <!-- TAB 2: EDITABLE COMPANY PROFILE -->
+        <!-- TAB 2: EDITABLE COMPANY PROFILE & PRESETS -->
         <!-- ========================================== -->
         <section id="panel-profile" class="hidden space-y-6">
+            
+            <!-- PRESET SELECTION BOX -->
+            <div class="bg-blue-950/30 border border-blue-900/50 rounded-xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-xs font-bold text-blue-300 uppercase tracking-wider font-mono">⚡ Hazır Sektörel Uyum Şablonu Yükle</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">
+                        Başka bir sektör için tarama yapıyorsanız şablon seçin; tüm NACE kodları, düzenleyici kurumlar ve gürültü filtreleri otomatik doldurulur.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <select id="preset-selector" class="px-3 py-2 text-xs rounded-lg bg-slate-900 border border-blue-800/80 text-white focus:outline-none focus:border-blue-500">
+                        <option value="defense_aerospace">Savunma Sanayii & Askeri Sistemler</option>
+                        <option value="fintech_banking">FinTech, Bankacılık & Ödeme Sistemleri</option>
+                        <option value="ecommerce_retail">E-Ticaret & Pazaryeri</option>
+                        <option value="software_saas">Yazılım, SaaS & Ar-Ge</option>
+                        <option value="energy_utilities">Enerji & Elektrik Piyasası</option>
+                    </select>
+                    <button onclick="applySelectedPreset()" class="px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white whitespace-nowrap transition">
+                        Şablonu Uygula
+                    </button>
+                </div>
+            </div>
+
             <div class="bg-slate-900 border border-slate-800/90 rounded-xl p-5 space-y-5">
                 <div class="border-b border-slate-800 pb-3">
                     <h2 class="text-sm font-bold text-white">Şirket Profili ve Denetim Kriterleri Düzenleyici</h2>
                     <p class="text-xs text-slate-400 mt-0.5">
-                        Yanlış alarmları (false-positive) engellemek için hariç tutulacak kelimeleri veya şirketinizin tabi olduğu kurumları buradan yönetin.
+                        Evrensel Gürültü Sınıflandırıcı ve Sektörel Filtreler profilinize göre dinamik olarak optimize edilir.
                     </p>
                 </div>
 
@@ -659,6 +695,28 @@ def index_page():
             }}
         }}
 
+        async function applySelectedPreset() {{
+            const key = document.getElementById('preset-selector').value;
+            try {{
+                const res = await fetch('/api/presets/' + key);
+                const p = await res.json();
+
+                document.getElementById('edit-primary-sector').value = p.primary_sector;
+                document.getElementById('edit-nace').value = p.nace_codes.join(', ');
+                document.getElementById('edit-regulators').value = p.regulatory_bodies.join(', ');
+                document.getElementById('edit-keywords').value = p.high_priority_keywords.join(', ');
+                document.getElementById('edit-excluded').value = p.excluded_keywords.join(', ');
+                
+                document.getElementById('edit-has-rd').checked = !!p.has_rd_center;
+                document.getElementById('edit-has-foreign').checked = !!p.has_foreign_trade;
+                document.getElementById('edit-has-ecom').checked = !!p.e_commerce_license;
+
+                alert(p.name + ' şablonu yüklendi. Bilgileri gözden geçirip "Profili Kaydet & Uygula" butonuna basınız.');
+            }} catch(e) {{
+                alert('Şablon yüklenemedi: ' + e.message);
+            }}
+        }}
+
         function fillProfileForm() {{
             if (!cachedProfile) return;
             document.getElementById('edit-name').value = cachedProfile.general.name;
@@ -807,7 +865,7 @@ def index_page():
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-10 text-center text-slate-400">
                     <div class="inline-block animate-spin text-2xl mb-2">⟳</div>
                     <p class="text-xs font-medium">Resmî Gazete arşivi taranıyor ve şirket profili ile eşleştiriliyor...</p>
-                    <p class="text-[11px] text-slate-500 mt-1 font-mono">Gelişmiş bağlamsal kural motoru çalışıyor...</p>
+                    <p class="text-[11px] text-slate-500 mt-1 font-mono">Evrensel gürültü filtreleme motoru devrede...</p>
                 </div>
             `;
 
