@@ -953,6 +953,29 @@ def index_page():
                             <p class="text-slate-400 leading-relaxed">${{ev.executive_summary}}</p>
                         </div>
 
+                        ${{ev.company_specific_impact ? `
+                            <div class="text-xs p-3 rounded-lg bg-blue-950/40 border border-blue-800/60 space-y-1">
+                                <span class="font-bold text-blue-300 flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wide">
+                                    <span>🎯 Şirket Profili Açısından Anlamı & Operasyonel Etki:</span>
+                                </span>
+                                <p class="text-slate-300 leading-relaxed">${{ev.company_specific_impact}}</p>
+                            </div>
+                        ` : ''}}
+
+                        ${{ev.key_articles_summary ? `
+                            <div class="text-xs p-2.5 rounded-lg bg-slate-950 border border-slate-800/90 text-slate-400">
+                                <span class="font-semibold text-slate-300 block mb-0.5">🔍 Kritik Maddeler & Yasal Hükümler:</span>
+                                <span class="font-mono text-[11px] text-slate-400">${{ev.key_articles_summary}}</span>
+                            </div>
+                        ` : ''}}
+
+                        ${{ev.compliance_deadlines ? `
+                            <div class="text-xs flex items-center gap-2 text-slate-400 font-mono text-[11px]">
+                                <span class="text-amber-400 font-bold">⏱️ Uyum & Yürürlük Takvimi:</span>
+                                <span>${{ev.compliance_deadlines}}</span>
+                            </div>
+                        ` : ''}}
+
                         ${{ev.penalty_and_legal_risk ? `
                             <div class="text-xs p-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300">
                                 <strong>Yaptırım & Hukuki Risk:</strong> ${{ev.penalty_and_legal_risk}}

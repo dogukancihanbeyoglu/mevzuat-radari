@@ -184,6 +184,18 @@ def generate_pdf_report(report: DailyAuditReport, output_path: str) -> str:
             item_elements.append(Paragraph(ev.executive_summary, body_style))
             item_elements.append(Spacer(1, 3))
 
+            # Company Profile Specific Impact
+            if ev.company_specific_impact:
+                item_elements.append(Paragraph("<b>🎯 Şirket Profili Açısından Anlamı & Operasyonel Etki:</b>", bold_label_style))
+                item_elements.append(Paragraph(ev.company_specific_impact, body_style))
+                item_elements.append(Spacer(1, 3))
+
+            # Key Articles
+            if ev.key_articles_summary:
+                item_elements.append(Paragraph("<b>🔍 Kritik Maddeler & Yasal Hükümler:</b>", bold_label_style))
+                item_elements.append(Paragraph(ev.key_articles_summary, body_style))
+                item_elements.append(Spacer(1, 3))
+
             # Matched Reasons
             reasons_formatted = "<br/>".join([f"• {r}" for r in ev.matched_reasons])
             item_elements.append(Paragraph("<b>Eşleşme Gerekçeleri:</b>", bold_label_style))

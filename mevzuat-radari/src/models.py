@@ -1,6 +1,6 @@
 """
 Data models for Mevzuat Radarı (Resmî Gazete İç Denetim & Uyum Radarı).
-Includes support for Negative/Exclusion Keywords, Horizontal Corporate Domains, and Multi-Layered Compliance.
+Includes support for Deep Content Analysis, Company-Specific Impact, and Multi-Tier Compliance.
 """
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
@@ -72,10 +72,14 @@ class AuditEvaluation(BaseModel):
     domain_badge: str = Field(default="SEKTÖREL", description="Rozet: SEKTÖREL, VERGİ & MALİYE, İŞ HUKUKU & İK, vb.")
     matched_reasons: List[str] = Field(default_factory=list, description="Neden şirketle alakalı?")
     executive_summary: str = Field(..., description="Yönetici özeti")
+    company_specific_impact: Optional[str] = Field(default=None, description="Şirket profili açısından derin etki ve anlam analizi")
+    key_articles_summary: Optional[str] = Field(default=None, description="Metinden çıkarılan kritik maddeler ve hükümler")
+    compliance_deadlines: Optional[str] = Field(default=None, description="Yürürlük, geçiş süresi ve bildirim takvimi")
     penalty_and_legal_risk: Optional[str] = Field(default=None, description="Cezai ve hukuki yaptırım riski")
     affected_departments: List[str] = Field(default_factory=list, description="Etkilenen departmanlar")
     action_checklist: List[str] = Field(default_factory=list, description="İç denetim kontrol/aksiyon listesi")
     effective_date: Optional[str] = Field(default=None, description="Yürürlük tarihi")
+    raw_content_preview: Optional[str] = Field(default=None, description="Kaynak metin önizlemesi")
 
 
 class DailyAuditReport(BaseModel):

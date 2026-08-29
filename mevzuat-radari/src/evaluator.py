@@ -1,11 +1,6 @@
 """
 AI and Multi-Tier Regulatory Hierarchy & Systematic Compliance Evaluator.
-Evaluates:
-1. Norms & Legal Hierarchy (Presidential Decrees, Constitutional Court, High Court Precedents)
-2. Vertical Sectoral Layer (Company specific: Defense, Aviation, FinTech, E-Commerce, etc.)
-3. Cross-Cutting Corporate Layers (Tax, Labor/HR, KVKK, Public Tenders, Customs, Incentives, ESG/Environment, Industrial Standards)
-4. Strategic Economic & Obligation Triggers (Expropriation, Export Restrictions, Macro Policy)
-5. Universal Public Noise Filter (suppresses strictly internal university/municipal routine)
+Features Deep Decision Content & Company Profile Impact Analysis Engine.
 """
 import os
 import re
@@ -108,14 +103,12 @@ def score_item_relevance(item: GazetteItem, profile: CompanyProfile) -> Tuple[in
     # =========================================================================
     # TIER 1: CONSTITUTIONAL & SYSTEMIC LEGAL HIERARCHY
     # =========================================================================
-    # A. Cumhurbaşkanlığı Kararnameleri (Normlar hiyerarşisinde en üst düzey düzenleyici işlem)
     if "cumhurbaşkanlığı kararnamesi" in category_lower or "cumhurbaşkanlığı kararnamesi" in title_lower or "kararname numarası" in title_lower:
         score = max(score, 65)
         reasons.append("Hukuki Normlar Hiyerarşisi: Cumhurbaşkanlığı Kararnamesi (Genel Teşkilat / Sistemik Hüküm)")
         detected_domain = "Cumhurbaşkanlığı Kararnameleri & Sistemik Düzenlemeler"
         domain_badge = "CB KARARNAMESİ"
 
-    # B. Anayasa Mahkemesi & Yüksek Yargı İçtihatları
     if "anayasa mahkemesi" in category_lower or "anayasa mahkemesi" in institution_lower or "anayasa mahkemesi" in title_lower:
         score = max(score, 60)
         reasons.append("Yargısal Denetim: Anayasa Mahkemesi İptal / Bireysel Başvuru Esas Kararı")
@@ -131,19 +124,16 @@ def score_item_relevance(item: GazetteItem, profile: CompanyProfile) -> Tuple[in
     # =========================================================================
     # TIER 2: VERTICAL SECTOR & COMPANY SPECIFIC LAYER
     # =========================================================================
-    # High Priority Keywords
     for kw in profile.keywords.high_priority:
         if _contains_term(title_lower, kw):
             score += 35
             reasons.append(f"Yüksek öncelikli dikey sektörel anahtar kelime: '{kw}'")
 
-    # Medium Priority Keywords
     for kw in profile.keywords.medium_priority:
         if _contains_term(title_lower, kw):
             score += 15
             reasons.append(f"Orta öncelikli sektörel anahtar kelime: '{kw}'")
 
-    # Regulatory Bodies Jurisdiction
     for reg in profile.regulatory_bodies:
         reg_clean = re.sub(r"\(.*?\)", "", reg).strip()
         acronym_match = re.search(r"\((.*?)\)", reg)
@@ -154,7 +144,6 @@ def score_item_relevance(item: GazetteItem, profile: CompanyProfile) -> Tuple[in
             score += 30
             reasons.append(f"Tabi olunan yetkili düzenleyici kurum: '{reg}'")
 
-    # Sector / NACE Alignment
     primary_sec = lower_tr(profile.sectors_and_nace.primary_sector)
     if "savunma" in primary_sec or "askeri" in primary_sec:
         defense_indicators = ["milli savunma", "savunma sanayii", "askeri", "askeri yasak bölge", "harp", "denizaltı", "iha", "5201", "5202", "milgem", "kargu"]
@@ -164,7 +153,6 @@ def score_item_relevance(item: GazetteItem, profile: CompanyProfile) -> Tuple[in
             detected_domain = "Savunma Sanayii & Askeri Sistemler"
             domain_badge = "SAVUNMA & ASKERİ"
 
-    # Operational Traits
     if profile.operational_traits.has_rd_center:
         if any(_contains_term(title_lower, term) for term in ["ar-ge", "teknoloji geliştirme", "tgb", "5746", "teknokent", "tübitak"]):
             score += 30
@@ -196,7 +184,7 @@ def score_item_relevance(item: GazetteItem, profile: CompanyProfile) -> Tuple[in
                 domain_badge = dom_data["badge_label"]
 
     # =========================================================================
-    # TIER 4: STRATEGIC ECONOMIC TRIGGERS (Acele Kamulaştırma, Özelleştirme vb.)
+    # TIER 4: STRATEGIC ECONOMIC TRIGGERS (Kamulaştırma vb.)
     # =========================================================================
     if "acele kamulaştırma" in title_lower or "kamulaştırma" in title_lower:
         score = max(score, 50)
@@ -205,14 +193,11 @@ def score_item_relevance(item: GazetteItem, profile: CompanyProfile) -> Tuple[in
             detected_domain = "Kamulaştırma & Saha Güvenliği"
             domain_badge = "KAMULAŞTIRMA"
 
-    # If no core reason was triggered, suppress
     if not reasons:
         return 0, [], "Bilgi", "Genel", "BİLGİ"
 
-    # Cap score at 100
     final_score = min(score, 100)
 
-    # Determine Risk Level
     if final_score >= 70:
         risk_level = "Kritik"
     elif final_score >= 50:
@@ -227,18 +212,129 @@ def score_item_relevance(item: GazetteItem, profile: CompanyProfile) -> Tuple[in
     return final_score, reasons, risk_level, detected_domain, domain_badge
 
 
+def analyze_company_profile_impact(
+    item: GazetteItem,
+    profile: CompanyProfile,
+    content: Optional[str],
+    domain_badge: str,
+    score: int,
+) -> Tuple[str, str, str, str]:
+    """
+    Performs deep content inspection against the company profile.
+    Returns (company_specific_impact, key_articles_summary, compliance_deadlines, raw_content_preview).
+    """
+    c_text = (content or "").strip()
+    raw_preview = c_text[:380] + ("..." if len(c_text) > 380 else "") if c_text else "Kaynak metin fihrist başlığı üzerinden incelenmiştir."
+
+    # 1. Company-Specific Semantic Meaning & Operational Impact
+    comp_name = profile.general.name
+    scale = profile.general.scale
+    turnover = profile.general.annual_turnover_tl
+    employees = profile.general.employee_count
+    sec = profile.sectors_and_nace.primary_sector
+
+    if "SAVUNMA" in domain_badge or "ASKERİ" in domain_badge:
+        impact = (
+            f"Şirketimiz {comp_name} ({sec}) açısından bu düzenleme; yürüttüğümüz askeri sistemler, "
+            f"taktik İHA projeleri (KARGU/ALPAGU) ve askeri denizcilik (MİLGEM) platformlarının operasyonel test sahaları, "
+            f"tesis güvenlik belgesi (5201/5202) ve Savunma Sanayii Başkanlığı (SSB) ile Milli Savunma Bakanlığı (MSB) "
+            f"sözleşme yükümlülüklerini doğrudan bağlamaktadır. Proje ekiplerimizin saha izinleri ve gizlilik protokolleri kontrol edilmelidir."
+        )
+    elif "VERGİ" in domain_badge or "MALİ" in domain_badge:
+        impact = (
+            f"Şirketimizin {scale} ölçekli yapısı ve {turnover} yıllık işlem hacmi kapsamında; "
+            f"bu tebliğ muhasebe ve ERP sistemlerimizde faturalama, tevkifat oranları, beyanname takvimi ve vergi matrahı "
+            f"hesaplamalarında anlık güncelleme gerektirmektedir. Ayrıca şirketin 5746 sayılı Ar-Ge teşvikleri ve "
+            f"Savunma Sanayii Destekleme Fonu (SSDF) kesintileri ile uyumu YMM denetiminde incelenmelidir."
+        )
+    elif "İŞ HUKUKU" in domain_badge or "İK" in domain_badge:
+        impact = (
+            f"Şirketimiz bünyesindeki {employees} çalışan, mühendislik iş gücü ve alt işveren/taşeron ilişkileri bakımından; "
+            f"bordro parametreleri, kıdem tazminatı tavanı, SGK prim teşvikleri ve 6331 sayılı İSG mevzuatı kapsamında "
+            f"çalışma ortamı ve iş sözleşmesi koşullarının ivedilikle güncellenmesini zorunlu kılmaktadır."
+        )
+    elif "KVKK" in domain_badge or "SİBER" in domain_badge:
+        impact = (
+            f"Şirketimizin işlediği personel, tedarikçi ve savunma sanayii paydaş verileri ile bilgi güvenliği operasyonlarımız "
+            f"açısından; VERBİS envanteri, yurt dışına veri aktarım standart sözleşmeleri ve USOM/BTK siber olay bildirim "
+            f"süreçlerinde yasal uyumun teyit edilmesi gerekmektedir."
+        )
+    elif "İHALE" in domain_badge or "SÖZLEŞME" in domain_badge:
+        impact = (
+            f"Şirketimizin kamu otoriteleri ve ana yüklenicilerle akdettiği sözleşmeler bakımından; "
+            f"4734/4735 sayılı Kanunlar uyarınca fiyat farkı hesaplama formülleri, teminat mektubu oranları ve teslimat süre uzatımı "
+            f"hakları maliyet ve nakit akışı fizibilitelerimize doğrudan etki etmektedir."
+        )
+    elif "GÜMRÜK" in domain_badge or "TİCARET" in domain_badge:
+        impact = (
+            f"Şirketimizin uluslararası tedarik zinciri, stratejik alt sistem ithalatı ve ihracat teslimatları kapsamında; "
+            f"GTİP gümrük tarife pozisyonları, gözetim belgeleri, Dahilde İşleme İzin Belgeleri (DİİB) ve kambiyo ihracat bedeli "
+            f"kapatma süreleri gümrük müşavirimiz kanalıyla denetlenmelidir."
+        )
+    elif "TEŞVİK" in domain_badge or "YATIRIM" in domain_badge:
+        impact = (
+            f"Şirketimizin Ar-Ge merkezi, teknopark ofisleri ve yüksek teknoloji üretim yatırımları için; "
+            f"Sağlanan KDV istisnası, gümrük vergisi muafiyeti, faiz desteği ve SGK işveren hissesi prim indirimleri "
+            f"şirketimizin yatırım bütçesi ve nakit projeksiyonlarına olumlu katkı sunmaktadır."
+        )
+    elif "ÇEVRE" in domain_badge or "SÜRDÜRÜLEBİLİRLİK" in domain_badge:
+        impact = (
+            f"Tesislerimizin çevre izin ve lisans belgeleri, Sıfır Atık sistemi, endüstriyel atık bertaraf protokolleri ve "
+            f"Yeşil Dönüşüm / Karbon ayak izi kriterleri uyarınca idari ve saha operasyonlarımızın denetlenmesi gerekmektedir."
+        )
+    elif "STANDART" in domain_badge or "SANAYİ" in domain_badge:
+        impact = (
+            f"Üretim hatlarımız ve mühendislik çıktılarımız açısından; Sanayi Sicil Belgesi vize işlemleri ve güncellenen "
+            f"TSE/CE standartlarına uygunluk sertifikasyonları satınalma ve üretim birimlerince doğrulanmalıdır."
+        )
+    elif "KARARNAME" in domain_badge or "AYM" in domain_badge or "İÇTİHAT" in domain_badge:
+        impact = (
+            f"Normlar hiyerarşisinin en üst basamağında yer alan bu düzenleme; şirketimizin kamu kurumlarıyla olan idari "
+            f"muhataplıklarını, yetki hiyerarşisini ve devam eden adli/idari uyuşmazlıklardaki hukuki savunma stratejilerini doğrudan belirlemektedir."
+        )
+    else:
+        impact = (
+            f"Şirketimiz {comp_name} ({sec}) genel kurumsal işleyişi ve iç denetim uyum riskleri kapsamında; "
+            f"ilgili mevzuat hükümleri operasyonel süreçlerimize entegre edilmeli ve takibe alınmalıdır."
+        )
+
+    # 2. Key Articles & Core Provisions Extraction
+    articles = []
+    if c_text:
+        # Check for specific articles
+        found_articles = re.findall(r"(MADDE\s+\d+[\s–\-—:]+[^\n\r]+)", c_text, re.IGNORECASE)
+        if found_articles:
+            articles = found_articles[:3]
+
+    if articles:
+        key_articles = " | ".join(articles)
+    else:
+        key_articles = f"Metin analizi: {item.category} çerçevesinde şirket yükümlülüklerini ve idari prosedürleri belirleyen temel hükümler yayımlanmıştır."
+
+    # 3. Compliance Deadlines & Effective Date
+    deadlines = "Yayımı tarihinde yürürlüğe girer."
+    if c_text:
+        date_match = re.search(r"(\d{1,2}/\d{1,2}/\d{4})\s+tarihinde\s+yürürlüğe\s+girer", c_text, re.IGNORECASE)
+        if date_match:
+            deadlines = f"{date_match.group(1)} tarihinde yürürlüğe girer."
+        elif "yayımı tarihinden itibaren" in lower_tr(c_text):
+            trans_match = re.search(r"yayımı\s+tarihinden\s+itibaren\s+([^.\n]+)", c_text, re.IGNORECASE)
+            if trans_match:
+                deadlines = f"Geçiş süreci: Yayımı tarihinden itibaren {trans_match.group(1).strip()}"
+
+    return impact, key_articles, deadlines, raw_preview
+
+
 def infer_affected_departments(title: str, matched_reasons: List[str], domain_badge: str = "SEKTÖREL") -> List[str]:
     """Infers internal company departments affected by the regulation across all corporate and systemic domains."""
     t = lower_tr(title)
     deps = set()
 
-    # Systemic & Norms Hierarchy
     if "KARARNAME" in domain_badge or "AYM" in domain_badge or "İÇTİHAT" in domain_badge:
         deps.add("Üst Yönetim & Genel Müdürlük")
         deps.add("Hukuk & Uyum")
         deps.add("Stratejik Planlama")
 
-    # Domain specific additions
     if "VERGİ" in domain_badge or "MALİ" in domain_badge or any(_contains_term(t, k) for k in ["vergi", "kdv", "fatura", "ssdf", "muhasebe", "mali", "tevkifat"]):
         deps.add("Mali İşler & Muhasebe")
         deps.add("Finansman & Bütçe")
@@ -269,7 +365,6 @@ def infer_affected_departments(title: str, matched_reasons: List[str], domain_ba
         deps.add("Tesis Güvenlik Koordinatörlüğü")
         deps.add("İdari İşler & Emlak")
 
-    # Defense / Technical additions
     if any(_contains_term(t, k) for k in ["milli savunma", "askeri", "savunma", "harp", "deniz", "iha", "milgem", "kargu"]):
         deps.add("Savunma Projeleri Yönetimi")
         deps.add("Mühendislik & Sistem Entegrasyonu")
@@ -292,58 +387,39 @@ def generate_action_checklist(title: str, category: str, risk_level: str, domain
     checklist = []
     t = lower_tr(title)
 
-    # 1. Presidential Decrees & High Courts
     if "KARARNAME" in domain_badge:
         checklist.append("Cumhurbaşkanlığı Kararnamesi ile değişen kamu teşkilat yapısı ve yetki devirlerinin incelenmesi.")
         checklist.append("Şirketimizin kamu kurumlarıyla olan yasal süreç ve muhataplıklarının güncellenmesi.")
     elif "AYM" in domain_badge or "İÇTİHAT" in domain_badge:
         checklist.append("Yüksek Mahkeme iptal/içtihat kararının şirket aleyhine/lehine doğurabileceği uyuşmazlıkların incelenmesi.")
         checklist.append("Devam eden ticari sözleşme ve davaların güncel içtihada göre hukuki analizinin yapılması.")
-
-    # 2. Tax & Accounting
     elif "VERGİ" in domain_badge or "MALİ" in domain_badge or any(_contains_term(t, k) for k in ["vergi", "kdv", "fatura", "ssdf", "muhasebe", "tevkifat"]):
         checklist.append("ERP ve muhasebe parametrelerinin yeni vergi/fon oranlarına göre sistemde güncellenmesi.")
         checklist.append("Yeminli Mali Müşavir (YMM) / Vergi Danışmanı görüşü alınarak beyanname kontrollerinin yapılması.")
         checklist.append("E-Fatura, e-defter ve tevsik limitlerinin ilgili dönem takvimine işlenmesi.")
-
-    # 3. Labor & HR
     elif "İŞ HUKUKU" in domain_badge or "İK" in domain_badge or any(_contains_term(t, k) for k in ["asgari ücret", "sgk", "iş kanunu", "isg", "tazminat"]):
         checklist.append("Bordro, özlük hakları ve asgari ücret/tavan parametrelerinin İK yazılımında güncellenmesi.")
         checklist.append("İş sözleşmeleri, uzaktan çalışma ve şirket içi İK prosedürlerinin mevzuata göre revize edilmesi.")
         checklist.append("6331 sayılı Kanun kapsamında İSG risk değerlendirmesi ve periyodik denetim adımlarının yürütülmesi.")
-
-    # 4. KVKK & Data Privacy
     elif "KVKK" in domain_badge or "SİBER" in domain_badge or any(_contains_term(t, k) for k in ["kvkk", "kişisel veri", "verbis", "veri aktarımı"]):
         checklist.append("VERBİS kayıt envanteri ve veri işleme politikalarının güncel Kurul kararıyla doğrulanması.")
         checklist.append("Yurtdışı veri aktarımı ve standart sözleşme taahhütlerinin revize edilmesi.")
         checklist.append("Siber olay bildirim ve bilgi güvenliği prosedürlerinin test edilmesi.")
-
-    # 5. Public Procurement & Tenders
     elif "İHALE" in domain_badge or "SÖZLEŞME" in domain_badge or any(_contains_term(t, k) for k in ["kamu ihale", "4734", "4735", "fiyat farkı"]):
         checklist.append("Kamu ihale eşik değerleri ve teminat oranlarının teklif hazırlık süreçlerine yansıtılması.")
         checklist.append("Mevcut sözleşmelerdeki fiyat farkı ve süre uzatımı haklarının hukuki analizinin yapılması.")
-
-    # 6. Customs & Trade
     elif "GÜMRÜK" in domain_badge or "TİCARET" in domain_badge or any(_contains_term(t, k) for k in ["gümrük", "ithalat", "ihracat", "kambiyo"]):
         checklist.append("Gümrük tarife pozisyonları (GTİP) ve ithalat gözetim/vergi oranlarının kontrol edilmesi.")
         checklist.append("Dahilde İşleme İzin Belgeleri (DİİB) ve ihracat taahhüt sürelerinin incelenmesi.")
-
-    # 7. Incentives & Investments
     elif "TEŞVİK" in domain_badge or "YATIRIM" in domain_badge:
         checklist.append("Yatırım Teşvik Belgesi (YTB) ve vergi muafiyeti şartlarının fizibilitelere yansıtılması.")
         checklist.append("Faiz desteği ve SGK prim desteği başvurularının takvimlendirilmesi.")
-
-    # 8. Environment & ESG
     elif "ÇEVRE" in domain_badge or "SÜRDÜRÜLEBİLİRLİK" in domain_badge:
         checklist.append("Çevre İzin/Lisans ve Sıfır Atık beyannamelerinin denetlenmesi.")
         checklist.append("Karbon emisyon ve Yeşil Dönüşüm kriterlerinin tesis operasyonlarına entegrasyonu.")
-
-    # 9. Industrial Standards
     elif "STANDART" in domain_badge or "SANAYİ" in domain_badge:
         checklist.append("Sanayi Sicil Belgesi ve yıllık işletme cetvellerinin kontrol edilmesi.")
         checklist.append("TSE / CE uygunluk sertifikalarının üretim süreçlerine uyarlanması.")
-
-    # 10. Defense & R&D / General
     else:
         if "teknoloji geliştirme" in t or "ar-ge" in t or "tgb" in t:
             checklist.append("Teknoloji Geliştirme Bölgesi (TGB) kapsamındaki Ar-Ge projelerinin ve teşvik şartlarının gözden geçirilmesi.")
@@ -384,10 +460,13 @@ def evaluate_gazette_item(item: GazetteItem, profile: CompanyProfile, content: O
         checklist = list(llm_res.get("action_checklist", []))
         compliance_domain = "Sektörel / Yapay Zeka Analizi"
         domain_badge = "YZ DEĞERLENDİRME"
+        
+        impact, key_articles, deadlines, raw_preview = analyze_company_profile_impact(item, profile, content, domain_badge, score)
     else:
         score, matched_reasons, risk_level, compliance_domain, domain_badge = score_item_relevance(item, profile)
         affected_deps = infer_affected_departments(item.title, matched_reasons, domain_badge)
         checklist = generate_action_checklist(item.title, item.category, risk_level, domain_badge)
+        impact, key_articles, deadlines, raw_preview = analyze_company_profile_impact(item, profile, content, domain_badge, score)
 
         doc_info = f" ({item.doc_number})" if item.doc_number else ""
         institution_info = f" ({item.institution})" if item.institution else ""
@@ -408,11 +487,7 @@ def evaluate_gazette_item(item: GazetteItem, profile: CompanyProfile, content: O
             else:
                 penalty_risk = "Yetkili düzenleyici otoritelerin mevzuatı ve ilgili kanunlar uyarınca idari para cezası, faaliyet kısıtı ve sözleşme fesih riski bulunmaktadır."
 
-    effective_date = "Yayımı tarihinde"
-    if content:
-        date_match = re.search(r"(\d{1,2}/\d{1,2}/\d{4})\s+tarihinde\s+yürürlüğe\s+girer", content, re.IGNORECASE)
-        if date_match:
-            effective_date = date_match.group(1)
+    effective_date = deadlines
 
     return AuditEvaluation(
         item=item,
@@ -422,10 +497,14 @@ def evaluate_gazette_item(item: GazetteItem, profile: CompanyProfile, content: O
         domain_badge=domain_badge,
         matched_reasons=matched_reasons,
         executive_summary=summary,
+        company_specific_impact=impact,
+        key_articles_summary=key_articles,
+        compliance_deadlines=deadlines,
         penalty_and_legal_risk=penalty_risk,
         affected_departments=affected_deps,
         action_checklist=checklist,
         effective_date=effective_date,
+        raw_content_preview=raw_preview,
     )
 
 
@@ -446,11 +525,10 @@ def generate_daily_audit_report(
         score, _, _, _, _ = score_item_relevance(item, profile)
         if score >= min_score:
             content = None
-            if not item.is_pdf:
-                try:
-                    content = fetch_regulation_content(item.url)
-                except Exception:
-                    content = None
+            try:
+                content = fetch_regulation_content(item.url)
+            except Exception:
+                content = None
             eval_res = evaluate_gazette_item(item, profile, content)
             evaluations.append(eval_res)
 
@@ -488,11 +566,10 @@ def generate_range_audit_report(
             score, _, _, _, _ = score_item_relevance(item, profile)
             if score >= min_score:
                 content = None
-                if not item.is_pdf:
-                    try:
-                        content = fetch_regulation_content(item.url)
-                    except Exception:
-                        content = None
+                try:
+                    content = fetch_regulation_content(item.url)
+                except Exception:
+                    content = None
                 eval_res = evaluate_gazette_item(item, profile, content)
                 evaluations.append(eval_res)
 

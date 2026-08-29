@@ -318,9 +318,33 @@ def fetch_gazette_date_range(
 
 
 def fetch_regulation_content(url: str) -> str:
-    """Fetch the clean text of a specific regulation document."""
+    """
+    Fetches the clean text of a specific regulation document.
+    Supports both HTML web pages and live PDF document streams using pypdf.
+    """
     if url.lower().endswith(".pdf"):
-        return f"[PDF Belgesi] Bu mevzuat PDF formatındadır. Doğrudan bağlantı: {url}"
+        try:
+            import pypdf
+            import io
+            import ssl
+            import urllib.request
+
+            ctx = ssl._create_unverified_context()
+            req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+            with urllib.request.urlopen(req, context=ctx, timeout=10) as response:
+                pdf_bytes = response.read()
+                reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+                pages_text = []
+                for p in reader.pages:
+                    t = p.extract_text()
+                    if t:
+                        pages_text.append(t.strip())
+                full_pdf_text = "\n".join(pages_text).strip()
+                if full_pdf_text:
+                    return full_pdf_text
+        except Exception:
+            pass
+        return f"[PDF Belgesi] Doğrudan bağlantı: {url}"
 
     try:
         html, _ = _fetch_html(url, timeout=6)

@@ -45,6 +45,19 @@ def format_markdown_report(report: DailyAuditReport) -> str:
         lines.append(f"{ev.executive_summary}")
         lines.append("")
 
+        if ev.company_specific_impact:
+            lines.append("#### 🎯 Şirket Profili Açısından Anlamı & Operasyonel Etki")
+            lines.append(f"{ev.company_specific_impact}")
+            lines.append("")
+
+        if ev.key_articles_summary:
+            lines.append("#### 🔍 Kritik Maddeler & Yasal Hükümler")
+            lines.append(f"{ev.key_articles_summary}")
+            lines.append("")
+
+        if ev.compliance_deadlines:
+            lines.append(f"⏱️ **Uyum & Yürürlük Takvimi:** `{ev.compliance_deadlines}`\n")
+
         if ev.penalty_and_legal_risk:
             lines.append("#### ⚠️ Yaptırım & Ceza Riski")
             lines.append(f"{ev.penalty_and_legal_risk}")
@@ -78,6 +91,14 @@ def format_html_report(report: DailyAuditReport) -> str:
 
         loc_str = ev.item.location_breadcrumb or f"{ev.item.gazette_date or report.date} Resmî Gazete > {ev.item.section} > {ev.item.category}"
 
+        impact_box = ""
+        if ev.company_specific_impact:
+            impact_box = f"""
+            <div style="margin: 10px 0; padding: 10px; background-color: #ebf8ff; border-left: 4px solid #3182ce; border-radius: 4px; font-size: 13px; color: #2b6cb0;">
+                <strong>🎯 Şirket Profili Açısından Anlamı:</strong><br>{safe_html(ev.company_specific_impact)}
+            </div>
+            """
+
         items_html += f"""
         <div style="border: 1px solid #e2e8f0; border-left: 5px solid {color}; border-radius: 8px; padding: 18px; margin-bottom: 20px; background-color: #ffffff;">
             <h3 style="margin-top:0; color: #2d3748; font-size: 16px;">
@@ -94,6 +115,7 @@ def format_html_report(report: DailyAuditReport) -> str:
             <div style="margin: 10px 0; font-size: 14px; line-height: 1.5; color: #4a5568;">
                 <strong>Özet:</strong> {safe_html(ev.executive_summary)}
             </div>
+            {impact_box}
             <div style="margin: 10px 0;">
                 <strong>Etkilenen Departmanlar:</strong><br>{deps_spans}
             </div>

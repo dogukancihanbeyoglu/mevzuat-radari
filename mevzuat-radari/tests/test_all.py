@@ -273,3 +273,29 @@ def test_sector_presets_api():
     pdata = r2.json()
     assert "6493" in pdata["high_priority_keywords"]
     assert "BDDK" in str(pdata["regulatory_bodies"])
+
+
+def test_deep_content_and_company_impact_analysis():
+    """Verifies that decision text is analyzed against company profile with specific impact."""
+    profile = load_company_profile("config/company_profile.yaml")
+    
+    mock_pdf_text = """
+    CUMHURBAŞKANI KARARI (Karar Sayısı: 11679)
+    MADDE 1- Ankara İli sınırları içerisinde yer alan alanın Milli Savunma Üniversitesi Teknoloji Geliştirme Bölgesi olarak tespit edilmesine karar verilmiştir.
+    MADDE 2- Bu Karar yayımı tarihinde yürürlüğe girer.
+    """
+    
+    item = GazetteItem(
+        title="Milli Savunma Üniversitesi Teknoloji Geliştirme Bölgesi Kararı",
+        url="https://resmigazete.gov.tr/sample_pdf.pdf",
+        category="Cumhurbaşkanı Kararı",
+        is_pdf=True,
+    )
+    
+    evaluation = evaluate_gazette_item(item, profile, content=mock_pdf_text)
+    
+    assert evaluation.company_specific_impact is not None
+    assert "STM" in evaluation.company_specific_impact or "şirketimiz" in evaluation.company_specific_impact.lower()
+    assert evaluation.key_articles_summary is not None
+    assert "MADDE 1" in evaluation.key_articles_summary
+    assert "yayımı tarihinde" in evaluation.compliance_deadlines.lower()
