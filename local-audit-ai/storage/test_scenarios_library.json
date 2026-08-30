@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1,
+    "phase_idx": 0,
+    "task_idx": 0,
+    "phase_name": "1. Yıllık Planlama (Annual Planning)",
+    "task_key": "audit_universe",
+    "task_name": "Denetim Evreni ve Risk Derecelendirmesi",
+    "context": "Anadolu Holding A.Ş. — Teftiş Kurulu Başkanlığı",
+    "input_data": "Holding bünyesindeki 5 ana sektör ve 5 iştirak şirket için 2026 Yılı Risk Odaklı Denetim Planı ve Evreni hazırlanacaktır.\n| Şirket / Birim | İncelenecek Kritik Süreç | 2025 Cirosu / Büyüklük | Regülasyon Kapsamı | Son Denetim Notu |\n| :--- | :--- | :--- | :--- | :--- |\n| Anadolu Finansman A.Ş. | Kredi Tahsis & Teminat Değerleme | 1.850.000.000 TL | BDDK & MASAK | 🔴 Yetersiz (2024) |\n| Anadolu Enerji Üretim A.Ş. | Doğalgaz ve Emtia Alım Sözleşmeleri | 3.400.000.000 TL | EPDK & Rekabet | 🟡 Orta (2023) |\n| Anadolu Bilişim & Teknoloji | Bulut Altyapısı & PAM Yönetimi | 450.000.000 TL | KVKK & ISO 27001 | 🔴 Yetersiz (2025) |\n| Anadolu Gayrimenkul Yatırım | Arsa Satışı & Kat Karşılığı İhaleler | 980.000.000 TL | SPK & Çevre Bak. | 🟡 Orta (2024) |\n| Anadolu Lojistik ve Dağıtım | Akaryakıt Filo Yönetimi & Taşıt | 620.000.000 TL | Ulaştırma Bak. | 🟢 İyi (2025) |",
+    "is_analytics": false
+  },
+  {
+    "id": 2,
+    "phase_idx": 0,
+    "task_idx": 1,
+    "phase_name": "1. Yıllık Planlama (Annual Planning)",
+    "task_key": "resource_competency_mapping",
+    "task_name": "Kaynak ve Yetkinlik Planlaması",
+    "context": "Anadolu Holding A.Ş. — İç Denetim Direktörlüğü",
+    "input_data": "2026 Yılında 18 Denetim Projesi planlanmıştır. İç Denetim ekibi 12 kişidir.\nEkip Yetkinlik Dağılımı:\n- Finans & Muhasebe: 5 Denetçi (Yetkinlik: 4.8 / 5.0)\n- Bilgi Sistemleri (BT): 2 Denetçi (Yetkinlik: 3.8 / 5.0 - Bulut ve DevSecOps eksik)\n- Sürdürülebilirlik & ESG: 0 Denetçi (Yetkinlik: 1.2 / 5.0 - Sıfır tecrübe)\n- Operasyonel & Satınalma: 5 Denetçi (Yetkinlik: 4.5 / 5.0)\nEksik kalan alanlar için Outsourcing / Co-Sourcing bütçesi ve stratejisi oluşturulmalıdır.",
+    "is_analytics": false
+  },
+  {
+    "id": 3,
+    "phase_idx": 1,
+    "task_idx": 0,
+    "phase_name": "2. Görev Planlama (Engagement Planning)",
+    "task_key": "rcm_generation",
+    "task_name": "Risk ve Kontrol Matrisi (RCM) & Walkthrough",
+    "context": "Mega Enerji ve Emtia Ticareti A.Ş. — Hazine Denetimi",
+    "input_data": "Hazine ve Türev Swap İşlemleri Sürecinde aşağıdaki 3 operasyonel risk tespit edilmiştir:\n1. Trader'ların günlük 5.000.000 USD limitini aşarak yetkisiz pozisyon açması ve kur zararı oluşturması.\n2. Front-Office ve Back-Office yetkilerinin aynı personelde toplanması (SoD ihlali).\n3. Piyasa aşırı dalgalandığında Stop-Loss limitlerinin manuel kapatılması.",
+    "is_analytics": false
+  },
+  {
+    "id": 4,
+    "phase_idx": 1,
+    "task_idx": 1,
+    "phase_name": "2. Görev Planlama (Engagement Planning)",
+    "task_key": "scoping_document",
+    "task_name": "Görev Kapsam Dokümanı (Scoping)",
+    "context": "Mega Perakende ve E-Ticaret A.Ş. — İç Denetim",
+    "input_data": "Mega Perakende E-Ticaret ve Pazaryeri Operasyonları için 2026 yılı 1. Çeyrek Denetim Görevi Kapsam Dokümanı hazırlanacaktır.\nİncelenecek Süreçler: Sanal POS tahsilat mutabakatları, iade ve kargo kayıpları, satıcı komisyon kesintileri, KVKK müşteri veri tabanı erişimleri.\nKapsam Dışı: Fiziksel mağaza envanter sayımları ve tedarikçi fabrika denetimleri.",
+    "is_analytics": false
+  },
+  {
+    "id": 5,
+    "phase_idx": 2,
+    "task_idx": 0,
+    "phase_name": "3. Saha Çalışması (Fieldwork & Testing)",
+    "task_key": "test_procedure",
+    "task_name": "Kontrol Test Prosedürü Geliştirme",
+    "context": "Mega İlaç ve Sağlık Ürünleri A.Ş. — İç Denetim",
+    "input_data": "Test Edilecek Kontrol: 'ERP üzerinde 2.500.000 TL üzerindeki tüm hammadde satınalma faturalarında Çift Dijital İmza (Satınalma Direktörü + CFO) ve PO-GR-Invoice 3'lü Eşleştirme kuralı zorunludur. Eşleşme olmadan Finans birimi ödeme fişi oluşturamaz.'\n2025 yılında toplam 4.200 hammadde faturası kesilmiştir.",
+    "is_analytics": false
+  },
+  {
+    "id": 6,
+    "phase_idx": 2,
+    "task_idx": 1,
+    "phase_name": "3. Saha Çalışması (Fieldwork & Testing)",
+    "task_key": "control_analysis",
+    "task_name": "Kontrol Tanımı ve Tasarım Zayıflığı Analizi",
+    "context": "Mega Metal ve Sanayi A.Ş. — İç Denetim",
+    "input_data": "Mevcut Kontrol Tanımı: 'Hazine uzmanı acil durumlarda CFO'ya WhatsApp veya telefon ile sözlü bilgi vererek 500.000 EUR'ya kadar döviz alım-satım talimatı verebilir. İşlem fişi mesai bitimine kadar e-posta ile onaylatılır.'\nBu kontrolün SoD, yetkilendirme ve operasyonel riskler açısından tasarım boşluklarını analiz ediniz.",
+    "is_analytics": false
+  },
+  {
+    "id": 7,
+    "phase_idx": 2,
+    "task_idx": 2,
+    "phase_name": "3. Saha Çalışması (Fieldwork & Testing)",
+    "task_key": "data_extraction",
+    "task_name": "Yapılandırılmamış Metinden Veri Ayıklama",
+    "context": "Mega Lojistik ve Taşımacılık A.Ş. — Teftiş Kurulu",
+    "input_data": "Ham Saha Notu:\n'12.03.2026 tarihinde BVI Energy Advisors firmasından gelen OFF-INV-088 no'lu 750.000 USD tutarlı danışmanlık faturası Uyum onayı olmadan ödenmiş. 28.04.2026'da Cyprus Maritime Logistics şirketine kesilen OFF-INV-112 no'lu 1.250.000 EUR navlun faturası tek imzayla onaylanmış. 14.05.2026 tarihinde İsviçre Glencore firmasından INV-ENG-0441 no'lu 18.500.000 USD tutarında yakıt alımı yapılmış ve akreditif kapatılmıştır.'",
+    "is_analytics": false
+  },
+  {
+    "id": 8,
+    "phase_idx": 3,
+    "task_idx": 0,
+    "phase_name": "4. Denetim Raporlama (Reporting)",
+    "task_key": "finding_5c",
+    "task_name": "5C Standart Denetim Bulgusu Yazımı",
+    "context": "Mega Yatırım Bankası A.Ş. — Teftiş Kurulu",
+    "input_data": "Teftiş Kurulu Kredi Denetimi Bulguları:\n1. Levent Şube Müdürü Mehmet Özkan, 15.000.000 TL yetki limitini aşarak Atlas Lojistik A.Ş.'ye tek imzayla 145.000.000 TL kredi kullandırmıştır.\n2. Teminata alınan Riva taşınmazı için sahte ekspertiz raporu sisteme yüklenmiş; gerçek değeri 17M TL olup LTV %850 gerçekleşmiştir.\n3. Kredi kullandırıldıktan 2 saat sonra MASAK filtreleri bypass edilerek 78.500.000 TL Panama merkezli hesaba aktarılmıştır.\n4. Şube Müdürünün şahsi hesabına Atlas Lojistik tarafından 4.500.000 TL komisyon yatırılmıştır.",
+    "is_analytics": false
+  },
+  {
+    "id": 9,
+    "phase_idx": 3,
+    "task_idx": 1,
+    "phase_name": "4. Denetim Raporlama (Reporting)",
+    "task_key": "executive_summary",
+    "task_name": "Yönetim Kurulu ve Denetim Komitesi Özeti",
+    "context": "Mega Holding A.Ş. — Denetim Komitesi",
+    "input_data": "2025 Yılı 4. Çeyrek Döneminde Teftiş Kurulu tarafından tamamlanan 6 denetim görevinde toplam 14 bulgu (3 Kritik, 6 Yüksek, 5 Orta) üretilmiştir. Toplam finansal maruziyet 210.000.000 TL'dir. En kritik alan Kredi ve Hazine birimidir.",
+    "is_analytics": false
+  },
+  {
+    "id": 10,
+    "phase_idx": 4,
+    "task_idx": 0,
+    "phase_name": "5. Sürekli Denetim & Analitik (Analytics)",
+    "task_key": "data_analytics",
+    "task_name": "Python (Pandas) İstisna Analiz Kodu",
+    "context": "Mega Finans & Hazine Operasyonları",
+    "input_data": "Hazine ve Uluslararası Para Transferleri veri tabanında ('transactions_sample.xlsx') sürekli denetim kuralları işletilecektir.\nTablo Sütunları: transaction_id, account_iban, beneficiary_name, beneficiary_country, amount_usd, transfer_type, approval_status, masak_cleared, approver_officer\n1. Offshore Transferler: Alıcı ülkesi ('PA', 'VG', 'CY', 'SC') olan ve tutarı 250.000 USD üzerindeki işlemler.\n2. MASAK Bypass: masak_cleared == False ve approval_status == 'APPROVED' olan işlemler.\n3. Yetkisiz Kredi: transfer_type == 'CREDIT_DISBURSEMENT' ve amount_usd >= 1.000.000 olan işlemler.",
+    "is_analytics": true
+  }
+]

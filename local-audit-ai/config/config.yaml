@@ -1,0 +1,30 @@
+model_tiers:
+  tier_1_light:
+    description: Hızlı veri ayıklama, basit özetleme ve walkthrough soruları
+    fallback: llama3.1:8b
+    max_tokens: 2048
+    name: qwen2.5-coder:7b
+    temperature: 0.1
+  tier_2_standard:
+    description: 5C formatında bulgu yazımı, RCM çıkarma ve kontrol test prosedürü
+    fallback: llama3.1:8b
+    max_tokens: 4096
+    name: deepseek-r1:8b
+    temperature: 0.2
+  tier_3_deep_reasoning:
+    description: Python analitik betikleri, audit universe optimizasyonu ve karmaşık
+      akış analizi
+    fallback: deepseek-r1:8b
+    max_tokens: 8192
+    name: qwen2.5-coder:14b
+    temperature: 0.2
+security:
+  enable_pii_masking: true
+  generate_audit_trail: true
+  hash_algorithm: sha256
+  storage_path: storage/audit_trails
+server:
+  host: 127.0.0.1
+  ollama_base_url: http://127.0.0.1:11434
+  port: 8501
+  timeout_seconds: 180

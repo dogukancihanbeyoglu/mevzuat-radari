@@ -1,0 +1,154 @@
+[
+  {
+    "id": "BDDK-5411-M160",
+    "authority": "BDDK & Ceza Mevzuatı",
+    "title": "5411 Sayılı Bankacılık Kanunu Madde 160 — Banka Zimmeti ve Nitelikli Zimmet",
+    "category": "Bankacılık & Ceza",
+    "keywords": ["zimmet", "kredi", "usulsüz", "para aktarma", "kasa açığı", "haksız menfaat", "dolandırıcılık", "banka zararı", "şube müdürü"],
+    "content": "Görevi dolayısıyla kendisine devredilmiş olan veya koruma ve gözetimiyle yükümlü olduğu para veya para yerine geçen evrak veya senetleri veya diğer malları kendisinin veya başkasının zimmetine geçiren banka yönetim kurulu başkan ve üyeleri ile diğer mensupları altı yıldan oniki yıla kadar hapis ve beşbin güne kadar adlî para cezası ile cezalandırılırlar. Hilenin bankanın denetlenmesini engelleyecek şekilde yapılması halinde ceza yarı oranında artırılır."
+  },
+  {
+    "id": "BDDK-5411-M50",
+    "authority": "BDDK",
+    "title": "5411 Sayılı Bankacılık Kanunu Madde 50 — Dahili Kredi Sınırları ve İlgili Taraflara Kredi Yasakları",
+    "category": "Kredi Riski",
+    "keywords": ["kredi sınırı", "ilişkili taraf", "yönetim kurulu kredisi", "ortaklara kredi", "limit aşımı", "şube yetkisi", "teminatsız kredi"],
+    "content": "Bankalar; yönetim kurulu üyelerine, genel müdüre, genel müdür yardımcılarına ve kredi açmaya yetkili mensuplarına, bunların eşlerine ve velâyeti altındaki çocuklarına kredi veremezler. Bankanın dahil olduğu risk grubuna kullandırılacak kredilerin toplamı banka özkaynaklarının yüzde yirmibeşini aşamaz."
+  },
+  {
+    "id": "BDDK-KREDI-KAR-YON",
+    "authority": "BDDK",
+    "title": "BDDK Kredilerin Sınıflandırılması ve Karşılıklar Yönetmeliği — LTV ve Ekspertiz Kuralları",
+    "category": "Kredi & Teminat",
+    "keywords": ["ltv", "ekspertiz", "teminat", "değerleme", "karşılık", "npl", "donuk alacak", "stage 3", "tfrs 9", "gayrimenkul"],
+    "content": "Kredilendirmede teminat olarak alınan gayrimenkullerin değerlemesi SPK ve BDDK tarafından yetkilendirilmiş bağımsız değerleme kuruluşlarınca yapılır. Kredi tutarının teminat olarak alınan gayrimenkulün değerine oranı (LTV) yönetmelikte belirlenen azami sınırları (azami %75) aşamaz. Geri ödemesi 90 günden fazla geciken krediler Donuk Alacak (NPL / Stage 3) olarak sınıflandırılmak ve zorunlu karşılık ayrılmak zorundadır."
+  },
+  {
+    "id": "BDDK-ITGC-TEBLIG",
+    "authority": "BDDK",
+    "title": "Bankaların Bilgi Sistemleri ve Elektronik Bankacılık Hizmetleri Hakkında Yönetmelik — Ayrıcalıklı Erişim ve Log Güvenliği",
+    "category": "Siber Güvenlik & ITGC",
+    "keywords": ["pam", "mfa", "ayrıcalıklı erişim", "root", "ssh", "loglama", "değiştirilemez log", "itgc", "bilgi sistemleri", "siber güvenlik"],
+    "content": "Bankaların kritik bilişim altyapılarına ve veritabanlarına yapılacak tüm yönetici (root/admin) erişimleri merkezi bir Ayrıcalıklı Erişim Yönetimi (PAM) çözümü üzerinden, çok faktörlü kimlik doğrulama (MFA) ile gerçekleştirilmelidir. Üretim sistemlerindeki tüm denetim izi logları (Audit Trail) değiştirilemez (WORM/Immutable) ortamda en az 10 yıl süreyle saklanmalıdır."
+  },
+  {
+    "id": "MASAK-5549-M8",
+    "authority": "MASAK",
+    "title": "5549 Sayılı Suç Gelirlerinin Aklanmasının Önlenmesi Hakkında Kanun Madde 8 — Şüpheli İşlem Bildirimi (STR)",
+    "category": "MASAK & Kara Para",
+    "keywords": ["şüpheli işlem", "masak", "str", "kara para", "aklama", "offshore", "smurfing", "parçalama", "panama", "bvi", "terörün finansmanı"],
+    "content": "Yükümlüler nezdinde veya bunlar aracılığıyla yapılan veya yapılmaya teşebbüs edilen işlemlere konu malvarlığının yasadışı yollardan elde edildiğine veya yasadışı amaçlarla kullanıldığına dair herhangi bir bilgi, şüphe veya şüpheyi gerektirecek bir durumun bulunması halinde bu işlemlerin yükümlüler tarafından MASAK'a bildirilmesi zorunludur. Şüpheli işlem bildirimi hiçbir suretle müşteriye veya üçüncü şahıslara ifşa edilemez (Tipping-off yasağı)."
+  },
+  {
+    "id": "MASAK-5549-M13",
+    "authority": "MASAK",
+    "title": "5549 Sayılı Kanun Madde 13 — Yükümlülüklere Uymama ve Ağır İdari Para Cezaları",
+    "category": "MASAK & Yaptırım",
+    "keywords": ["idari para cezası", "masak cezası", "yükümlülük ihlali", "kimlik tespiti yapmama", "str bildirmeme", "uyum görevlisi"],
+    "content": "Şüpheli işlem bildiriminde bulunmayan, müşteri kimlik tespitini gereğince yapmayan veya MASAK tarafından istenen bilgi ve belgeleri vermeyen yükümlülere işlem başına yüz binlerce liradan başlayan ve her bir ihlal için katlanarak artan ağır idari para cezaları uygulanır. Kasıtlı bildirmeme durumunda sorumlular hakkında adli soruşturma açılır."
+  },
+  {
+    "id": "MASAK-UBO-TEBLIG",
+    "authority": "MASAK",
+    "title": "MASAK Genel Tebliği Sıra No: 5 — Gerçek Faydalanıcının (UBO) ve PEP'in Tespiti",
+    "category": "MASAK & Uyum",
+    "keywords": ["ubo", "gerçek faydalanıcı", "pep", "siyasi nüfuz", "paravan şirket", "tüzel kişi", "nihai sahip", "yaptırım"],
+    "content": "Yükümlüler; tüzel kişi müşterilerin arkasındaki nihai gerçek kişi hakim ortakları (Ultimate Beneficial Owner - UBO) tespit etmek, kimlik bilgilerini doğrulamak ve Siyasi Nüfuz Sahibi Kişi (PEP) taramalarını yapmak zorundadır. Karmaşık sermaye yapılarına veya paravan şirketlere sahip offshore müşterilerde UBO doğrulanmadan hesap açılamaz ve fon transferi yapılamaz."
+  },
+  {
+    "id": "SPK-6362-M106",
+    "authority": "SPK & Ceza",
+    "title": "6362 Sayılı Sermaye Piyasası Kanunu Madde 106 — Bilgi Suistimali (İçeriden Öğrenenlerin Ticareti / Insider Trading)",
+    "category": "Sermaye Piyasası",
+    "keywords": ["insider trading", "içeriden öğrenen", "bilgi suistimali", "hisse", "menkul kıymet", "haksız kazanç", "spk", "kamuyu aydınlatma"],
+    "content": "Doğrudan veya dolaylı olarak sermaye piyasası araçları ya da ihraççılar hakkında henüz kamuya duyurulmamış, fiyatı etkileyebilecek nitelikteki bilgiye sahip olup bu bilgiyi kullanarak işlem yapan ve haksız menfaat sağlayan kişilere üç yıldan sekiz yıla kadar hapis veya adli para cezası verilir."
+  },
+  {
+    "id": "SPK-6362-M107",
+    "authority": "SPK & Ceza",
+    "title": "6362 Sayılı Sermaye Piyasası Kanunu Madde 107 — Piyasa Dolandırıcılığı (Manipülasyon)",
+    "category": "Sermaye Piyasası",
+    "keywords": ["manipülasyon", "piyasa dolandırıcılığı", "yapay fiyat", "sahte işlem", "emir iptali", "hisse senedi", "fiyat şişirme"],
+    "content": "Sermaye piyasası araçlarının fiyatlarına, fiyat değişimlerine, arz ve taleplerine ilişkin olarak yanlış veya yanıltıcı izlenim uyandırmak amacıyla alım veya satım yapan, emir veren veya işlem gerçekleştirenler üç yıldan beş yıla kadar hapis ve beş bin günden on bin güne kadar adli para cezası ile cezalandırılırlar."
+  },
+  {
+    "id": "KVKK-6698-M12",
+    "authority": "KVKK & GDPR",
+    "title": "6698 Sayılı Kişisel Verilerin Korunması Kanunu Madde 12 — Veri Güvenliğine İlişkin Yükümlülükler ve İhlal Bildirimi",
+    "category": "Veri Gizliliği",
+    "keywords": ["kvkk", "kişisel veri", "veri sızıntısı", "data breach", "tckn", "müşteri bilgisi", "gizlilik", "ihlal bildirimi", "gdpr", "72 saat"],
+    "content": "Veri sorumlusu; kişisel verilerin hukuka aykırı olarak işlenmesini önlemek, verilere hukuka aykırı olarak erişilmesini engellemek ve verilerin muhafazasını sağlamak amacıyla uygun güvenlik düzeyini temin etmeye yönelik gerekli her türlü teknik ve idari tedbirleri almak zorundadır. İşlenen kişisel verilerin kanuni olmayan yollarla başkaları tarafından elde edilmesi halinde, veri sorumlusu bu durumu en kısa sürede (ve 72 saat içinde) ilgilisine ve Kurula bildirir."
+  },
+  {
+    "id": "KVKK-6698-M18",
+    "authority": "KVKK",
+    "title": "6698 Sayılı Kanun Madde 18 — Kabahatler ve İdari Para Cezaları",
+    "category": "Veri Gizliliği & Yaptırım",
+    "keywords": ["kvkk cezası", "idari para cezası", "veri sorumlusu cezası", "güvenlik ihlali cezası", "kurul kararı"],
+    "content": "Veri güvenliğine ilişkin yükümlülükleri yerine getirmeyen veri sorumluları hakkında Kurul tarafından her yıl yeniden değerleme oranında artırılan milyonlarca liralık idari para cezası uygulanır. İhlalin niteliğine göre şirket cirosuyla orantılı yaptırımlar öngörülür."
+  },
+  {
+    "id": "REKABET-4054-M4",
+    "authority": "Rekabet Kurumu",
+    "title": "4054 Sayılı Rekabetin Korunması Hakkında Kanun Madde 4 — Rekabeti Kısıtlayıcı Anlaşmalar ve Kartel Yasakları",
+    "category": "Rekabet Hukuku",
+    "keywords": ["kartel", "fiyat tespiti", "rekabet ihlali", "pazar paylaşımı", "ihaleye fesat", "uyumlu eylem", "bilgi paylaşımı"],
+    "content": "Belirli bir mal veya hizmet piyasasında doğrudan veya dolaylı olarak rekabeti engelleme, bozma ya da kısıtlama amacını taşıyan veya bu etkiyi doğuran yahut doğurabilecek nitelikte olan teşebbüsler arası anlaşmalar, uyumlu eylemler ve teşebbüs birliklerinin bu tür karar ve eylemleri hukuka aykırı ve yasaktır."
+  },
+  {
+    "id": "TTK-6102-M18",
+    "authority": "TTK",
+    "title": "6102 Sayılı Türk Ticaret Kanunu Madde 18/2 — Basiretli İş Adamı Gibi Davranma Yükümlülüğü",
+    "category": "Şirketler Hukuku",
+    "keywords": ["basiretli tacir", "özen borcu", "şirket yönetimi", "ticari basiret", "zarar tazmini", "yönetici sorumluluğu"],
+    "content": "Her tacirin, ticaretine ait bütün faaliyetlerinde basiretli bir iş adamı gibi hareket etmesi gerekir. Tacirler, işletmeleriyle ilgili kararlarda gerekli piyasa araştırmasını yapmak, kontrol mekanizmalarını kurmak ve şirket malvarlığını koruyacak tedbirleri almakla yükümlüdür."
+  },
+  {
+    "id": "TTK-6102-M369",
+    "authority": "TTK",
+    "title": "6102 Sayılı Türk Ticaret Kanunu Madde 369 — Yönetim Kurulu Üyelerinin Özen ve Sadakat Yükümlülüğü",
+    "category": "Kurumsal Yönetim",
+    "keywords": ["yönetim kurulu", "sadakat borcu", "özen yükümlülüğü", "şirket menfaati", "hukuki sorumluluk", "tazminat davası"],
+    "content": "Yönetim kurulu üyeleri ve yönetimle görevli üçüncü kişiler, görevlerini tedbirli bir yöneticinin özeniyle yerine getirmek ve şirketin menfaatlerini dürüstlük kurallarına uyarak gözetmekle yükümlüdürler. Görevlerini kusurlarıyla ihlal eden üyeler, şirkete, pay sahiplerine ve şirket alacaklılarına verdikleri zararlardan sorumludurlar."
+  },
+  {
+    "id": "TCK-5237-M158",
+    "authority": "Ceza Mevzuatı (TCK)",
+    "title": "5237 Sayılı Türk Ceza Kanunu Madde 158 — Nitelikli Dolandırıcılık",
+    "category": "Ceza Hukuku",
+    "keywords": ["nitelikli dolandırıcılık", "hile", "aldatma", "banka dolandırıcılığı", "bilişim dolandırıcılığı", "sahte evrak", "haksız çıkar"],
+    "content": "Dolandırıcılık suçunun; kamu kurum ve kuruluşlarının zararına, bilişim sistemlerinin, banka veya kredi kurumlarının araç olarak kullanılması suretiyle işlenmesi halinde, üç yıldan on yıla kadar hapis ve beş bin güne kadar adlî para cezasına hükmolunur."
+  },
+  {
+    "id": "TCK-5237-M204",
+    "authority": "Ceza Mevzuatı (TCK)",
+    "title": "5237 Sayılı Türk Ceza Kanunu Madde 204 — Resmi Belgede Sahtecilik",
+    "category": "Ceza Hukuku",
+    "keywords": ["sahte evrak", "resmi belge", "ekspertiz sahteciliği", "imza taklidi", "sahte fatura", "belgede sahtecilik"],
+    "content": "Bir resmi belgeyi sahte olarak düzenleyen, gerçek bir resmi belgeyi başkalarını aldatacak şekilde değiştiren veya sahte resmi belgeyi kullanan kişi, iki yıldan beş yıla kadar hapis cezası ile cezalandırılır. Suçun kamu görevlisi tarafından görevi sebebiyle işlenmesi halinde ceza artırılır."
+  },
+  {
+    "id": "SOX-ACT-S404",
+    "authority": "Uluslararası (SOX / SEC)",
+    "title": "Sarbanes-Oxley Act Section 404 — İç Kontrol Raporlama ve Etkinlik Güvencesi",
+    "category": "Uluslararası Uyum",
+    "keywords": ["sox 404", "sarbanes oxley", "iç kontrol güvencesi", "maddi hata", "finansal raporlama", "kontrol eksikliği", "material weakness"],
+    "content": "Halka açık şirketlerin yönetimi, finansal raporlama üzerindeki iç kontrollerin (ICFR) yeterliliği ve etkinliğine ilişkin yıllık bir değerlendirme raporu sunmakla yükümlüdür. Önemli kontrol eksiklikleri (Material Weakness) kamuya açıklanmalı ve bağımsız denetçi tarafından tasdik edilmelidir."
+  },
+  {
+    "id": "ISO-27001-A8",
+    "authority": "ISO / IEC Standartları",
+    "title": "ISO/IEC 27001:2022 Madde A.8.2 & A.8.4 — Ayrıcalıklı Erişim Hakları ve Kaynak Kodu Güvenliği",
+    "category": "Bilgi Güvenliği Standartları",
+    "keywords": ["iso 27001", "bilgi güvenliği", "ayrıcalıklı yetki", "kod güvenliği", "kaynak kodu", "erişim kontrolü", "güvenlik açığı"],
+    "content": "Ayrıcalıklı erişim haklarının (root/admin) tahsisi ve kullanımı sıkı bir şekilde sınırlandırılmalı ve kontrol edilmelidir. Sistem ve yazılım geliştirme ortamlarında kaynak koduna ve üretim sistemlerine doğrudan kontrolsüz erişim engellenmeli, tüm değişiklikler denetim izine bağlanmalıdır."
+  },
+  {
+    "id": "IIA-GLOBAL-2026",
+    "authority": "IIA Global Standartları",
+    "title": "IIA Global Internal Audit Standards (2026) — Prensip 9 & 13: Mesleki Şüphecilik ve 5C Bulgu Yazımı",
+    "category": "İç Denetim Metodolojisi",
+    "keywords": ["iia", "iç denetim standardı", "5c bulgusu", "mesleki şüphecilik", "condition", "criteria", "cause", "effect", "recommendation"],
+    "content": "İç denetçiler denetim faaliyetlerini yürütürken mesleki şüphecilik (Professional Skepticism) sergilemek ve elde edilen kanıtları eleştirel bir yaklaşımla değerlendirmek zorundadır. Tüm denetim bulguları 5C formatında (Durum, Kriter, Kök Neden, Etki, Öneri) tam, net ve somut delillerle desteklenerek raporlanmalıdır."
+  }
+]

@@ -29,3 +29,11 @@ reports/*.md
 reports/*.pdf
 !reports/.gitkeep
 *.log
+
+# Local Audit AI Temp & Reports
+local-audit-ai/storage/temp_render_html/
+local-audit-ai/storage/generated_reports/*.xlsx
+local-audit-ai/storage/generated_reports/*.csv
+local-audit-ai/storage/audit_trails/*.json
+local-audit-ai/temp/
+local-audit-ai/.pytest_cache/
