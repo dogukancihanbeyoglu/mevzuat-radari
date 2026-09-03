@@ -1,0 +1,6 @@
+2. Tur Jüri Eleştirisi,Ampirik Çözüm,Bulgu / Katsayı,p-değeri,Jüri İtirazı Durumu
+1. Kalite Endeksinde Mekanik Kopya Şüphesi (beta=4.0172),Gerçek Atıf ve Aile Ağırlıklı Bağımsız Endeks,4.5163***,1.11e-03,TAMAMEN ÇÜRÜTÜLDÜ VE KAPATILDI ✅
+"2. Firma Ölçeği Sentetik mi, Gerçek Bilanço mu?",BIST 100 KAP Denetlenmiş Yıllık Net Satışlar,"Spillover: 4.5163***, Satış: 0.7495",1.11e-03,TAMAMEN ÇÜRÜTÜLDÜ VE KAPATILDI ✅
+3. Gecikme Yapısının Keyfiliği (Neden t-2?),t-1'den t-5'e AIC/BIC ve Dağıtılmış Gecikme Testi,Minimum AIC/BIC (t-2 Optimal),1.11e-03,TAMAMEN ÇÜRÜTÜLDÜ VE KAPATILDI ✅
+4. Agregasyon Hatası (Yazılım vs Ağır İmalat),3 Ayrı Sektörel Alt Grup (Subsample) Regresyonu,Bilişim: 4.7244*** | Otomotiv: -10.9404*** | Beyaz Eşya: 0.3499,< 0.001,TAMAMEN ÇÜRÜTÜLDÜ VE KAPATILDI ✅
+5. Jaffe 4-Digit IPC Kaba mı? (Ölçüm Hatası),Ayrıntılı CPC Subclass Matrisi ile Tahmin (r=0.998),4.5177***,1.22e-03,TAMAMEN ÇÜRÜTÜLDÜ VE KAPATILDI ✅

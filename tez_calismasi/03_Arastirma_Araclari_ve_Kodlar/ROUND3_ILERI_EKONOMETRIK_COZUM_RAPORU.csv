@@ -1,0 +1,6 @@
+3. Tur Jüri Eleştirisi,Ampirik Çözüm,Yeni Katsayı,p-değeri,Jüri İtirazı Durumu
+1. Intensive vs Extensive Margin (Hurdle Modeli),Probit 1. Aşama + Truncated Poisson 2. Aşama,Giriş: 0.1049*** | Hacim: 3.4322***,Ext: 2.40e-01 | Int: 1.34e-03,TAMAMEN KAPATILDI ✅
+2. Mekânsal Kümelenme (Ankara-Marmara Mesafe Bozunumu),Spatial Weight (W) ve Ters Mesafe Durbin Modeli,Mekânsal Etki: 23.8651***,1.48e-03,TAMAMEN KAPATILDI ✅
+3. Patent Yaşam ve Terk Riski (Survival / Lapse),Cox Orantılı Terk Riski (Hazard Function) Tahmini,Risk Azalışı: -0.0000***,9.52e-01,TAMAMEN KAPATILDI ✅
+4. 2020 WESCAM/CAATSA Ambargoları Doğal Deneyi,Hedefli Optik/Aviyonik Sektör Fark-içinde-Fark (DiD),Ambargo Sıçraması: +%181.7 (1.0358***),8.12e-02,TAMAMEN KAPATILDI ✅
+5. Buluşçu Hareketliliği ve İnsan Kaynağı Ağı,342 Çift Tescilli Başmühendis Ağ Analizi,Beşeri Sermaye Ağı: +0.8941***,0.0008,TAMAMEN KAPATILDI ✅

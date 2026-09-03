@@ -1,0 +1,824 @@
+Dış kapak sayfası tez yazım kılavuzuna göre ayarlanmıştır. Gerekli yerlere bilgiler yazıldığında yazım
+şartları sağlanmaktadır. Eğer başka bir dosyadan kopyalayarak bu dosyaya metin yapıştırılmak
+isteniyorsa yazı karakterini ve paragraf özelliklerini gözden geçirmek için aşağıdaki düzenlemeleri
+yapınız. Her yazı düzenlemesinde aşağıdaki adımları uygulayınız. Ayrıca her yapıştırma işleminde
+farenizin sağ tuşu ile yapıştırma seçeneklerine geliniz ve aşağıda kırmızı ile gösterilen yapıştırma
+seçeneğini kullanınız.
+
+Tez kapağı örnekleri HBV Lisansüstü Eğitim Enstitüsü internet sitesinde Tez İşlemleri sekmesinde
+mevcuttur.
+Tez adının düzenlenmesi için yazılan yerin tamamını seçiniz.
+
+Giriş kısmından Yazı Tipi kısmına geliniz.
+
+Times New Romen yazı karakteri ve 22 punto yazı boyutu seçilir. Baş harfler büyük yazılacaktır. Giriş
+kısmından Paragraf kısmına geliniz. Kırmızı ile işaretlenen simgeye basınız.
+
+Aşağıda kırmızı ile gösterilen alanlarda düzenlemeler yapılır. Kapak sayfasında yer alan diğer bilgilerin
+düzenlenmesi aynı şekilde gerçekleştirillir.
+
+Büyük harflerle ve ortalanmış olarak tez adı bu bölüme yazılmalıdır
+
+Ad SOYAD
+
+Başlık sayfası tez yazım kılavuzuna göre ayarlanmıştır. Gerekli yerlere bilgiler yazıldığında yazım
+şartları sağlanmaktadır. Eğer başka bir dosyadan kopyalayarak bu dosyaya metin yapıştırılmak
+isteniyorsa yazı karakterini ve paragraf özelliklerini gözden geçirmek için aşağıdaki düzenlemeleri
+yapınız. Her yazı düzenlemesinde aşağıdaki adımları uygulayınız. Tez Jürisi, danışmandan başlanarak
+Doktora ve Sanatta yeterlilik için beş jüri üyesi ile Yüksek Lisans için üç jüri üyesinin unvanlarıyla ad
+ve soyadları yazılır. Bu kısımda parantez içerisinde bir açıklama kullanılmaz.
+Tez adının düzenlenmesi için yazılan yerin tamamını seçiniz.
+
+Giriş kısmından Yazı Tipi kısmına geliniz.
+
+Tez Danışmanı Unvan Ad SOYAD
+
+Times New Romen yazı karakteri ve 12 punto yazı boyutu seçilir.
+
+Tez Jürisi
+Unvan Ad SOYAD
+Unvan Ad SOYAD
+Unvan Ad SOYAD
+
+YÜKSEK LİSANS TEZİ/DOKTORA TEZİ/SANATTA YETERLİK TEZİ
+… ANA BİLİM DALI / ANA SANAT DALI
+… PROGRAMI
+
+Ankara - SAVUNMA YILI
+
+Başlık Sayfası’na ait kenar boşlukları üstten 3,5 cm ve sağ, sol, alt kısım 2,5 cm olacak şekilde
+ayarlanmıştır. Tezin geri kalanında ise kenar boşlukları 2,5 cm’dir. Ayarlamak için Başlık Sayfası’nın
+tamamını seçin. Düzen’e gelin ve Özel Kenar Boşlukları’nı seçin. Benzer şekilde tezin geri kalan
+sayfaları da düzenlenir.
+
+Etik Beyan sayfası tez yazım kılavuzuna göre ayarlanmıştır. Gerekli yerlere bilgiler yazıldığında yazım
+şartları sağlanmaktadır. Eğer başka bir dosyadan kopyalayarak bu dosyaya metin yapıştırılmak
+isteniyorsa yazı karakterini ve paragraf özelliklerini gözden geçirmek için aşağıdaki düzenlemeleri
+yapınız. Her yazı düzenlemesinde aşağıdaki adımları uygulayınız. Başlığın düzenlenmesi için yazılan
+yerin tamamını seçiniz.
+
+Giriş kısmından Yazı Tipi kısmına geliniz.
+
+Times New Romen yazı karakteri ve 12 punto yazı boyutu seçilir. Giriş kısmından Paragraf kısmına
+geliniz. Kırmızı ile işaretlenen simgeye basınız.
+
+Aşağıda kırmızı ile gösterilen alanlar düzenlenir.
+
+Aynı adımlar Etik Beyan açıklama yazısı için tekrarlanmalıdır. Ancak yazı hizalaması bu sefer yaslanmış
+ve 6 nk ile 1,5 satır aralığı olmalıdır.
+
+Tez onay sayfası tez yazım kılavuzuna göre ayarlanmıştır. Boşlukları doldurduktan sonra metin
+
+ONAY
+Ankara
+
+Hacı
+
+Bayram
+
+Veli
+
+Üniversitesi
+
+düzenlemesi yukarıda anlatıldığı gibi yapılır.
+Lisansüstü
+
+Eğitim
+
+Enstitüsü
+
+………………………………………………………………………………………
+
+Tezin onaylanması için kutucuklara işaret yapılması gerekmektedir. Bunun için kutucuklara iki kere
+basın. Bu işlemden sonra aşağıdaki pencere belirecektir.
+
+Ana Bilim / Ana Sanat Dalı ………………………… Programı ……………………………
+öğrencisi tarafından hazırlanan ………………………………….. Başlıklı tez çalışması
+.../... /…. tarih ve saatinde yapılan tez savunma sınavında aşağıdaki jüri tarafından OY
+BİRLİĞİ / OY ÇOKLUĞU ile YÜKSEK LİSANS / DOKTORA / SANATTA YETERLİK
+TEZİ olarak KABUL edilmiştir.
+
+Kabul
+Başkan (Unvan/Ad-Soyad/Kurum):
+Üye (Unvan/Ad-Soyad/Kurum):
+Üye (Unvan/Ad-Soyad/Kurum):
+Üye (Unvan/Ad-Soyad/Kurum):
+Üye (Unvan/Ad-Soyad/Kurum):
+
+Ret
+
+Teziniz kabul edildiyse resimde kırmızı ile işaretlenen Varsayılan değer kısmından Onaylandı
+seçeneğini seçiniz. Tamam dedikten sonra kutucukta aşağıdaki gibi işaretleme belirecektir.
+
+…………………………………………………………………………………
+(Tezin/Projenin Türkçe Başlığı)
+
+Özet bölümü tez yazım kılavuzuna göre ayarlanmıştır. Gerekli yerlere bilgiler yazıldığında yazım şartları
+sağlanmaktadır. Eğer başka bir dosyadan kopyalayarak bu dosyaya metin yapıştırılmak isteniyorsa yazı
+karakterini ve paragraf özelliklerini gözden geçirmek için aşağıdaki düzenlemeleri yapınız. Her yazı
+düzenlemesinde aşağıdaki adımları uygulayınız.
+
+Adı SOYADI
+
+(Tez Başlığı) kısmı da dahil olmak üzere tüm başlıkları seçiniz. Ardından yazı boyutunu aşağıdaki gibi
+ayarlayınız.
+
+Yüksek Lisans Tezi, Doktora Tezi/Sanatta Yeterlilik
+Bitirme Projesi ya da Dönem Projesi
+Danışman: Ünvanı Adı SOYADI
+T.C. Ankara Hacı Bayram Veli Üniversitesi, Lisansüstü Eğitim Enstitüsü
+… Anabilim Dalı/…Anasanat Dalı
+Yıl, Ankara
+
+Bölüm başlığı ve metin içi yazı hizalaması farklıdır bu sebeple iki aşamada yapılması gerekmektedir.
+Giriş kısmından Paragraf’a geliniz. Başlıklar ortalanmıştır.
+
+ÖZET
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+
+Ana metin ise iki yana yaslı olarak işaretlenmiştir.
+
+Özet bölümünde hem başlık hem de metin içi yazılar tek satır aralığı olmalıdır. Giriş kısmından
+Paragraf’a gelin ve aşağıda kırmızı ile işaretlenen simge basın
+
+Açılan pencereden başlık için 0 nk, metin için 6 nk ile tek satır aralığını seçiniz. Hizalama, yukarıda
+bahsedildiği şekilde yapılabileceği gibi açılan pencerede de yapılabilmektedir. Detay için 2. Bölüm
+Başlığı bölümünde anlatıldığı şekilde metni düzenleyiniz.
+
+Anahtar Kelimeler: En az beş, en fazla yedi anahtar kelimeye yer verilmelidir.
+
+Özet başlığı oluşturulurken sayfaya ÖZET yazılır ve başlığın tümü seçilir. Word çalışma dosyasında tez
+için gerekli olan başlık stilleri oluşturulmuştur. Bu başlıklara ulaşmak için Giriş’e basın ve ardından
+Stiller kısmına bakınız.
+
+Burada kırmızı ile çizilen ÖZET başlığı seçildiğinde otomatik tanımlanacaktır. İÇİNDEKİLER
+LİSTESİ’ni güncellemek için listenin üzerine basınız. Tabloyu Güncelleştir diyerek veya farenin sağ
+tuşu kullanılarak Tüm Tabloyu Güncelleştir’e basınız.
+
+iv
+
+…………………………………………………………………………………
+(English Title of Thesis/Project)
+
+Abstract bölümü tez yazım kılavuzuna göre ayarlanmıştır. Gerekli yerlere bilgiler yazıldığında yazım
+şartları sağlanmaktadır. Eğer başka bir dosyadan kopyalayarak bu dosyaya metin yapıştırılmak
+isteniyorsa yazı karakterini ve paragraf özelliklerini gözden geçirmek için aşağıdaki düzenlemeleri
+yapınız. Her yazı düzenlemesinde aşağıdaki adımları uygulayınız.
+
+Name and SURNAME
+
+(İngilizce Tez Başlığı) kısmı da dahil olmak üzere tüm başlıkları seçiniz. Ardından yazı boyutunu
+aşağıdaki gibi ayarlayınız.
+
+Master’s Thesis, Doctoral Thesis/Doctor of Fine Arts, Graduation Project or Term
+Project
+Supervisor: Academic Title Name and SURNAME
+Ankara Haci Bayram Veli University, Institute of Graduate Programs
+Department of …
+Year, Ankara
+
+Bölüm başlığı ve metin içi yazı hizalaması farklıdır bu sebeple iki aşamada yapılması gerekmektedir.
+Giriş kısmından Paragraf’a geliniz. Başlıklar ortalanmıştır.
+
+ABSTRACT
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+………………………………………………………………………………………………….
+
+Ana metin ise iki yana yaslı olarak işaretlenmiştir.
+
+Özet bölümünde hem başlık hem de metin içi yazılar tek satır aralığı olmalıdır. Giriş kısmından
+Paragraf’a gelin ve aşağıda kırmızı ile işaretlenen simge basın
+
+Açılan pencereden başlık için 0 nk, metin için 6 nk ile tek satır aralığını seçiniz. Hizalama, yukarıda
+bahsedildiği şekilde yapılabileceği gibi açılan pencerede de yapılabilmektedir. Detay için 2. Bölüm
+Başlığı bölümünde anlatıldığı şekilde metni düzenleyiniz.
+
+Keywords: At least five and at most seven keywords should be written.
+
+Abstract başlığı oluşturulurken sayfaya ABSTRACT yazılır ve başlığın tümü seçilir. Word çalışma
+dosyasında tez için gerekli olan başlık stilleri oluşturulmuştur. Bu başlıklara ulaşmak için Giriş’e basın
+ve ardından Stiller kısmına bakınız.
+
+Burada kırmızı ile çizilen ÖZET başlığı seçildiğinde ABSTRACT başlığı otomatik tanımlanacaktır.
+İÇİNDEKİLER listesini güncellemek için listenin üzerine basınız. Tabloyu Güncelleştir diyerek veya
+farenin sağ tuşu kullanılarak Tüm Tabloyu Güncelleştir’e basınız.
+Sayfanın altında yer alan kılavuz ile çizilmiş tabloda ise istenilen bilgiler doldurulur. Kılavuz çizgisi word
+dosyasında yazım esnasında kolaylık sağlamaktadır.
+v
+
+İçindekiler listesi oluşturulurken sayfaya İÇİNDEKİLER yazılır ve yazının tümü seçilir.
+
+İÇİNDEKİLER
+Sayfa
+Özet ............................................................................................................................................iv
+
+Word çalışma dosyasında tez için gerekli olan başlık stilleri oluşturulmuştur. İçindekiler başlığı
+oluşturmak için Giriş kısmından Stiller’e gelerek oluşturulmuş başlıklardan İÇİNDEKİLER seçilir.
+Böylece başlık otomatik tanımlanmış olmaktadır.
+
+Abstract ....................................................................................................................................... v
+İthaf (Varsa) ...............................................................................................................................vi
+Teşekkür (Varsa) ...................................................................................................................... vii
+İçindekiler ............................................................................................................................... viii
+Tabloların listesi (Varsa) ............................................................................................................ix
+Şekillerin listesi (Varsa) .............................................................................................................. x
+Haritaların listesi (Varsa) ...........................................................................................................xi
+Resimlerin listesi (Varsa) ......................................................................................................... xii
+Simgeler dizini (Varsa) ........................................................................................................... xiii
+
+İÇİNDEKİLER listesi eklemek için Başvurular kısmından İçindekiler’e basarak Otomatik İçindekiler
+Tablosu 1’i seçiniz. Her başlık aşağıdaki adımları takip ederek güncellenebilmektedir.
+
+Kısaltmalar dizini (Varsa) ........................................................................................................xiv
+1.
+
+GİRİŞ ................................................................................................................................... 1
+
+2.
+
+BÖLÜM BAŞLIĞI .............................................................................................................. 3
+
+2.1.
+
+Bölümün İkinci Dereceden Başlığı................................................................................ 4
+
+2.1.1.
+
+Bölümün Üçüncü Dereceden Başlığı ............................................................................ 5
+
+3.
+
+BÖLÜM BAŞLIĞI .............................................................................................................. 7
+
+3.1.
+
+Bölümün İkinci Dereceden Başlığı................................................................................ 7
+
+3.1.1.
+
+Bölümün Üçüncü Dereceden Başlığı ............................................................................ 7
+
+4.
+
+BÖLÜM BAŞLIĞI .............................................................................................................. 9
+
+5.
+
+SONUÇ .............................................................................................................................. 11
+
+Sonnotlar (Varsa) ...................................................................................................................... 13
+
+İÇİNDEKİLER listesini güncellemek için listenin üzerine basınız. Tabloyu Güncelleştir diyerek veya
+farenin sağ tuşu kullanılarak tüm tabloyu güncelleştire basınız.
+
+Extended abstract ...................................................................................................................... 15
+
+Satır aralıkları ve girintiler bu tez yazım şablonunda otomatik tanımlı olduğu için başka bir düzenlemeye
+gerek bulunmamaktadır.
+
+Kaynakça................................................................................................................................... 17
+Ekler .......................................................................................................................................... 19
+Dizin (Varsa) ............................................................................................................................. 21
+Özgemiş .................................................................................................................................... 23
+
+vi
+
+Tablonun adının yanında sayısını belirten numaralandırma çıkmaktadır. Yazı stilinin ve renginin
+düzenlenmesi gerekmektedir.
+
+TABLOLARIN LİSTESİ (VARSA)
+Sayfa
+Tablo 3. 1. Çalışmada Kullanılan Tablonun Adı ........................................................................5
+
+Tablo 3.1 yazısı seçildikten sonra Giriş kısmında Yazı Tipi’ne gelerek Times New Romen, 12 punto ve
+siyah renk yazımı seçilir. Ardından Paragraf kısmından 6 nk önce ve sonra ile 1,5 satır aralığı seçilir.
+Tabloların listesini otomatik oluşturmak için Başvurular kısmından Resim Yazıları’na gelinir. Şekiller
+Tablosu Ekle’ye basılır. Aşağıdaki gibi kırmızı içine alınmış yerlerin işaretli olduğundan emin olunuz.
+
+Word çalışma dosyasında tez için gerekli olan başlık stilleri oluşturulmuştur. Tabloların listesi
+oluşturulurken sayfaya TABLOLARIN LİSTESİ yazılır ve yazının tümü seçilir.
+
+Tabloların listesi başlığını oluşturmak için Giriş kısmından Stiller’e gelerek oluşturulmuş başlıklardan
+TABLOLAR seçilir. Böylece başlık otomatik tanımlanmış olmaktadır.
+
+Tabloların listesi her bölüm için düzenlenmek istendiğinde yeni etiket tanımlamak gerekmektedir.
+Başvurular kısmından Resim Yazıları’na gelerek Resim Yazısı Ekle’ye basılır. Yeni Etiket dedikten
+sonra çıkan pencerede hangi bölüme eklenecekse o bölümün numarası yazılır. Örnek aşağıda
+verilmektedir.
+
+Tabloların listesini güncellemek için birçok seçenek bulunmaktadır. Bunlardan bir tanesi Başvurular
+kısmından Resim Yazıları kısmına gelinir ve tabloyu güncelleştire basılır. Ancak tabloyu güncelleştire
+basmadan önce imlecin tablo üzerinde olduğundan emin olunuz. Aşağıdaki pencere ile karşılaştığınızda
+tüm tabloyu güncelleştirince sayfa numaraları da dahil tablo güncellenecektir.
+
+Her tablo eklendiğinde aynı adımlar tekrarlanır ve TABLOLAR LİSTESİ güncellenir.
+vii
+
+ŞEKİLLERİN LİSTESİ (VARSA)
+Sayfa
+Şekil 2. 1. Çalışmada kullanılan şeklin adı. ................................................................................3
+Şekil 2.1 yazısı seçildikten sonra Giriş kısmında Yazı Tipi’ne gelerek Times New Romen, 12 punto ve
+siyah renk yazımı seçilir. Ardından Paragraf kısmından 6 nk önce ve sonra ile 1,5 satır aralığı seçilir.
+Şekillerin listesini otomatik oluşturmak için başvurular kısmından Resim Yazıları’na gelinir. Şekiller
+Tablosu Ekle’ye basılır. Aşağıdaki gibi kırmızı içine alınmış yerlerin işaretli olduğundan emin olunuz.
+Word çalışma dosyasında tez için gerekli olan başlık stilleri oluşturulmuştur. Şekillerin listesi
+oluşturulurken sayfaya ŞEKİLLERİN LİSTESİ yazılır ve yazının tümü seçilir.
+
+Şekillerin listesi başlığını oluşturmak için Giriş kısmından Stiller’e gelerek oluşturulmuş başlıklardan
+ŞEKİLLER seçilir. Böylece başlık otomatik tanımlanmış olmaktadır.
+
+Şekillerin listesi her bölüm için düzenlenmek istendiğinde yeni etiket tanımlamak gerekmektedir.
+Başvurular kısmından Resim Yazıları’na gelerek Resim Yazısı Ekle’ye basılır. Yeni Etiket dedikten
+sonra çıkan pencerede hangi bölüme eklenecekse o bölümün numarası yazılır. Örnek aşağıda
+verilmektedir.
+
+Şekillerin listesini güncellemek için birçok seçenek bulunmaktadır. Bunlardan bir tanesi Başvurular
+kısmından Resim Yazıları kısmına gelinir ve tabloyu güncelleştire basılır. Ancak tabloyu güncelleştire
+basmadan önce imlecin tablo üzerinde olduğundan emin olunuz. Aşağıdaki pencere ile karşılaştığınızda
+tüm tabloyu güncelleştirince sayfa numaraları da dahil tablo güncellenecektir.
+
+Her şekil eklendiğinde aynı adımlar tekrarlanır ve ŞEKİLLER LİSTESİ güncellenir.
+Şeklin adının yanında sayısını belirten numaralandırma çıkmaktadır. Yazı stilinin ve renginin
+düzenlenmesi gerekmektedir.
+
+viii
+
+RESİMLERİN LİSTESİ (VARSA)
+Sayfa
+Resim 2. 1. Çalışmada kullanılan resmin adı. .............................................................................3
+
+Word çalışma dosyasında tez için gerekli olan başlık stilleri oluşturulmuştur. Resimlerin listesi
+oluşturulurken sayfaya Resimlerin listesi yazılır ve yazının tümü seçilir.
+Resim 2.1 yazısı seçildikten sonra Giriş kısmında Yazı Tipi’ne gelerek Times New Romen, 12 punto ve
+siyah renk yazımı seçilir. Ardından Paragraf kısmından 6 nk önce ve sonra ile 1,5 satır aralığı seçilir.
+Resimlerin listesi başlığını oluşturmak için Giriş kısmından Stiller’e gelerek oluşturulmuş başlıklardan
+RESİMLER seçilir. Böylece başlık otomatik tanımlanmış olmaktadır.
+
+Resimlerin listesini otomatik oluşturmak için Başvurular kısmından Resim Yazıları’na gelinir. Şekiller
+Tablosu Ekle’ye basılır. Aşağıdaki gibi kırmızı içine alınmış yerlerin işaretli olduğundan emin olunuz.
+
+Resimlerin listesi her bölüm için düzenlenmek istendiğinde yeni etiket tanımlamak gerekmektedir.
+Başvurular kısmından Resim Yazıları’na gelerek Resim Yazısı Ekle’ye basılır. Yeni Etiket dedikten
+sonra çıkan pencerede hangi bölüme eklenecekse o bölümün numarası yazılır. Örnek aşağıda
+verilmektedir.
+
+Şekillerin listesini güncellemek için birçok seçenek bulunmaktadır. Bunlardan bir tanesi başvurular
+kısmından Resim Yazıları kısmına gelinir ve tabloyu güncelleştire basılır. Ancak tabloyu güncelleştire
+basmadan önce imlecin tablo üzerinde olduğundan emin olunuz. Aşağıdaki pencere ile karşılaştığınızda
+tüm tabloyu güncelleştirince sayfa numaraları da dahil tablo güncellenecektir.
+
+Resim adının yanında sayısını belirten numaralandırma çıkmaktadır. Yazı stilinin ve renginin
+düzenlenmesi gerekmektedir.
+Her resim eklendiğinde aynı adımlar tekrarlanır ve RESİMLER LİSTESİ güncellenir.
+
+ix
+
+HARİTALARIN LİSTESİ (VARSA)
+
+KISALTMALAR
+Bu çalışmada kullanılmış kısaltmalar, açıklamaları ile birlikte aşağıda sunulmuştur.
+
+Word çalışma dosyasında tez için gerekli olan başlık stilleri oluşturulmuştur. Haritaların listesi
+oluşturulurken sayfaya Resimlerin listesi yazılır ve yazının tümü seçilir.
+
+Kısaltmalar
+
+Açıklamalar
+
+ABD
+
+Amerika Birleşik Devletleri
+
+AB
+
+Avrupa Birliği
+
+Resimlerin listesi başlığını oluşturmak için Giriş kısmından Stiller’e gelerek oluşturulmuş başlıklardan
+HARİTALAR seçilir. Böylece başlık otomatik tanımlanmış olmaktadır.
+
+Kısaltmalar sayfasında yer alan kelimeler kılavuz çizgilerle gösterilen tablo içerisinde verilmektedir.
+Kılavuz çizgisi word dosyasında yazım esnasında kolaylık sağlamaktadır.
+Haritaların listesi oluşturulurken her eklenen yeni harita için tablolar, şekiller, resimler vb. adımları aynı
+
+Her eklenen yeni kısaltma kelimesi için satır eklemek için aşağıda yer alan görseli kullanınız.
+
+şekilde uygulanır.
+
+x
+
+1. GİRİŞ
+Tezin "GİRİŞ" bölümünde tez çalışmasında ele alınan konunun, problemin ne olduğuna, araştırmanın
+amacına, araştırmanın önemine, sınırlılıklarına ve adı geçen tanımların hangi anlamlarda kullanıldığına
+yönelik, araştırma yöntemleri ve önceki çalışmalar gibi, okuyucuyu konuya hazırlayıcı nitelikte bilgiler
+verilir. Ancak, bu bilgilerin yazılışında Amaç, Kapsam, Yöntem gibi alt bölüm başlıkları kullanılmaz.
+Bölüm numaralandırması GİRİŞ ile başlar. GİRİŞ başlığı sola dayalı olur.
+Giriş bölümü hiçbir şekilde, numaralı alt bölüm başlıkları bulunmaz. (Yani örnek olarak GİRİŞ 'in altında
+1.1., 1.2. gibi bir alt bölüm başlığı bulunmaz.)
+Buna karşın, konuyu daha iyi açıklamak için gerekli ise, koyu (bold) olmamak üzere sırası ile düz altı
+çizili, italik ve italik altı çizili ara başlıklar kullanılabilir. Bu başlıklara numara verilmez.
+Giriş bölümüne kadar olan sayfalar Romen rakamıyla numaralandırılırken Giriş bölümünden sonra
+sayısal değer ile numaralandırılır.
+Her ana başlık tek numaralı sayfadan başlamalıdır.
+1.GİRİŞ ile başlayıp sonuç dahil numaralandırılmalıdır (1.GİRİŞ altına 1.1 gibi numaralandırma
+yapılmamalıdır).
+Giriş başlığı oluşturulurken sayfaya GİRİŞ yazılır ve yazının tümü seçilir.
+Metin genelinde her paragrafta 1 cm satır başı girinti kullanılır. Bunun için ilk satır 1 cm olarak girinti
+verilmelidir. Öncelikle Giriş kısmından Paragraf’a geliniz ve aşağıdaki kırmızı ile işaretlenen adımları
+yapınız.
+
+Word çalışma dosyasında tez için gerekli olan başlık stilleri oluşturulmuştur. Giriş başlığını oluşturmak
+için Giriş kısmından Stiller’e gelerek oluşturulmuş başlıklardan 1. GİRİŞ seçilir. Böylece başlık
+otomatik tanımlanmış olmaktadır.
+
+Birinci başlık giriş ile başladığından dolayı bundan sonra yazılacak her ana başlık sırası ile
+numaralandırılacaktır. Bu sebeple tezinizin doğru bölüm numaralarına sahip olduğunu kontrol ediniz.
+Metin genelinde times New Romen yazı karakteri ve 12 punto yazı boyutu kullanılmalıdır. Öncelikle
+metni seçiniz. Giriş kısmından Yazı Tipi’ne geliniz ve aşağıda kırmızı ile işaretlenen yerleri metne
+uygulayınız.
+
+Metin genelinde 6 nk önce ve sonra ile 1,5 satır aralığı kullanılmalıdır. Bunun için öncelikle Giriş
+kısmından Paragraf’a geliniz ve aşağıdaki kırmızı ile işaretlenen adımları yapınız.
+
+1
+
+2. BÖLÜM BAŞLIĞI
+Her ana başlık yeni ve tek numaralı sayfadan başlamalıdır.
+Tez yazımında metin içi atıf veya dipnot sistemi kullanılabilir.
+
+Word çalışma dosyasında tez için gerekli olan başlık stilleri oluşturulmuştur. Bu başlıklara ulaşmak için
+
+Metin içi atıflar; “(Soyad, yıl: sayfa)” (Aslanapa, 2002: 36) şeklinde yapılabilir. Dipnotlar ise aşağıda
+belirtilen şekilde verilebilir;
+
+Giriş’e basın ve ardından Stiller kısmına bakınız.
+
+- Kitap için
+İlk Atıf- Yazar Soyadı, Adının İlk Harfi. (Yıl). Eser (italik), Basım Yeri, atıf yapılan sayfa.
+Örnek: Kuban, D. (2003). Divriği Mucizesi: Selçuklular Çağında İslam Bezeme Sanatı Üzerine Bir
+Deneme, İstanbul, 27.
+İkinci ve daha sonraki atıflar- Yazar Soyadı, a.g.e, Yıl, atıf yapılan sayfa. Örnek: Kuban, a.g.e., 2003, 27.
+
+Her ana başlık için kırmızı ile işaretlenen BÖLÜM BAŞLIKLARI’na basınız. Bölüm başlıkları otomatik
+
+- Makale-Kitapta Bölüm-Sempozyum-Bildiri için
+
+tanımlanacaktır. Tezde yazılacak her ana başlık sırası ile numaralandırılacaktır. Bu sebeple tezinizin
+
+İlk Atıf- Yazar Soyadı, Adının İlk Harfi. (Yıl). “Makale”, Dergi (İtalik), Cilt (sayı), atıf yapılan sayfa.
+
+doğru bölüm numaralarına sahip olduğunu kontrol ediniz.
+
+Örnek: Tuncer, C. (1990). "Taşın Bezeme Şekli Üzerine Düşünceler", Vakıf Haftası Dergisi, 1 (7), 233.
+İkinci ve daha sonraki atıflar- Yazar Soyadı, a.g.m, Yıl, atıf yapılan sayfa. Örnek: Tuncer, a.g.m., 1990,
+238.
+
+Metin genelinde times New Romen yazı karakteri ve 12 punto yazı boyutu kullanılmalıdır. Öncelikle
+yazılan kısmı seçiniz. Giriş kısmından Yazı Tipi’ne geliniz ve 1. GİRİŞ bölümünde anlatıldığı şekilde
+
+……………………………………………………………………………………………………………
+…………………………1
+
+metni düzenleyiniz.
+Metin genelinde 6 nk önce ve sonra ile 1,5 satır aralığı kullanılmalıdır. Bunun için öncelikle Giriş
+kısmından Paragraf’a geliniz ve 1. GİRİŞ bölümünde anlatıldığı şekilde metni düzenleyiniz.
+“Metin içindeki 39 kelimeye kadar olan doğrudan alıntılar, kısa alıntı olarak kabul edilir. Kısa alıntılar
+metinde başlangıç ve bitişi “…” çift tırnak işareti ile belirtilerek düz yazı tipi ile yazılmalıdır.”
+39 kelimeden daha uzun doğrudan alıntılar, uzun doğrudan alıntı olarak sınıflandırılır.
+Uzun doğrudan alıntılar, kısa doğrudan alıntılardan farklı olarak ayrı bir paragraf
+şeklinde, düz yazı stili kullanılarak, bütün satırları hem sağdan hem soldan 1,5 cm
+girintili olacak şekilde ve tırnak içine alınmadan yazılır.
+Doğrudan uzun alıntı bir paragraftan fazla ise, o zaman ikinci ve daha sonraki
+paragrafların ilk satırı 2,5 cm girintili olacak şekilde başlatılır. Uzun alıntıların sonuna
+mutlaka sayfa numarası eklenir.
+39 kelime ve daha uzun alıntıda yazılanların tamamı seçildikten sonra Giriş kısmından Paragraf’a
+geliniz ve aşağıda kırmızı ile işaretlenen simgeye basınız.
+
+Bölüm başlığı oluşturulurken sayfaya BÖLÜM BAŞLIĞI yazılır ve yazının tümü seçilir.
+
+1
+
+Sayfa altında verilecek dipnotlarda 10 punto kullanılmalıdır. Tek satır aralığı (0 nk) ve iki yana yaslı olarak yazılmalıdır.
+2
+
+Simgeye bastıktan sonra yeni pencere açılacaktır. Tek satır aralığı ve iki yana yaslı yazı biçimi yapmak
+için aşağıdaki adımları uygulayınız.
+
+Açılan pencereden girintiyi ayarlamak için kırmızı ile işaretlendiği gibi düzenleme yapınız.
+
+Resim numarasını tanımlama ve nasıl resimler listesine ekleneceği RESİMLER LİSTESİ kısmında
+anlatılmıştır.
+
+Metin içerisinde dipnot oluşturmak için Başvurular’a basınız ve Dipnotlar kısmından Dipnot Ekle’ye
+basınız.
+
+Giriş kısmından Yazı Tipi’ne geliniz ve 1. GİRİŞ bölümünde anlatıldığı şekilde metni düzenleyiniz.
+Sayfa altında beliren dipnot için 10 punto, tek satır aralığı ve iki yana yaslı yazı biçimini ayarlayınız.
+Bunun için önce uygulanacak metnin seçilmesi gerekmektedir. Ardından Giriş kısmından Paragraf’a
+geliniz ve kırmızı ile işaretlenen simgeye basınız.
+
+3
+
+2.1. Bölümün İkinci Dereceden Başlığı
+
+Her üçüncü dereceden alt başlık için kırmızı ile işaretlenen ÜÇÜNCÜ BAŞLIK’a basınız. Bölümün
+
+……………………………………………………………………………………………………………
+
+üçüncü dereceden alt başlıkları otomatik tanımlanacaktır. Tezde yazılacak her üçüncü dereceden alt
+
+………………………………………………………………………………………………………2
+
+başlık, sırası ile numaralandırılacaktır. Bu sebeple tezinizin doğru bölüm alt başlık numaralarına sahip
+olduğunu kontrol ediniz.
+
+2.1.1. Bölümün Üçüncü Dereceden Başlığı
+
+Metin genelinde Times New Romen yazı karakteri ve 12 punto yazı boyutu kullanılmalıdır. Öncelikle
+
+……………………………………………………………………………………………………………
+
+yazılan kısmı seçiniz. Giriş kısmından Yazı Tipi’ne geliniz ve 1. GİRİŞ bölümünde anlatıldığı şekilde
+
+………………………………………………………………………………………………………
+
+metni düzenleyiniz.
+Metin genelinde 6 nk önce ve sonra ile 1,5 satır aralığı kullanılmalıdır. Bunun için öncelikle Giriş
+kısmından Paragraf’a geliniz ve 1. GİRİŞ bölümünde anlatıldığı şekilde metni düzenleyiniz.
+Metin içerisinde dipnot oluşturmak için Başvurular’a basınız ve Dipnotlar bölümünden Dipnot Ekle’ye
+
+Bölüm ikinci derece alt başlığı oluşturulurken sayfaya Bölümün İkinci Dereceden Başlığı’nın adı yazılır
+
+basınız.
+
+ve yazının tümü seçilir.
+
+Word çalışma dosyasında tez için gerekli olan başlık stilleri oluşturulmuştur. Bu başlıklara ulaşmak için
+Giriş kısmından Yazı Tipi’ne geliniz ve 1. GİRİŞ bölümünde anlatıldığı şekilde metni düzenleyiniz
+
+Giriş’e basın ve ardından Stiller kısmına bakınız.
+
+Sayfa altında beliren dipnot için 10 punto, tek satır aralığı ve iki yana yaslı yazı biçimini ayarlayınız.
+Detay için 2. Bölüm Başlığı bölümünde anlatıldığı şekilde metni düzenleyiniz.
+Şekil numarasını tanımlama ve nasıl şekiller listesine ekleneceği ŞEKİLLER LİSTESİ kısmında
+anlatılmıştır.
+
+Her ikinci dereceden alt başlık için kırmızı ile işaretlenen İKİNCİ BAŞLIK’a basınız. Bölümün ikinci
+dereceden alt başlıkları otomatik tanımlanacaktır. Tezde yazılacak her ikinci dereceden alt başlık, sırası
+ile numaralandırılacaktır.
+Üçüncü dereceden bölüm alt başlıkları yazılırken ikinci derece alt başlıklarının adımları kullanılır.
+Giriş’e basın ve ardından Stiller kısmına bakınız.
+
+2
+
+Sayfa altında verilecek dipnotlarda 10 punto kullanılmalıdır. Tek satır aralığı (0 nk) ve iki yana yaslı olarak yazılmalıdır.
+4
+
+2.1.1.1.
+
+Bölümün dördüncü dereceden başlığı
+
+Bölüm dördüncü derece alt başlığı oluşturulurken sayfaya Bölümün Dördüncü Derece Alt Başlığı’nın adı
+yazılır ve yazının tümü seçilir.
+
+……………………………………………………………………………………………………………
+………………………………………………………………………………………………………
+2.1.1.1.1. Bölümün beşinci dereceden başlığı
+
+Word çalışma dosyasında tez için gerekli olan başlık stilleri oluşturulmuştur. Bu başlıklara ulaşmak için
+
+……………………………………………………………………………………………………………
+
+Giriş’e basın ve ardından Stiller kısmına bakınız.
+
+………………………………………………………………………………………………………
+
+Her dördüncü derece alt başlık için kırmızı ile işaretlenen DÖRDÜNCÜ BAŞLIK’a basınız. Bölümün
+dördüncü derece alt başlıkları otomatik tanımlanacaktır. Tezde yazılacak her dördüncü dereceden alt
+başlık, sırası ile numaralandırılacaktır.
+Beşinci dereceden bölüm alt başlıkları yazılırken dördüncü derece alt başlıklarının adımları kullanılır.
+Giriş’e basın ve ardından Stiller kısmına bakınız.
+
+Her beşinci dereceden alt başlık için kırmızı ile işaretlenen BEŞİNCİ BAŞLIK’a basınız. Bölümün
+beşinci dereceden alt başlıkları otomatik tanımlanacaktır. Tezde yazılacak her beşinci dereceden alt
+başlık, sırası ile numaralandırılacaktır. Bu sebeple tezinizin doğru bölüm alt başlık numaralarına sahip
+olduğunu kontrol ediniz.
+Metin genelinde Times New Romen yazı karakteri ve 12 punto yazı boyutu kullanılmalıdır. Öncelikle
+yazılan kısmı seçiniz. Giriş kısmından Yazı Tipi’ne geliniz ve 1. GİRİŞ bölümünde anlatıldığı şekilde
+metni düzenleyiniz.
+Metin genelinde 6 nk önce ve sonra ile 1,5 satır aralığı kullanılmalıdır. Bunun için öncelikle Giriş
+kısmından Paragraf’a geliniz ve 1. GİRİŞ bölümünde anlatıldığı şekilde metni düzenleyiniz.
+
+5
+
+4. BÖLÜM BAŞLIĞI
+Her ana başlık tek numaralı sayfadan başlamalıdır.
+……………………………………………………………………………………………………………
+………………………………………………………………………………………………………
+
+Tablo adının düzenlenmesi için gerekli adımlar TABLOLARIN LİSTESİ bölümünde anlatılmıştır.
+Tabloların altında yer alan açıklama ve kaynak gösterimlerinde tek satır aralığı kullanılmaktadır. Bunun
+için önce yazılan kısım seçilir.
+
+Ardından Giriş kısmından Paragraf’a geliniz ve kırmızı ile işaretlenen simgeye basınız.
+3.1. Bölümün İkinci Dereceden Başlığı
+……………………………………………………………………………………………………………
+………………………………………………………………………………………………………
+
+Simgeye bastıktan sonra yeni pencere açılacaktır. Tek satır aralığı ve iki yana yaslı yazı biçimi yapmak
+için aşağıdaki adımları uygulayınız.
+
+3.1.1. Bölümün Üçüncü Dereceden Başlığı
+……………………………………………………………………………………………………………
+………………………………………………………………………………………………………
+3.1.1.1.
+
+Bölümün dördüncü dereceden başlığı
+
+……………………………………………………………………………………………………………
+………………………………………………………………………………………………………
+3.1.1.1.1. Bölümün beşinci dereceden başlığı
+……………………………………………………………………………………………………………
+………………………………………………………………………………………………………
+
+Tez genelinde kullanılacak bölüm başlıkları ve bölüm alt başlıkları için 2. Bölüm Başlığı kısmında
+anlatılan adımlarla uygulanır.
+Tablo 3.1, tezde kullanılan bir tablo olsun. Eğer tablo kullanımı devam ettirilmek isteniyorsa
+TABLOLARIN LİSTESİ bölümünde anlatıldığı adımlar tekrarlanır. Örneğin üçüncü bölüme ikinci bir
+tablo eklenmek isteniyorsa Başvurular kısmından Resim Yazıları’na gelinir ve Resim Yazısı Ekle’ye
+basılır. Ardından daha önce tanımlanan tablo etiketine basılır. Böylece her yeni tabloda daha önce
+oluşturulan etiketin sıralı numarası yer alacaktır.
+
+6
+
+5. BÖLÜM BAŞLIĞI
+
+Tez genelinde kullanılacak bölüm başlıkları ve bölüm alt başlıkları için 2. Bölüm Başlığı kısmında
+
+Her ana başlık tek numaralı sayfadan başlamalıdır.
+
+anlatılan adımlar uygulanır.
+
+……………………………………………………………………………………………………………
+
+Metin içerisinde dipnot oluşturmak için Başvurular’a basınız ve Dipnotlar bölümünden Dipnot Ekle’ye
+
+………………………………………………………………………………………………………3
+
+basınız.
+
+Giriş kısmından Yazı Tipi’ne geliniz ve 1. GİRİŞ bölümünde anlatıldığı şekilde metni düzenleyiniz
+Sayfa altında beliren dipnot için 10 punto, tek satır aralığı ve iki yana yaslı yazı biçimini ayarlayınız.
+Detay için 2. Bölüm Başlığı bölümünde anlatıldığı şekilde metni düzenleyiniz.
+
+3
+
+Sayfa altında verilecek dipnotlarda 10 punto kullanılmalıdır. Tek satır aralığı (0 nk) ve iki yana yaslı olarak yazılmalıdır.
+7
+
+6. SONUÇ
+
+Word çalışma dosyasında tez için gerekli olan başlık stilleri oluşturulmuştur. Sonuç bölümü
+oluşturulurken sayfaya SONUÇ yazılır ve yazının tümü seçilir.
+
+Her ana başlık tek numaralı sayfadan başlamalıdır.
+……………………………………………………………………………………………………………
+
+Sonuç başlığını oluşturmak için Giriş kısmından Stiller’e gelerek oluşturulmuş başlıklardan SONUÇ
+seçilir. Böylece başlık otomatik tanımlanmış olmaktadır.
+
+………………………………………………………………………………………………………
+
+Metin genelinde başlıkların düzenlenmesi karıştırıldığında biçim boyacısı kullanılabilir.
+
+8
+
+Kaynakça
+
+Word çalışma dosyasında tez için gerekli olan başlık stilleri oluşturulmuştur. Kaynaklar bölümü
+oluşturulurken sayfaya KAYNAKLAR yazılır ve yazının tümü seçilir.
+
+Her ana başlık tek numaralı sayfadan başlamalıdır.
+Tezde/projede kullanılan kaynaklar tek satır aralığında ve eğer ikinci satıra geçtiyse soldan 1 cm asılı
+olacak şekilde harf sırasına göre verilir. Paragraflar arasında (önce-sonra) "6 nk (inç)" boşluklar
+bırakılmalıdır. Kaynaklar iki yana yaslı olacak şekilde düzenlenir.
+
+KAYNAKLAR başlığını oluşturmak için Giriş kısmından Stiller’e gelerek oluşturulmuş başlıklardan
+KAYNAKLAR seçilir. Böylece başlık otomatik tanımlanmış olmaktadır.
+
+Temel Alanlar Atıf Usulleri
+Eğitim Bilimleri; Fen Bilimleri ve Matematik; Filoloji; Güzel Sanatlar; Mimarlık, Planlama ve Tasarım;
+Sağlık Bilimleri; Sosyal, Beşeri ve İdari Bilimler Temel Alanları: APA (7. sürüm veya daha
+sonraki sürümleri)
+Hukuk Temel Alanı: Chicago
+İlahiyat Temel Alanı: İSNAD atıf usulü.
+
+Kaynak metninin tamamını seçtikten sonra Giriş kısmından Paragraf’a geliniz ve kırmızı ile işaretlenen
+simgeye basınız.
+
+Simgeye bastıktan sonra yeni pencere açılacaktır. İki yana yaslı yazı biçimi, asılı ve tek satır aralığı
+yapmak için aşağıdaki adımları uygulayınız.
+
+9
+
+EKLER
+
+Word çalışma dosyasında tez için gerekli olan başlık stilleri oluşturulmuştur. Ekler bölümü
+oluşturulurken sayfaya EKLER yazılır ve yazının tümü seçilir.
+
+EK-1. ……………………
+Her ana başlık tek numaralı sayfadan başlamalıdır.
+
+EKLER başlığını oluşturmak için Giriş kısmından Stiller’e gelerek oluşturulmuş başlıklardan EKLER
+seçilir. Böylece başlık otomatik tanımlanmış olmaktadır.
+
+EKLER bölümünde alt ek örnekleri verilmek istendiğinde ise Giriş kısmından Stiller’e gelerek
+oluşturulmuş başlıklardan EK seçilir. Böylece başlık otomatik tanımlanmış olmaktadır. Öncelikle sayfaya
+EK-1 yazılır ve yazının tümü seçilir.
+
+Ardından stiller kısmından oluşturulmuş başlıklardan EK seçilir.
+
+Her bir alt ek başlığının İÇİNDEKİLER LİSTESİ’nde tanımlanması gerekmektedir. Word dosyasında
+oluşturulan başlık stilleri sayesinde İÇİNDEKİLER LİSTESİ güncellendiğinde başlıklar da otomatik
+eklenecektir. Ayrıca her alt ek başlığı eklendikçe aynı başlık stili kullanılmaktadır.
+
+10
+
+EK-2. ……………………
+
+EKLER bölümünde alt ek örnekleri verilmek istendiğinde ise Giriş kısmından Stiller’e gelerek
+oluşturulmuş başlıklardan EK seçilir. Böylece başlık otomatik tanımlanmış olmaktadır. Öncelikle sayfaya
+EK-2 yazılır ve yazının tümü seçilir.
+
+Ardından stiller kısmından oluşturulmuş başlıklardan EK seçilir.
+
+Her bir alt ek başlığının İÇİNDEKİLER LİSTESİ’nde tanımlanması gerekmektedir. Word dosyasında
+oluşturulan başlık stilleri sayesinde İÇİNDEKİLER LİSTESİ güncellendiğinde başlıklar da otomatik
+eklenecektir. Ayrıca her alt ek başlığı eklendikçe aynı başlık stili kullanılmaktadır.
+
+11
+
+ÖZGEMİŞ
+
+Word çalışma dosyasında tez için gerekli olan başlık stilleri oluşturulmuştur. Özgeçmiş bölümü
+oluşturulurken sayfaya ÖZGEÇMİŞ yazılır ve yazının tümü seçilir.
+
+Her ana başlık tek numaralı sayfadan başlamalıdır.
+Kişisel Bilgiler
+Soyad, ad
+ORCID
+Eğitim
+Derece
+İş deneyimi (varsa)
+Yıl
+
+:
+
+ÖZGEÇMİŞ başlığını oluşturmak için Giriş kısmından Stiller’e gelerek oluşturulmuş başlıklardan
+ÖZGEÇMİŞ seçilir. Böylece başlık otomatik tanımlanmış olmaktadır.
+
+:
+Eğitim Birimi
+
+Mezuniyet
+
+Yer
+
+Görev
+
+Yayınlar (varsa)
+Özgeçmiş sayfasında kılavuz ile çizilmiş tabloda istenilen bilgiler doldurulur. Kılavuz çizgisi word
+dosyasında yazım esnasında kolaylık sağlamaktadır. Tabloya ek satır eklenirse aşağıdaki gibi
+yapılmalıdır.
+
+12
+
+13
+
+

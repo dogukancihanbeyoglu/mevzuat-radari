@@ -1,0 +1,590 @@
+ALINTILAR
+Metin İçi Alıntılar
+
+- Dennis ve diğerleri (vd.) (2015)
+
+KULLANIM:
+
+Kısa Alıntılar (40 kelimeden az)
+
+- (Soyadı, Yıl)
+
+KULLANIM:
+
+(Soyadı, Yıl, s. …)
+
+- Alıntı tırnak içinde verilir, sonunda
+(Soyadı, Yıl, s. sayfa)
+
+- Soyadı (Yıl)
+
+GÖSTERİM:
+
+Soyadı (Yıl, s. …)
+
+- “Yeni örüntüler hızla değişir” (Çetin, 2021,
+s. 12).
+
+GÖSTERİM:
+- (Erkan, 2019)
+
+- “Patterns vary by context” (Foster, 2020, s.
+33).
+
+- Morrison (2021, s. 44)
+Parantez İçindeki Alıntılar
+KULLANIM:
+
+40 kelime veya daha fazla alıntılar (blok
+alıntı)
+
+- (Soyadı, Yıl)
+
+KULLANIM:
+
+Iki yayın gösterimi
+
+- Alıntı blok biçiminde, girintili; sonunda
+(Soyadı, Yıl, s. …)
+
+- (İlk Makale Yazar Soyadı, Yıl; Diğer
+Makale Yazar Soyadı, Yıl)
+
+GÖSTERİM:
+- Uzun alıntı metni burada blok olarak
+verilir... (Yalın, 2018, ss. 90–91).
+
+Iki yazarlı yayın
+- (İlk Yazar & İkinci Yazar, Yıl)
+
+- The extended quotation appears in block
+format ... (Miller, 2017, ss. 140–141).
+
+GÖSTERİM:
+- (Uçar, 2020)
+- (Barker & Cole, 2018)
+
+Uzun Alıntılar
+KULLANIM:
+
+Anlatı Alıntılar
+KULLANIM:
+
+- Blok alıntı; tüm paragraf girintili; (Soyadı,
+Yıl, s. …)
+
+- Soyadı (Yıl)
+
+GÖSTERİM:
+
+Iki yazarlı yayın
+
+- “...” (Erden, 2020, ss. 64–65).
+
+- İlk Yazar ve İkinci Yazar (Yıl)
+
+- “...” (Palmer, 2019, ss. 22–23).
+
+Ikiden fazla yazarlı yayın
+- İlk Yazar ve diğerleri (vd.) (Yıl)
+
+Araştırma Katılımcılarından Alıntılar
+
+GÖSTERİM:
+
+KULLANIM:
+
+- Aksoy (2022)
+
+- Katılımcı kodu/rumuzu ile tırnak içinde;
+kaynakça girişi yapılmaz
+
+- Walker and Reyes (2019)
+
+1
+
+GÖSTERİM:
+
+- (A. Işık, kişisel görüşme, 12 Mart 2023)
+
+- K8: “Süreç boyunca belirsizlik baskındı.”
+
+İkincil Kaynaklar
+
+Metinde Kişisel Görüşmecilere Atıfta
+Bulunulması
+
+KULLANIM:
+- (Birincil Yazar, Yıl, aktaran İkincil Yazar,
+Yıl)
+
+KULLANIM:
+- (Ad Baş Harfi. Soyadı, kişisel görüşme,
+Gün Ay Yıl)
+
+GÖSTERİM:
+- (Sezer, 2005, aktaran Korkmaz, 2019)
+
+GÖSTERİM:
+
+- (Turner, 1998, as cited in Wallace, 2021)
+
+2
+
+KAYNAKÇA YAZIMI
+Yazar (Author)
+
+Tüzel Yazarlı Çalışmalar
+
+KULLANIM:
+
+KULLANIM:
+
+- Yazar Soyadı, Adının İlk Harfi. (Yıl).
+Başlık. Kaynak.
+
+- Kurum Adı. (Yıl). Başlık. Yayıncı/Kurum.
+URL/DOI
+
+GÖSTERİM:
+
+GÖSTERİM:
+
+- Özkan, L. (2017). Kurmaca saha notları.
+Hayali Enstitü.
+
+- Ulusal Veri Merkezi. (2022). Veri erişim
+ilkeleri raporu. Ulusal Veri Merkezi.
+https://ornek.gov.tr/veri-ilkeleri
+
+- Taylor, P. (2016). Imaginary field notes.
+Fictional Institute.
+
+- Institute of Urban Models. (2021). Annual
+review
+of
+urban
+systems.
+IUM.
+https://example.org/urban-review
+
+3
+
+KAYNAKÇA GÖSTERİMİ
+- Tunç, R., Karadağ, İ., Aksu, P., Erdem, Y.,
+Aslan, D., Yılmaz, H., & Uğur, E. (2022).
+Kıyı kentlerinde gece ekonomisi. Kent ve
+Kültür
+Araştırmaları,
+9(1),
+1–24.
+https://doi.org/10.5555/kka.2022.001
+
+Süreli Yayınlar (Makale)
+KULLANIM:
+- Yazar Soyadı, Adının İlk Harfi., Yazar
+Soyadı, Adının İlk Harfi., ... & Yazar
+Soyadı, Adının İlk Harfi. (Yıl). Makale
+başlığı. Dergi Adı (italik), cilt(sayı), xx–xx.
+https://doi.org/xxxx
+
+- Martinez, L., O’Connor, J., & Reed, S.
+(2019). Patterns of urban nightscapes.
+Journal of City Life, 27(3), 233–259.
+https://doi.org/10.2468/jcl.2019.233
+
+GÖSTERİM:
+- Kaya, E., Yılmaz, T., Demir, S., Öztürk,
+L., Arslan, M., & Çetin, H. (2021). Dijital
+kültürün kent yaşamına etkileri. Hayali
+Toplum Araştırmaları Dergisi, 18(2), 55–78.
+https://doi.org/10.0000/htad.2021.45
+
+Kitaplar ve Referans Çalışmalar
+KULLANIM:
+- Yazar Soyadı, Adının İlk Harfi. (Yıl).
+Kitap adı: Alt başlık varsa (italik). Yayınevi.
+https://doi.org/xxxx
+
+- Johnson, R., Patel, S., Huang, L., & Smith,
+A. (2020). Imaginary approaches to social
+transformation. Fictional Journal of Modern
+Studies,
+34(1),
+101–125.
+https://doi.org/10.1234/fjms.2020.77
+
+GÖSTERİM:
+- Karaca, T. (2020). Sessiz mimariler:
+Boşluk ve yapı arasındaki diyalog. Ufuk
+Kitabevi.
+
+Gazete Makaleleri
+
+- Henderson, P. (2022). Imaginary
+architectures: Dialogues of space and form.
+Meridian Press.
+
+KULLANIM:
+- Yazar Soyadı, Adının İlk Harfi. (Yıl, Gün
+Ay). Makale başlığı. Gazete Adı (italik).
+URL
+
+Editörlü Kitap Bölümleri
+
+GÖSTERİM:
+
+KULLANIM:
+
+- Erdoğan, F. (2022, 5 Mayıs). Yeni ulaşım
+hatları kenti dönüştürüyor. Günlük Ufuk
+Gazetesi.
+https://gunlukufuk.com/yeniulasim
+
+- Bölüm Yazarı Soyadı, A. A. (Yıl). Bölüm
+başlığı. In Editör A. A. (Ed.), Kitap adı
+(italik)
+(ss.
+xx–xx).
+Yayınevi.
+https://doi.org/xxxx
+
+- Brown, D. (2021, March 15). City unveils
+riverfront renewal plan. Metropolitan
+Herald. https://metherald.com/riverfront
+
+GÖSTERİM:
+- Sevim, B. (2018). Eşikler ve geçiş
+mekânları. In T. Güler (Ed.), Kentsel
+okumalar: Kurgu ve gerçek (ss. 77–95). Ada
+Yayıncılık.
+
+Dergi Makaleleri
+
+- Hart, K. (2021). Thresholds in
+contemporary design. In J. Milton (Ed.),
+Imagined cities and interiors (s. 145–168).
+Northbridge Press.
+
+KULLANIM:
+- Yazar Soyadı, Adının İlk Harfi., ... (Yıl).
+Makale başlığı. Dergi Adı (italik), cilt(sayı),
+xx–xx. https://doi.org/xxxx
+GÖSTERİM:
+4
+
+Yayımlanmamış ve Gayri Resmi Basılmış
+Eserler
+
+Raporlar ve Gri Edebiyat
+KULLANIM:
+
+KULLANIM:
+
+- Yazar/Kurum. (Yıl). Rapor başlığı (Rapor
+No. xxx). Yayıncı. URL
+
+- Yazar Soyadı, A. A. (Yıl). Başlık
+[Yayımlanmamış el yazması]. Kurum.
+
+GÖSTERİM:
+
+GÖSTERİM:
+
+- Kentsel Gözlem Merkezi. (2020). Mahalle
+esnekliği değerlendirme raporu (Rapor No.
+20-014). KGM. https://kgm.org/rapor20-014
+
+- Korkmaz, D. (2018). Kent hikâyeleri
+[Yayımlanmamış el yazması]. Bağımsız
+Çalışma Grubu.
+
+- Center for Applied Futures. (2019). Annual
+outlook on civic resilience (Report No.
+CAF-19-07). CAF. https://caf.org/outlook2019
+
+Veri Kümesi Referansları
+KULLANIM:
+- Yazar/Kurum. (Yıl). Veri kümesi adı
+(Sürüm) (italik) [Veri kümesi]. Yayıncı.
+https://doi.org/xxxx
+
+Konferans Sunumları ve Bildiriler
+KULLANIM:
+- Yazar, A. A. (Yıl, Ay). Sunum/Bildiri
+başlığı. Konferans adı, Yer. URL / Yayın
+bilgisi
+
+GÖSTERİM:
+- Açık Veri Ağı. (2022). Kentsel
+erişilebilirlik haritaları (v2.1) [Veri
+kümesi].
+AVA.
+https://doi.org/10.9999/ava.2022.21
+
+GÖSTERİM:
+- Uz, M., & Bilge, S. (2021, Eylül). Kıyı
+kentlerinde gece ekonomisinin mekânsal
+etkileri. 5. Kentsel Araştırmalar Kongresi,
+İzmir. https://kak.org.tr/program
+
+Araç Kutusu Referansları
+KULLANIM:
+
+- Gibson, R. (2020, July). Reframing
+waterfront commons. 12th Symposium on
+Urban
+Studies,
+Dublin.
+https://sus2020.org/schedule
+
+- Geliştirici/Kurum. (Yıl). Yazılım adı
+(Sürüm) [Bilgisayar yazılımı]. Yayıncı.
+URL
+GÖSTERİM:
+- ModelLab. (2023). UrbanSimX (v1.4)
+(italik) [Bilgisayar yazılımı]. ModelLab.
+https://modellab.dev/urbansimx
+
+Tezler
+KULLANIM:
+- Yazar Soyadı, A. A. (Yıl). Tez başlığı
+(Yayımlanmış/Yayımlanmamış
+yüksek
+lisans/doktora tezi). Üniversite, Yer.
+
+Yapıt Referansları (resim, sanat eseri)
+
+GÖSTERİM:
+
+KULLANIM:
+
+- Taş, E., Erden, K., Uçar, B., Yalçın, R., &
+Akar, S. (2019). Kurgusal tasarım ilkeleri
+(Yayımlanmış doktora tezi). Uydurma
+Üniversitesi, Ankara.
+
+- Sanatçı Soyadı, A. A. (Yıl). Yapıt adı
+(italik) [Format]. Müze/Galeri, Yer. URL
+GÖSTERİM:
+- Saraç, N. (2015). Sessiz Meydan [Tuval
+üzerine yağlı boya]. Kent Müzesi, Bursa.
+
+- Morrison, A. (2021). Imagined spatial
+narratives (Unpublished master’s thesis).
+Fictional University, Glasgow.
+
+- Holland, E. (2012). Silent Square [Oil on
+canvas]. East Gallery, Leeds.
+5
+
+- Yerlikaya, H. (2021). Kentsel Tasarımın
+Temelleri [Çevrimiçi ders]. AçıkKampus.
+https://acikkampus.org/kentsel-tasarim
+
+Küçük Resim / Stok Görsel Referansları
+KULLANIM:
+- Üretici. (Yıl). Görsel adı (italik) [Stok
+fotoğraf]. Platform. URL
+
+Podcast Referansları
+
+GÖSTERİM:
+
+KULLANIM:
+
+- K. Deniz. (2020). Kıyı kentinde gece [Stok
+fotoğraf].
+StokGörsel.
+https://stokgorsel.com/kiyi-gece
+
+- Sunucu, A. A. (Sunucu). (Yıl, Gün Ay).
+Bölüm başlığı (No. x) [Sesli podcast
+bölümü]. Podcast adı (italik). Yapımcı. URL
+GÖSTERİM:
+
+Film ve Televizyon Referansları
+
+- K. Demirtaş (Sunucu). (2022, 14 Şubat).
+Gece ekonomisi ve kent (No. 42) [Sesli
+podcast bölümü]. KentNotları. Kuzey
+Prodüksiyon. https://kentnotlari.fm/42
+
+KULLANIM:
+- Yapımcı, A. A. (Yapımcı) & Yönetmen, B.
+B. (Yönetmen). (Yıl). Yapım adı (italik)
+[Film/TV dizisi bölümü]. Yapım şirketi.
+GÖSTERİM:
+
+PowerPoint Slaytları / Ders Notları
+
+- Ersoy, L. (Yapımcı) & Güven, R.
+(Yönetmen). (2016). Kıyıdaki Yol [Film].
+Yedinci Perde Film.
+
+KULLANIM:
+- Yazar, A. A. (Yıl). Başlık (italik)
+[PowerPoint
+slaytları/Ders
+notları].
+Platform/Üniversite. URL
+
+- Gray, T. (Producer) & Lin, P. (Director).
+(2018). Crossing the Pier [Film]. Blue
+Harbour Pictures.
+
+GÖSTERİM:
+- Yüce, R. (2020). Mekân kuramlarına giriş
+[PowerPoint slaytları]. KU Mimarlık.
+https://ku.edu.tr/mekan-kuram
+
+Müzik Referansları
+KULLANIM:
+
+GÖSTERİM:
+
+- Blake, S. (2019). Introduction to spatial
+theory [PowerPoint slides]. Northbridge
+University. https://northbridge.edu/spatialtheory
+
+- Uzay, D. (2019). Gece Valsi [Şarkı]. Sessiz
+Adımlar. Kuzey Müzik.
+
+Radyo Yayını Referansları
+
+- Besteci, A. A. (Yıl). Parça adı [Şarkı].
+Albüm adı (italik). Plak Şirketi. URL
+
+- Rowan, K. (2020). Night Waltz [Song].
+Quiet Steps. North Music.
+
+KULLANIM:
+
+Çevrimiçi Kurs / MOOC Referansları
+
+- Yapımcı, A. A. (Yıl, Gün Ay). Program
+bölümü (italik) [Radyo yayını]. Radyo Adı.
+URL
+
+KULLANIM:
+
+GÖSTERİM:
+
+- Eğitmen, A. A. (Yıl). Kurs adı (italik)
+[Çevrimiçi ders]. Platform. URL
+
+- E. Korkut. (2018, 3 Nisan). Gece ve şehir
+[Radyo
+yayını].
+Radyo
+Panorama.
+https://panorama.fm/gece-sehir
+
+GÖSTERİM:
+
+6
+
+- Kıyı Tasarım İnisiyatifi. (2021, 4 Haziran).
+Kıyıdaki
+kamusal
+alanlar.
+KTI.
+https://kti.org/kamusal-alanlar
+
+TED Talk Referansları
+KULLANIM:
+- Konuşmacı, A. A. (Yıl, Ay). Konuşma
+başlığı (italik) [Video]. TED Konferansları.
+URL
+
+- Civic Futures Lab. (2020, November 12).
+Nighttime
+city
+commons.
+CFL.
+https://cfl.org/nighttime-commons
+
+GÖSTERİM:
+- S. İmren. (2021, Ekim). Geleceğin ortak
+alanları [Video]. TED Konferansları.
+https://ted.com/gelecek-ortak-alanlar
+
+Blog Yazıları ve Yorumları
+KULLANIM:
+- Yazar, A. A. (Yıl, Ay Gün). Yazı başlığı.
+Blog Adı. URL
+
+YouTube Video Referansları
+
+GÖSTERİM:
+
+KULLANIM:
+
+- N. Ersoy. (2019, Mart 7). Kıyıdaki banklar
+neden
+boş?
+Şehir
+Defterleri.
+https://sehirdefterleri.blog/banklar
+
+- Kanal Adı. (Yıl, Gün Ay). Video başlığı
+(italik) [Video]. YouTube. URL
+GÖSTERİM:
+- ŞehirGözlem. (2020, 12 Ağustos). Kıyıdaki
+yürüyüş
+yolları
+[Video].
+YouTube.
+https://youtube.com/watch?v=abc123
+
+Wikipedia Maddeleri
+KULLANIM:
+- Madde başlığı. (Yıl, Ay Gün). In
+Wikipedia. URL
+
+Sosyal Medya
+
+GÖSTERİM:
+
+KULLANIM:
+
+- Kıyı Parkı. (2022, Ocak 10). In Wikipedia.
+https://tr.wikipedia.org/wiki/Kıyı_Parkı
+
+- Yazar Adı [@kullanıcıadı]. (Yıl, Gün Ay).
+İçerik metni [Gönderi türü]. Platform. URL
+GÖSTERİM:
+
+Çevrimiçi Sözlük Maddeleri
+
+- Selin Kara [@selinkara]. (2023, 10 Ocak).
+Yeni kıyı parkı gece ışıklandırması
+tamamlandı.
+[Tweet].
+X.
+https://x.com/selinkara/status/1
+
+KULLANIM:
+- Kurum. (Yıl). Madde başlığı. Sözlük Adı.
+URL
+
+- Urban Notes [@urbannotes]. (2022, May
+5). Waterfront renewal brings new public
+spaces.
+[Tweet].
+X.
+https://x.com/urbannotes/status/2
+
+GÖSTERİM:
+- Türk Dil Kurumu. (2020). Kıyı. Güncel
+Türkçe Sözlük. https://sozluk.gov.tr/kiyi
+
+Web Sayfaları ve Web Siteleri
+KULLANIM:
+- Yazar/Kurum. (Yıl, Ay Gün). Sayfa başlığı
+(italik). Site Adı. URL
+GÖSTERİM:
+
+7
+
+

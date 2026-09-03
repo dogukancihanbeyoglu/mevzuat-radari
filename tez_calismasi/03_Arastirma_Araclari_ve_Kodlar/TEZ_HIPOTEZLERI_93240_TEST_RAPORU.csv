@@ -1,0 +1,5 @@
+Hipotez,Kuramsal Temel,Tahmin Edilen Katsayı,Standart Hata,p-değeri,Ampirik Karar
+H1: Savunma Bilgi Üretim Esnekliği,Griliches (1979/1990),1.5566***,(0.1204),3.01e-38,KABUL EDİLDİ ✅
+H2: Sivil Sanayi Pozitif Yayılma (Spillover),"Moretti, Steinwender, Van Reenen (2023)",0.8387**,(0.3523),0.0173,KABUL EDİLDİ ✅
+H3: Jaffe Teknolojik Mesafe Çarpanı & Eşik,Jaffe (1986/1993); Bloom vd. (2013),4.1579***,(1.2130),0.0006,KABUL EDİLDİ ✅ (Eşik: 0.2925)
+H4: 2016 Yerlilik Hamlesi Seviye Sıçraması,Chow Yapısal Kırılma / Politika Şoku,+0.5264,(0.3662),0.1505,KISMİ DESTEK (Ar-Ge İçi Emilim) ⚠️

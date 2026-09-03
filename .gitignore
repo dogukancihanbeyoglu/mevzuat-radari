@@ -37,3 +37,10 @@ local-audit-ai/storage/generated_reports/*.csv
 local-audit-ai/storage/audit_trails/*.json
 local-audit-ai/temp/
 local-audit-ai/.pytest_cache/
+
+# Personal Contacts and Temporary Exports
+Rehber_*
+*contacts*
+silinecekler*
+Telefonsuz_*
+
