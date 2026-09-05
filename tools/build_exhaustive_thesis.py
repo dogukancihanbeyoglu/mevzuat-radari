@@ -1,4 +1,45 @@
-# T.C.
+#!/usr/bin/env python3
+"""
+EXHAUSTIVE AHBV MASTER THESIS COMPILER (2025/2026 GUIDELINES)
+Builds the full-length academic thesis manuscript:
+- All 5 Chapters fully expanded with theoretical depth, equations, and tables
+- Front and back matters strictly formatted per AHBV rules
+- Produces both .md and .docx files
+"""
+
+import os
+import re
+import docx
+from docx.shared import Pt, Inches, RGBColor
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.oxml import parse_xml
+from docx.oxml.ns import nsdecls
+
+MD_OUT_PATH = "/Users/dogukancihanbeyoglu/Desktop/AHBV_Iktisat_Tez_Calismasi/01_Tez_Oneri_Formu/AHBV_IKTISAT_TEZI_TAM_METIN.md"
+DOCX_OUT_PATH = "/Users/dogukancihanbeyoglu/Desktop/AHBV_Iktisat_Tez_Calismasi/01_Tez_Oneri_Formu/AHBV_IKTISAT_TEZI_TAM_METIN.docx"
+GIT_MD_PATH = "/Users/dogukancihanbeyoglu/Gemini/tez_calismasi/01_Tez_Oneri_Formu/AHBV_IKTISAT_TEZI_TAM_METIN.md"
+GIT_DOCX_PATH = "/Users/dogukancihanbeyoglu/Gemini/tez_calismasi/01_Tez_Oneri_Formu/AHBV_IKTISAT_TEZI_TAM_METIN.docx"
+
+def set_cell_background(cell, fill_color):
+    tcPr = cell._element.get_or_add_tcPr()
+    shd = parse_xml(f'<w:shd {nsdecls("w")} w:fill="{fill_color}"/>')
+    tcPr.append(shd)
+
+def clean_xml(text):
+    if not text:
+        return ""
+    return "".join(c for c in text if c in ("\t", "\n", "\r") or (0x20 <= ord(c) <= 0xD7FF) or (0xE000 <= ord(c) <= 0xFFFD) or (0x10000 <= ord(c) <= 0x10FFFF))
+
+def get_manuscript_markdown():
+    ch4_path = "/Users/dogukancihanbeyoglu/Desktop/AHBV_Iktisat_Tez_Calismasi/01_Tez_Oneri_Formu/BOLUM_4_AMPIRIK_BULGULAR_VE_TARTISMA.md"
+    ch4_content = ""
+    if os.path.exists(ch4_path):
+        with open(ch4_path, "r", encoding="utf-8") as f:
+            ch4_content = f.read()
+            ch4_content = re.sub(r"^# .*\n## .*\n### .*\n", "", ch4_content).strip()
+
+    md = """# T.C.
 # ANKARA HACI BAYRAM VELİ ÜNİVERSİTESİ
 ## LİSANSÜSTÜ EĞİTİM ENSTİTÜSÜ
 ### İKTİSAT ANABİLİM DALI — İKTİSAT TEZLİ YÜKSEK LİSANS PROGRAMI
@@ -59,9 +100,9 @@ Yüksek Lisans Tezi, İktisat Anabilim Dalı
 Tez Danışmanı: [Unvanı, Adı SOYADI]  
 Ocak 2027, 168 Sayfa  
 
-Bu tez çalışması; Türkiye'de 2010–2024 döneminde kamu kaynakları ve Savunma Sanayii Başkanlığı (SSB) sözleşmeleriyle ivmelenen savunma sanayii Ar-Ge harcamalarının, sivil ileri teknoloji imalat sektörlerindeki (bilişim/yazılım, haberleşme, otonom otomotiv, elektronik ve malzeme teknolojileri) patent üretimi ve kalitesi üzerindeki bilgi yayılması (*knowledge spillover*), çift kullanımlı (*dual-use*) teknoloji difüzyonu ve mekânsal kümelenme dinamiklerini mikro-ekonometrik modellerle incelemektedir. Araştırmada; Türk Patent ve Marka Kurumu'nun (TÜRKPATENT) 15 yıllık resmî patent sicilinden derlenen **93.240 adet tekil tescil kaydı**, SASAD savunma bilançoları ve Borsa İstanbul'da (BIST 100) işlem gören 30 büyük sanayi devinin ($N 	imes T = 450$ boyuna panel gözlemi) denetlenmiş reel net satışları birleştirilmiştir. 
+Bu tez çalışması; Türkiye'de 2010–2024 döneminde kamu kaynakları ve Savunma Sanayii Başkanlığı (SSB) sözleşmeleriyle ivmelenen savunma sanayii Ar-Ge harcamalarının, sivil ileri teknoloji imalat sektörlerindeki (bilişim/yazılım, haberleşme, otonom otomotiv, elektronik ve malzeme teknolojileri) patent üretimi ve kalitesi üzerindeki bilgi yayılması (*knowledge spillover*), çift kullanımlı (*dual-use*) teknoloji difüzyonu ve mekânsal kümelenme dinamiklerini mikro-ekonometrik modellerle incelemektedir. Araştırmada; Türk Patent ve Marka Kurumu'nun (TÜRKPATENT) 15 yıllık resmî patent sicilinden derlenen **93.240 adet tekil tescil kaydı**, SASAD savunma bilançoları ve Borsa İstanbul'da (BIST 100) işlem gören 30 büyük sanayi devinin ($N \times T = 450$ boyuna panel gözlemi) denetlenmiş reel net satışları birleştirilmiştir. 
 
-Ekonometrik analizler beş aşamalı bir kanıt piramidiyle yürütülmüştür: (1) Griliches Bilgi Üretim Fonksiyonu çerçevesinde, savunma Ar-Ge harcamalarının 2 yıl gecikmeyle tescilli savunma patentine dönüşüm esnekliği $eta = 1.5566^{***}$ ($p < 0.001$) olarak saptanmış; ölçeğe göre artan bilgi getirisi kanıtlanmıştır. (2) Çift Sabit Etkili (Two-Way FE) PPML modelinde savunma Ar-Ge şoklarının sivil patent üretimini pozitif tetiklediği ($eta = 0.9098^{***}$); Jaffe (1986, 1993) teknolojik yakınlık etkileşimiyle birlikte hesaplanan analitik başabaş eşiğinin $	au^* = 0.2925$ olduğu türetilmiştir. $	au > 0.2925$ üzerindeki sektörlerde (Bilişim, Telekomünikasyon, İleri Otomotiv) güçlü bir tamamlayıcılık (*crowding-in*) görülürken; eşiğin altındaki geleneksel tüketim sektörlerinde hafif bir mühendis dışlaması (*crowding-out*) gözlenmiştir. (3) Cragg (1971) İki Aşamalı Hurdle modelinde geniş kapsam (*extensive margin - Probit*) katsayısı anlamsız ($eta = 0.1049$), yoğun kapsam (*intensive margin - Truncated Count*) katsayısı ise devasa ($eta = 3.4322^{***}, p = 0.0013$) çıkmış; yayılmanın tescil kültürüne sahip aktif inovatif firmalarda hacim patlaması yarattığı ispatlanmıştır. (4) Spatial Durbin Modeli ile Ankara savunma çekirdeği ile Marmara sanayi aksı arasındaki ters mesafe etkileşimi $	heta = 23.8651^{***}$ ($p = 0.00148$) bulunarak coğrafi mesafe bozunumu kanıtlanmıştır. (5) 2020 Kanada WESCAM ve ABD CAATSA ambargolarının dışsal doğal deney kurgusuyla (DiD) yapılan analizinde, ambargoya maruz kalan optik/aviyonik sınıflarında yerli ikame tescil sıçramasının $+\%181.7$ ($eta_{	ext{DiD}} = 1.0358^{*}$) olduğu belirlenmiştir. Ayrıca 342 başmühendisin kariyer geçişleri haritalandırılarak örtük bilginin insan beyniyle transferi ($eta = +0.8941^{***}$) ve Cox Orantılı Tehlikeler analiziyle savunma akrabalığı olan patentlerin terk edilme riskinin $\%31.6$ daha düşük olduğu belgelenmiştir. Bulgular, savunma sanayii Ar-Ge bütçelerinin salt askeri değil, sivil sanayi için yüksek katma değerli bir ulusal teknoloji motoru olduğunu ortaya koymaktadır.
+Ekonometrik analizler beş aşamalı bir kanıt piramidiyle yürütülmüştür: (1) Griliches Bilgi Üretim Fonksiyonu çerçevesinde, savunma Ar-Ge harcamalarının 2 yıl gecikmeyle tescilli savunma patentine dönüşüm esnekliği $\beta = 1.5566^{***}$ ($p < 0.001$) olarak saptanmış; ölçeğe göre artan bilgi getirisi kanıtlanmıştır. (2) Çift Sabit Etkili (Two-Way FE) PPML modelinde savunma Ar-Ge şoklarının sivil patent üretimini pozitif tetiklediği ($\beta = 0.9098^{***}$); Jaffe (1986, 1993) teknolojik yakınlık etkileşimiyle birlikte hesaplanan analitik başabaş eşiğinin $\tau^* = 0.2925$ olduğu türetilmiştir. $\tau > 0.2925$ üzerindeki sektörlerde (Bilişim, Telekomünikasyon, İleri Otomotiv) güçlü bir tamamlayıcılık (*crowding-in*) görülürken; eşiğin altındaki geleneksel tüketim sektörlerinde hafif bir mühendis dışlaması (*crowding-out*) gözlenmiştir. (3) Cragg (1971) İki Aşamalı Hurdle modelinde geniş kapsam (*extensive margin - Probit*) katsayısı anlamsız ($\beta = 0.1049$), yoğun kapsam (*intensive margin - Truncated Count*) katsayısı ise devasa ($\beta = 3.4322^{***}, p = 0.0013$) çıkmış; yayılmanın tescil kültürüne sahip aktif inovatif firmalarda hacim patlaması yarattığı ispatlanmıştır. (4) Spatial Durbin Modeli ile Ankara savunma çekirdeği ile Marmara sanayi aksı arasındaki ters mesafe etkileşimi $\theta = 23.8651^{***}$ ($p = 0.00148$) bulunarak coğrafi mesafe bozunumu kanıtlanmıştır. (5) 2020 Kanada WESCAM ve ABD CAATSA ambargolarının dışsal doğal deney kurgusuyla (DiD) yapılan analizinde, ambargoya maruz kalan optik/aviyonik sınıflarında yerli ikame tescil sıçramasının $+\%181.7$ ($\beta_{\text{DiD}} = 1.0358^{*}$) olduğu belirlenmiştir. Ayrıca 342 başmühendisin kariyer geçişleri haritalandırılarak örtük bilginin insan beyniyle transferi ($\beta = +0.8941^{***}$) ve Cox Orantılı Tehlikeler analiziyle savunma akrabalığı olan patentlerin terk edilme riskinin $\%31.6$ daha düşük olduğu belgelenmiştir. Bulgular, savunma sanayii Ar-Ge bütçelerinin salt askeri değil, sivil sanayi için yüksek katma değerli bir ulusal teknoloji motoru olduğunu ortaya koymaktadır.
 
 **Anahtar Kelimeler:** Savunma Sanayii Ar-Ge Harcamaları, Bilgi Yayılması (Knowledge Spillover), TÜRKPATENT, Jaffe Teknolojik Yakınlığı, Hurdle Modeli, Spatial Durbin Modeli, Doğal Deney (DiD), Çift Kullanımlı Teknoloji.
 
@@ -75,9 +116,9 @@ Master's Thesis, Department of Economics
 Supervisor: [Title, Name SURNAME]  
 January 2027, 168 Pages  
 
-This thesis investigates the knowledge spillover, dual-use technology diffusion, and spatial clustering dynamics of defense R&D expenditures on civilian innovation quality and patenting output across Turkish advanced manufacturing industries (ICT, telecommunications, autonomous automotive, electronics, and materials technology) over the 2010–2024 period. The empirical framework utilizes a comprehensive dataset consisting of **93,240 individual patent and utility model publications** officially retrieved from the Turkish Patent and Trademark Office (TÜRKPATENT), matched with 15-year audited financial defense balance sheets from SASAD and Borsa Istanbul (BIST 100) audited net sales across 30 industrial leaders ($N 	imes T = 450$ longitudinal panel observations).
+This thesis investigates the knowledge spillover, dual-use technology diffusion, and spatial clustering dynamics of defense R&D expenditures on civilian innovation quality and patenting output across Turkish advanced manufacturing industries (ICT, telecommunications, autonomous automotive, electronics, and materials technology) over the 2010–2024 period. The empirical framework utilizes a comprehensive dataset consisting of **93,240 individual patent and utility model publications** officially retrieved from the Turkish Patent and Trademark Office (TÜRKPATENT), matched with 15-year audited financial defense balance sheets from SASAD and Borsa Istanbul (BIST 100) audited net sales across 30 industrial leaders ($N \times T = 450$ longitudinal panel observations).
 
-The empirical strategy is executed via a rigorous five-pillar econometric evidence pyramid: (1) Within the Griliches (1979) Knowledge Production Function, defense R&D elasticity with a 2-year lag is estimated at $eta = 1.5566^{***}$ ($p < 0.001$), confirming increasing returns to scale in defense knowledge creation. (2) In a Two-Way Fixed Effects PPML model, defense spillovers significantly stimulate civilian patenting ($eta = 0.9098^{***}$); analytical derivation of the Jaffe (1986, 1993) technological proximity interaction establishes a critical breakeven threshold of $	au^* = 0.2925$. Sectors above this absorptive capacity threshold (Software, Telecom, Automotive) experience substantial crowding-in, whereas sectors below exhibit slight human capital crowding-out. (3) A two-part Cragg (1971) Hurdle model demonstrates an insignificant extensive margin (entry decision: $eta = 0.1049, p > 0.10$) alongside a massive, highly significant intensive margin (patenting depth: $eta = 3.4322^{***}, p = 0.0013$), establishing that spillovers intensely scale patenting volume within actively innovative firms rather than inducing non-innovative firms to enter. (4) A Spatial Durbin Model confirms significant geographic distance decay from the Ankara defense hub to the Marmara industrial corridor ($	heta = 23.8651^{***}, p = 0.00148$). (5) Exploiting the 2020 Canadian WESCAM and US CAATSA embargoes as an exogenous quasi-natural experiment (Difference-in-Differences), targeted electro-optical/avionics IPC classes exhibit a $+181.7\%$ domestic substitution surge ($eta_{	ext{DiD}} = 1.0358^{*}, p = 0.048$). Tracking 342 dual-patenting chief engineers establishes that tacit knowledge transfers through labor mobility ($eta = +0.8941^{***}$), while Cox Proportional Hazards modeling proves a $31.6\%$ lower lapse risk ($	ext{HR} = 0.684^{***}$) for defense-related civilian patents. The results establish defense R&D as a premier technological driver for civilian industrial upgrading.
+The empirical strategy is executed via a rigorous five-pillar econometric evidence pyramid: (1) Within the Griliches (1979) Knowledge Production Function, defense R&D elasticity with a 2-year lag is estimated at $\beta = 1.5566^{***}$ ($p < 0.001$), confirming increasing returns to scale in defense knowledge creation. (2) In a Two-Way Fixed Effects PPML model, defense spillovers significantly stimulate civilian patenting ($\beta = 0.9098^{***}$); analytical derivation of the Jaffe (1986, 1993) technological proximity interaction establishes a critical breakeven threshold of $\tau^* = 0.2925$. Sectors above this absorptive capacity threshold (Software, Telecom, Automotive) experience substantial crowding-in, whereas sectors below exhibit slight human capital crowding-out. (3) A two-part Cragg (1971) Hurdle model demonstrates an insignificant extensive margin (entry decision: $\beta = 0.1049, p > 0.10$) alongside a massive, highly significant intensive margin (patenting depth: $\beta = 3.4322^{***}, p = 0.0013$), establishing that spillovers intensely scale patenting volume within actively innovative firms rather than inducing non-innovative firms to enter. (4) A Spatial Durbin Model confirms significant geographic distance decay from the Ankara defense hub to the Marmara industrial corridor ($\theta = 23.8651^{***}, p = 0.00148$). (5) Exploiting the 2020 Canadian WESCAM and US CAATSA embargoes as an exogenous quasi-natural experiment (Difference-in-Differences), targeted electro-optical/avionics IPC classes exhibit a $+181.7\%$ domestic substitution surge ($\beta_{\text{DiD}} = 1.0358^{*}, p = 0.048$). Tracking 342 dual-patenting chief engineers establishes that tacit knowledge transfers through labor mobility ($\beta = +0.8941^{***}$), while Cox Proportional Hazards modeling proves a $31.6\%$ lower lapse risk ($\text{HR} = 0.684^{***}$) for defense-related civilian patents. The results establish defense R&D as a premier technological driver for civilian industrial upgrading.
 
 **Keywords:** Defense R&D Expenditures, Knowledge Spillovers, TÜRKPATENT, Jaffe Proximity, Hurdle Model, Spatial Durbin Model, Natural Experiment, Difference-in-Differences, Dual-Use Technology.
 
@@ -176,7 +217,7 @@ The empirical strategy is executed via a rigorous five-pillar econometric eviden
 *   **Tablo 4.6:** 2020 WESCAM/CAATSA Ambargoları Farkların Farkı (DiD) Regresyon Çıktıları
 *   **Tablo 4.7:** Buluşçu Hareketliliği ve Kariyer Geçişleri Panel Regresyon Sonuçları
 *   **Tablo 4.8:** Patent Sağkalım ve Yenileme Riski Cox Orantılı Tehlikeler Modeli Çıktıları
-*   **Tablo 4.9:** Dinamik Dağıtılmış Gecikme Modelleri ($t-1 \dots t-5$) Karşılaştırması
+*   **Tablo 4.9:** Dinamik Dağıtılmış Gecikme Modelleri ($t-1 \\dots t-5$) Karşılaştırması
 *   **Tablo 4.10:** Sektörel Alt Küme Regresyonları (Bilişim vs Otomotiv vs Beyaz Eşya)
 
 ---
@@ -222,11 +263,11 @@ Bu araştırmanın temel amacı; Türkiye'de 2010–2024 döneminde gerçekleşt
 Tez kapsamında sınanan 6 temel araştırma sorusu ve karşılık gelen formal hipotezler şunlardır:
 
 *   **Soru 1:** Savunma sektörünün Ar-Ge harcamaları, tescilli savunma patentine ne ölçüde ve kaç yıllık bir gecikmeyle dönüşmektedir?  
-    *   **Hipotez 1 ($H_1$):** Savunma sektörü Ar-Ge harcamaları, en az 2 yıllık dinamik bir gecikmeyle tescilli patent sayısını anlamlı biçimde artırmakta ve sektörde ölçeğe göre artan bilgi getirisi ($eta > 1$) bulunmaktadır.
+    *   **Hipotez 1 ($H_1$):** Savunma sektörü Ar-Ge harcamaları, en az 2 yıllık dinamik bir gecikmeyle tescilli patent sayısını anlamlı biçimde artırmakta ve sektörde ölçeğe göre artan bilgi getirisi ($\beta > 1$) bulunmaktadır.
 *   **Soru 2:** Savunma Ar-Ge şokları, sivil imalat sanayiindeki firmaların patent üretimini uyararak tamamlayıcılık (*crowding-in*) mı yaratmakta, yoksa kaynak dışlaması (*crowding-out*) mı işletmektedir?  
     *   **Hipotez 2 ($H_2$):** Savunma sanayii Ar-Ge genişlemesi, sivil ileri teknoloji firmalarının patent üretim hacmi ve kalite endeksi üzerinde istatistiki olarak anlamlı ve pozitif bir yayılma esnekliği yaratmaktadır.
 *   **Soru 3:** Savunma teknolojisi ile sivil sektörlerin IPC sınıfları arasındaki Jaffe teknolojik yakınlığı bu yayılmayı nasıl düzenlemektedir?  
-    *   **Hipotez 3 ($H_3$):** Savunma Ar-Ge'sinin sivil sanayiye etkisi Jaffe yakınlığına bağlı doğrusal bir türevdir. Teknolojik yakınlığı analitik eşiğin ($	au^* = 0.2925$) üzerinde olan sektörlerde tamamlayıcılık, altında olan geleneksel sektörlerde dışlama görülmektedir.
+    *   **Hipotez 3 ($H_3$):** Savunma Ar-Ge'sinin sivil sanayiye etkisi Jaffe yakınlığına bağlı doğrusal bir türevdir. Teknolojik yakınlığı analitik eşiğin ($\tau^* = 0.2925$) üzerinde olan sektörlerde tamamlayıcılık, altında olan geleneksel sektörlerde dışlama görülmektedir.
 *   **Soru 4:** Savunma yayılma etkisi, firmaların patentleme kararına mı (*extensive margin*) yoksa tescil hacim derinleşmesine mi (*intensive margin*) etki etmektedir?  
     *   **Hipotez 4 ($H_4$):** Savunma Ar-Ge yayılması geniş kapsamda (sıfır patentli firmaları pazara sokmada) anlamsız kalmakta; ancak yoğun kapsamda (hali hazırda patent üreten yenilikçi firmalarda) hacmi katlamaktadır.
 *   **Soru 5:** Ankara savunma çekirdeği ile Marmara sanayi aksı arasında coğrafi bir mesafe bozunumu (*spatial distance decay*) var mıdır?  
@@ -239,11 +280,11 @@ Tez kapsamında sınanan 6 temel araştırma sorusu ve karşılık gelen formal 
 Bu tez çalışması, iktisat ve savunma sanayii literatürüne üç temel boyutta çığır açıcı katkı sağlamaktadır:
 
 1.  **Metodolojik Katkı (Türkiye'nin İlk Tam Patent Evreni Mikro Paneli):**  
-    Türkiye'de savunma harcamaları üzerine yapılan önceki çalışmaların tamamı 30-40 gözlemlik kaba zaman serilerine dayalıyken; bu çalışmada ilk kez TÜRKPATENT'in 15 yıllık **93.240 adetlik resmî patent sicilinin tamamı** mikro düzeyde ayıklanmış, 30 büyük BIST sanayi deviyle boyuna panel ($N 	imes T = 450$) kurulmuş ve Jaffe kosinüs matrisiyle teknolojik yakınlık haritalandırılmıştır.
+    Türkiye'de savunma harcamaları üzerine yapılan önceki çalışmaların tamamı 30-40 gözlemlik kaba zaman serilerine dayalıyken; bu çalışmada ilk kez TÜRKPATENT'in 15 yıllık **93.240 adetlik resmî patent sicilinin tamamı** mikro düzeyde ayıklanmış, 30 büyük BIST sanayi deviyle boyuna panel ($N \times T = 450$) kurulmuş ve Jaffe kosinüs matrisiyle teknolojik yakınlık haritalandırılmıştır.
 2.  **Ampirik Katkı (5-Pillar Ekonometrik Kanıt Piramidi):**  
     Literatürdeki seçim yanlılığı, içsellik ve mekânsal bağımlılık problemleri; Santos Silva ve Tenreyro (2006) PPML modeli, Cragg (1971) Hurdle iki aşamalı seçilim modeli, Spatial Durbin mesafe bozunumu, 2020 WESCAM ambargoları Farkların Farkı (DiD) doğal deneyi ve 342 başmühendisi izleyen Buluşçu Hareketliliği ağ modeliyle sıfırlanmıştır.
 3.  **Sanayi Politikası Katkısı (Çift Kullanımlı Eşik Değeri):**  
-    Cumhurbaşkanlığı Savunma Sanayii Başkanlığı (SSB) ve Sanayi ve Teknoloji Bakanlığı için, kamu Ar-Ge kaynaklarının hangi sivil sektörlerde çarpan etkisi yarattığını gösteren somut bir kılavuz ($	au^* = 0.2925$) üretilmiştir.
+    Cumhurbaşkanlığı Savunma Sanayii Başkanlığı (SSB) ve Sanayi ve Teknoloji Bakanlığı için, kamu Ar-Ge kaynaklarının hangi sivil sektörlerde çarpan etkisi yarattığını gösteren somut bir kılavuz ($\tau^* = 0.2925$) üretilmiştir.
 
 ## 1.4. Türkiye Savunma Sanayiinin Tarihsel Gelişimi ve Kurumsal Yapısı
 
@@ -287,9 +328,9 @@ Ancak Wesley Cohen ve Daniel Levinthal (1990) tarafından ortaya konulan **Absor
 
 Adam Jaffe (1986, 1993), bilginin sektörler arasında serbestçe ve eşit hızda yayılmadığını kanıtlamıştır. İki sektör veya firma arasındaki bilgi aktarımı, sahip oldukları patentlerin teknolojik sınıflarının benzerliğine bağlıdır. Jaffe Teknolojik Yakınlık İndeksi ($S_{ij}$), firmaların patent dağılım vektörleri arasındaki kosinüs açısı ile hesaplanır:
 
-$$S_{ij} = \frac{f_i f_j'}{\sqrt{(f_i f_i')(f_j f_j')}}$$
+$$S_{ij} = \\frac{f_i f_j'}{\\sqrt{(f_i f_i')(f_j f_j')}}$$
 
-Burada $0 \le S_{ij} \le 1$ arasında değer alır. $S_{ij} = 1$ iki firmanın tıpatıp aynı teknoloji alanında patent ürettiğini, $S_{ij} = 0$ ise tamamen alakasız alanlarda olduğunu gösterir. Bloom, Schankerman ve Van Reenen (2013), bu matrisi kullanarak bilgi yayılmasını ürün pazarı rekabetinden ayrıştırmıştır.
+Burada $0 \\le S_{ij} \\le 1$ arasında değer alır. $S_{ij} = 1$ iki firmanın tıpatıp aynı teknoloji alanında patent ürettiğini, $S_{ij} = 0$ ise tamamen alakasız alanlarda olduğunu gösterir. Bloom, Schankerman ve Van Reenen (2013), bu matrisi kullanarak bilgi yayılmasını ürün pazarı rekabetinden ayrıştırmıştır.
 
 ## 2.5. Dünyada ve Türkiye'de Yapılmış Ampirik Çalışmaların Sentezi
 
@@ -309,7 +350,7 @@ Mükerrer sayım yanlılığını (*duplication bias*) önlemek amacıyla veri s
 
 ## 3.2. SASAD Savunma Bilançoları ve BIST 100 KAP Veri Entegrasyonu
 
-Savunma sektörü Ar-Ge harcamaları ve mühendislik istihdamı, SASAD'ın 2010–2024 Sektör Performans Raporlarından derlenmiştir. Sivil firma tarafında ise Borsa İstanbul'da (BIST 100) işlem gören ve Türkiye sanayi cirosunun ana omurgasını oluşturan 30 büyük sanayi devi (Ford Otosan, Tofaş, Türkcell, Türk Telekom, Arçelik, Vestel, Aselsan, TUSAŞ, Tırsan, Otokar vb.) seçilmiş; Kamuyu Aydınlatma Platformu'ndan (KAP) 15 yıllık bağımsız denetimden geçmiş reel net satış hasılatı ($\ln(	ext{Sales})$) çekilerek $N 	imes T = 450$ gözlemli mikro panel inşa edilmiştir.
+Savunma sektörü Ar-Ge harcamaları ve mühendislik istihdamı, SASAD'ın 2010–2024 Sektör Performans Raporlarından derlenmiştir. Sivil firma tarafında ise Borsa İstanbul'da (BIST 100) işlem gören ve Türkiye sanayi cirosunun ana omurgasını oluşturan 30 büyük sanayi devi (Ford Otosan, Tofaş, Türkcell, Türk Telekom, Arçelik, Vestel, Aselsan, TUSAŞ, Tırsan, Otokar vb.) seçilmiş; Kamuyu Aydınlatma Platformu'ndan (KAP) 15 yıllık bağımsız denetimden geçmiş reel net satış hasılatı ($\ln(\text{Sales})$) çekilerek $N \times T = 450$ gözlemli mikro panel inşa edilmiştir.
 
 ## 3.3. Jaffe (1986, 1993) Teknolojik Yakınlık Matrisinin Hesaplanması
 
@@ -319,189 +360,37 @@ Savunma sektörü Ar-Ge harcamaları ve mühendislik istihdamı, SASAD'ın 2010�
 
 Patent verileri negatif değer almayan, aşırı yayılımlı (*overdispersed*) sayma verisidir. Santos Silva ve Tenreyro (2006), heteroskedasite durumunda log-lineer OLS modellerinin tutarsız katsayılar ürettiğini kanıtlamış ve PPML tahmincisini önermiştir:
 
-$$\mathbb{E}[Y_{it} \mid \mathbf{X}_{it}] = \exp\left( lpha_i + \lambda_t + eta_1 \ln(	ext{Def\_R\&D}_{t-2}) + eta_2 	ext{Jaffe}_i + eta_3 (\ln(	ext{Def\_R\&D}_{t-2}) 	imes 	ext{Jaffe}_i) + \gamma \ln(	ext{Sales}_{it}) ight)$$
+$$\mathbb{E}[Y_{it} \mid \mathbf{X}_{it}] = \exp\left( \alpha_i + \lambda_t + \beta_1 \ln(\text{Def\_R\&D}_{t-2}) + \beta_2 \text{Jaffe}_i + \beta_3 (\ln(\text{Def\_R\&D}_{t-2}) \times \text{Jaffe}_i) + \gamma \ln(\text{Sales}_{it}) \right)$$
 
-Burada $lpha_i$ firma sabit etkilerini, $\lambda_t$ yıl sabit etkilerini, $\gamma$ ise bilanço ölçek kontrolünü temsil etmektedir. Standart hatalar firma düzeyinde kümelenmiştir (*clustered robust SE*).
+Burada $\alpha_i$ firma sabit etkilerini, $\lambda_t$ yıl sabit etkilerini, $\gamma$ ise bilanço ölçek kontrolünü temsil etmektedir. Standart hatalar firma düzeyinde kümelenmiştir (*clustered robust SE*).
 
 ## 3.5. Cragg Hurdle İki Aşamalı Seçilim Modeli (Extensive vs. Intensive Margin)
 
 Firmaların inovasyona başlama kararı ile tescil hacmi arasındaki davranışsal fark John Cragg (1971) Hurdle modeliyle ayrıştırılmıştır:
 *   *Aşama 1 (Geniş Kapsam - Probit):* $\Pr(Y_{it} > 0 \mid X_{it}) = \Phi(X_{it}' \gamma)$
-*   *Aşama 2 (Yoğun Kapsam - Truncated Poisson):* $\mathbb{E}[Y_{it} \mid Y_{it} > 0, X_{it}] = \exp(X_{it}' eta) \cdot [1 - \exp(-\exp(X_{it}' eta))]^{-1}$
+*   *Aşama 2 (Yoğun Kapsam - Truncated Poisson):* $\mathbb{E}[Y_{it} \mid Y_{it} > 0, X_{it}] = \exp(X_{it}' \beta) \cdot [1 - \exp(-\exp(X_{it}' \beta))]^{-1}$
 
 ## 3.6. Mekânsal Ekonometri: Spatial Durbin Modeli (SDM)
 
 Ankara savunma kümelenmesinin coğrafi difüzyonu, ters mesafe matrisi $W$ ($w_{ij} = 1/d_{ij}$) kullanılarak LeSage ve Pace (2009) Spatial Durbin Modeliyle tahmin edilmiştir:
 
-$$Y = ho W Y + X eta + W X 	heta + \mu + arepsilon$$
+$$Y = \rho W Y + X \beta + W X \theta + \mu + \varepsilon$$
 
 ## 3.7. Dışsal Nedensellik ve Doğal Deney: 2020 Ambargoları (DiD)
 
 2020 yılı sonunda yürürlüğe giren Kanada WESCAM elektro-optik ambargosu ve ABD CAATSA yaptırımları dışsal bir jeopolitik şok olarak kurgulanmış; optik/aviyonik sınıfları deney grubu, diğer sınıflar kontrol grubu olarak Farkların Farkı (*Difference-in-Differences*) modeliyle test edilmiştir:
 
-$$Y_{ijt} = lpha + \gamma 	ext{Treat}_j + \lambda 	ext{Post2020}_t + eta_{	ext{DiD}} (	ext{Treat}_j 	imes 	ext{Post2020}_t) + \mathbf{Z}_{it}' \delta + arepsilon_{ijt}$$
+$$Y_{ijt} = \alpha + \gamma \text{Treat}_j + \lambda \text{Post2020}_t + \beta_{\text{DiD}} (\text{Treat}_j \times \text{Post2020}_t) + \mathbf{Z}_{it}' \delta + \varepsilon_{ijt}$$
 
 ## 3.8. Buluşçu Hareketliliği (Inventor Mobility) ve Cox Sağkalım Modeli
 
 93.240 patentte 342 başmühendisin savunmadan sivile tescilli geçişleri mikro düzeyde izlenmiş; yıllık sicil harcı ödenmeme kaynaklı terk edilme (*lapse*) riski Cox Orantılı Tehlikeler Modeli ile tahmin edilmiştir:
 
-$$h(t \mid X) = h_0(t) \exp(eta_1 	ext{SavunmaAkrabalığı} + eta_2 	ext{Mühendis} + \mathbf{Z}' oldsymbol{\gamma})$$
+$$h(t \mid X) = h_0(t) \exp(\beta_1 \text{SavunmaAkrabalığı} + \beta_2 \text{Mühendis} + \mathbf{Z}' \boldsymbol{\gamma})$$
 
 ---
 
-**Araştırmacı:** Doğukan CİHANBEYOĞLU  
-**Tez Başlığı:** *Türkiye Savunma Sanayii Yayılma Dinamiklerinin İleri Teknoloji Patent Ekosistemine Etkileri: Mikro-Ekonometrik ve Mekânsal Bir Analiz (2010–2024)*  
-
----
-
-## 4.1. Veri Tabanı ve Betimsel İstatistikler (TÜRKPATENT 93.240 Kayıt Evreni)
-
-Araştırmanın ampirik omurgasını, Türk Patent ve Marka Kurumu'nun (TÜRKPATENT) 2010–2024 döneminde Resmî Patent Bültenlerinde ilan ettiği **93.240 adet tekil tescil ve patent başvurusu** oluşturmaktadır. Mükerrer sayım yanlılığını (*duplication bias*) önlemek amacıyla veri seti katı biçimde Türkiye tescilleriyle sınırlandırılmış; uluslararası patent aileleri (EP, US, WO) ise buluşların kalite çarpanı olarak modele dahil edilmiştir.
-
-### Tablo 4.1: TÜRKPATENT Evreninin Dönemsel ve Sektörel Dağılımı (2010–2024)
-
-| Dönem / Gösterge | Savunma Sanayii Odaklı Sınıflar | Sivil Yüksek Teknoloji (Bilişim/Otomotiv) | Geleneksel İmalat ve Tüketim Malları | Toplam Tescil Evreni |
-| :--- | :---: | :---: | :---: | :---: |
-| **2010–2015 (Kurulum)** | 1.842 | 8.420 | 11.238 | 21.500 |
-| **2016–2019 (İvmelenme)** | 4.120 | 12.650 | 13.230 | 30.000 |
-| **2020–2024 (Olgunluk)** | 8.560 | 18.940 | 14.240 | 41.740 |
-| **TOPLAM** | **14.522** | **40.010** | **38.708** | **93.240** |
-| *Ortalama Atıf Sayısı* | 2.84 | 1.92 | 0.41 | 1.48 |
-| *Patent Ailesi (Family Size)*| 3.12 | 2.45 | 1.15 | 2.04 |
-
-*Not: Veriler TÜRKPATENT Resmî Patent Sicilinden derlenmiş; 4 haneli IPC ve CPC sınıflarına göre kodlanmıştır.*
-
----
-
-## 4.2. Griliches Bilgi Üretim Fonksiyonu ($H_1$)
-
-Savunma sektörünün Ar-Ge harcamalarını tescilli bilgi stoğuna dönüştürme kapasitesi, Zvi Griliches (1979) Bilgi Üretim Fonksiyonu (*Knowledge Production Function - KPF*) çerçevesinde Poisson Pseudo-Maximum Likelihood (PPML) yöntemiyle tahmin edilmiştir:
-
-$$\ln(\text{Defense\_Patents}_t) = \alpha + \beta_1 \ln(\text{Def\_R\&D}_{t-2}) + \beta_2 \ln(\text{Engineers}_t) + \varepsilon_t$$
-
-### Tablo 4.2: Savunma Sanayii Bilgi Üretim Esnekliği Tahmin Sonuçları
-
-| Bağımsız Değişken | Model 1 (Ham KPF) | Model 2 (+ Mühendislik Kontrolü) | Model 3 (TWFE PPML) |
-| :--- | :---: | :---: | :---: |
-| $\ln(\text{Def\_R\&D}_{t-2})$ | **$1.5566^{***}$** *(0.241)* | **$1.4120^{***}$** *(0.218)* | **$1.3850^{***}$** *(0.194)* |
-| $\ln(\text{Engineers}_t)$ | — | $0.4125^{**}$ *(0.182)* | $0.3890^{**}$ *(0.171)* |
-| Gözlem Sayısı ($N \times T$) | 15 Yıl (Konsolide) | 15 Yıl | 90 Firma-Yıl |
-| $R^2$ / Pseudo-$R^2$ | 0.884 | 0.912 | 0.938 |
-
-*Standart hatalar parantez içindedir. $^{***} p < 0.01, ^{**} p < 0.05$.*
-
-**İktisadi Yorum:** Savunma Ar-Ge harcamalarının 2 yıl gecikmeli katsayısı $\beta = 1.5566^{***}$ çıkmıştır. Türkiye savunma ekosistemine yatırılan her $\%1$'lik ilave reel Ar-Ge kaynağı, 2 yıl sonra savunma patent tescillerinde $\%1.55$'lik bir artış yaratmaktadır. $\beta > 1$ bulunması, savunma sektöründe ölçeğe göre artan bilgi getirisi (*increasing returns to scale*) olduğunu kanıtlamaktadır.
-
----
-
-## 4.3. Sivil Sanayiye Doğrudan Yayılma ve Jaffe Kritik Teknolojik Eşiği ($H_2$ ve $H_3$)
-
-Savunma teknolojilerinin sivil firmaların patent üretimini tetikleme gücü ve teknolojik yakınlığın (*technological proximity*) düzenleyici rolü Jaffe (1986, 1993) etkileşim modeliyle sınanmıştır:
-
-$$\mathbb{E}[Y_{it}] = \exp\left( \alpha_i + \lambda_t + \beta_1 \ln(\text{Def\_R\&D}_{t-2}) + \beta_2 \text{Jaffe}_i + \beta_3 (\ln(\text{Def\_R\&D}_{t-2}) \times \text{Jaffe}_i) + \gamma \ln(\text{Sales}_{it}) \right)$$
-
-### Tablo 4.3: Çift Sabit Etkili Panel Regresyon ve Eşik Analizi Sonuçları
-
-| Parametre | Katsayı ($\beta$) | Dirençli Std. Hata | $z$-Değeri | $p$-Değeri | İktisadi Anlamı |
-| :--- | :---: | :---: | :---: | :---: | :--- |
-| **Savunma Ar-Ge ($\beta_1$)** | **$-1.2161^{***}$** | 0.384 | -3.17 | 0.0015 | Temel Dışlama (*Base Crowding-Out*) |
-| **Jaffe Yakınlığı ($\beta_2$)** | **$-2.4150^{**}$** | 1.120 | -2.16 | 0.0310 | Yapısal Uzaklık Maliyeti |
-| **Etkileşim Terimi ($\beta_3$)** | **$+4.1579^{***}$** | 1.285 | +3.24 | 0.0012 | Pozitif Bilgi Yayılması (*Crowding-In*) |
-| **Reel Net Satış ($\ln(\text{Sales})$)**| **$+0.1842^{**}$** | 0.081 | +2.27 | 0.0240 | Bilanço ve Firma Ölçek Etkisi |
-| **Firma Sabit Etkisi (Firm FE)**| EVET | — | — | — | Gözlemlenemeyen heterojenlik kontrolü |
-| **Yıl Sabit Etkisi (Year FE)** | EVET | — | — | — | Makro konjonktür şokları kontrolü |
-
-### Kritik Eşik Türevi ($\tau^*$):
-Savunma Ar-Ge'sinin sivil firma inovasyonu üzerindeki net marjinal etkisi Jaffe yakınlığına bağlı bir türev fonksiyonudur:
-
-$$\frac{\partial \mathbb{E}[Y_{it}] / \mathbb{E}[Y_{it}]}{\partial \ln(\text{Def\_R\&D})} = \beta_1 + \beta_3 \cdot \text{Jaffe}_i = -1.2161 + 4.1579 \cdot \text{Jaffe}_i$$
-
-Bu marjinal etkinin sıfıra eşitlendiği başabaş eşiği:
-
-$$\tau^* = \frac{-\beta_1}{\beta_3} = \frac{1.2161}{4.1579} \approx \mathbf{0.2925} \quad (\text{Model Varyantlarında: } 0.2376 - 0.2925)$$
-
-**Kuramsal ve Pratik Sonuç:**  
-*   **$\text{Jaffe}_i > 0.2925$ Olan Sektörler:** Bilişim/Yazılım ($\text{Jaffe} = 0.68$), İleri Otomotiv/Otonom ($\text{Jaffe} = 0.54$) ve Telekomünikasyon ($\text{Jaffe} = 0.61$) sektörlerinde net marjinal etki kuvvetle **pozitiftir**. Bu sektörlerde savunma sanayii Ar-Ge'si devasa bir tamamlayıcılık ve teknoloji sıçraması yaratmaktadır.
-*   **$\text{Jaffe}_i < 0.2925$ Olan Sektörler:** Geleneksel Beyaz Eşya ($\text{Jaffe} = 0.12$) ve Temel Metal Sanayiinde net marjinal etki **negatiftir**. Savunma sektörü nitelikli mühendislik işgücünü yüksek ücret primiyle kendine çekerek bu sektörlerde hafif bir dışlama (*crowding-out*) yaratmaktadır.
-
----
-
-## 4.4. İki Aşamalı Cragg Hurdle Modeli: Extensive vs. Intensive Margin Ayrışımı
-
-Sıfır yığılmalı patent dağılımında seçim yanlılığını gidermek amacıyla Cragg (1971) iki aşamalı Hurdle modeli uygulanmıştır:
-
-### Tablo 4.4: Cragg İki Aşamalı Hurdle Tahmin Sonuçları
-
-| Aşama / Karar Mekanizması | Bağımlı Değişken | Katsayı ($\beta$) | $p$-Değeri | Ekonometrik Yorum |
-| :--- | :--- | :---: | :---: | :--- |
-| **1. Aşama: Geniş Kapsam (Extensive Margin)** | $\Pr(Y_{it} > 0)$ *(Probit)* | $+0.1049$ | $0.142$ *(Anlamsız)* | Savunma Ar-Ge'si sıfır patentli firmaları sahaya sokmaz. |
-| **2. Aşama: Yoğun Kapsam (Intensive Margin)** | $Y_{it} \mid Y_{it} > 0$ *(Truncated)*| **$+3.4322^{***}$**| **$0.0013$** | Tescil eşiğini geçmiş firmalarda patent hacmini katlar. |
-
-**İktisadi Çıkarım:** Yayılma etkisi rassal bir lütuf değildir. Eşik aşamasını geçmiş, kendi öz Ar-Ge laboratuvarına ve absorptif kapasitesine sahip firmalarda marjinal inovasyon çarpanı **$\exp(3.4322) \approx 30.9$ katlık** bir hacim derinleşmesi sağlamaktadır.
-
----
-
-## 4.5. Mekânsal Ekonometri ve Mesafe Bozunumu (Spatial Durbin Modeli - SDM)
-
-Bilginin coğrafi sürtünmesi, ters mesafe ağırlıklı mekânsal ağırlık matrisi ($W$) kullanılarak Spatial Durbin Modeli ile tahmin edilmiştir:
-
-### Tablo 4.5: Spatial Durbin Mesafe Bozunumu Parametreleri
-
-| Mekânsal Değişken | Parametre | Tahmin Değeri | $t$-İstatistiği | $p$-Değeri |
-| :--- | :---: | :---: | :---: | :---: |
-| **Mekânsal Otoregresif Parametre** | $\rho$ | $0.4120^{***}$ | $3.85$ | $0.0002$ |
-| **Mekânsal Gecikmeli Yayılma ($W \times \text{Def}$)** | $\theta$ | **$23.8651^{***}$** | $3.18$ | **$0.00148$** |
-| Doğrudan Etki (Direct Impact) | — | $4.1205^{***}$ | $3.42$ | $0.0008$ |
-| Dolaylı Mekânsal Etki (Indirect Spillover) | — | $19.7446^{***}$ | $2.95$ | $0.0032$ |
-
-**İktisadi Çıkarım:** Ankara merkezli savunma çekirdeği (ASELSAN, TUSAŞ, ROKETSAN, HAVELSAN); Kocaeli, Bursa ve İstanbul sanayi aksında yerleşik sivil teknoloji tedarikçileriyle çok güçlü bir mekânsal kümelenme sergilemektedir. Coğrafi yakınlık, teknolojik absorpsiyonu $23.86$ birimlik katsayıyla ivmelendirmektedir.
-
----
-
-## 4.6. Dışsal Nedensellik ve Doğal Deney: 2020 WESCAM/CAATSA Ambargoları (DiD)
-
-İçsellik ve ters nedensellik eleştirilerini bertaraf etmek üzere 2020 yılındaki Kanada elektro-optik ambargosu ve ABD yaptırımları dışsal doğal deney olarak kurgulanmıştır:
-
-### Tablo 4.6: Farkların Farkı (Difference-in-Differences) Regresyon Sonuçları
-
-| Değişken | Katsayı ($\beta$) | Standart Hata | $t$-Değeri | $p$-Değeri |
-| :--- | :---: | :---: | :---: | :---: |
-| $\text{Treat}_j$ (Ambargolu Sınıflar: Optik/Aviyonik/Radar) | $+0.4210$ | $0.312$ | $1.35$ | $0.178$ |
-| $\text{Post2020}_t$ (2020 Sonrası Dönem Kuklası) | $+0.1850$ | $0.142$ | $1.30$ | $0.194$ |
-| **$\text{DiD} = \text{Treat}_j \times \text{Post2020}_t$** | **$+1.0358^{*}$** | **$0.524$** | **$1.98$** | **$0.0480$** |
-
-### Yerli İkame Sıçrama Oranı:
-$$\% \Delta = (\exp(1.0358) - 1) \times 100 = \mathbf{+\%181.7}$$
-
-**İktisadi Çıkarım:** Dışsal ambargo şoku sonrasında, ambargoya maruz kalan kritik teknoloji sınıflarındaki yerli patent üretimi kontrol grubuna kıyasla **$\%181.7$ oranında sıçrama** yapmıştır. Bu bulgu, Daron Acemoglu'nun *Directed Technical Change* (Yönlendirilmiş Teknik Değişim) kuramının savunma kısıtları altındaki doğrudan ampirik kanıtıdır.
-
----
-
-## 4.7. Mikro İletim Kanalı: Buluşçu Hareketliliği (Inventor Mobility Network)
-
-Savunmadan sivil sektöre transfer olan **342 başmühendisin** kariyer hareketliliği 93.240 patent kütüğünde haritalandırılmıştır:
-
-$$\hat{\beta}_{\text{Mobility}} = \mathbf{+0.8941^{***}} \quad (t = 3.35, \; p = 0.0008)$$
-
-Savunma kökenli başmühendis istihdam eden sivil şirketlerin patent kalitesi (aldıkları atıf hacmi) **$\%44.8$ oranında artmaktadır**. Bilginin "kağıt üstünde" değil, insan beyninde taşınan örtük bilgi (*tacit knowledge*) formatında difüze olduğu belgelenmiştir.
-
----
-
-## 4.8. Patent Sağkalım Analizi (Cox Proportional Hazards)
-
-Türk Patent sicilindeki yıllık harç ödememe kaynaklı terk edilme (*lapse*) riski Cox Orantılı Tehlikeler modeliyle tahmin edilmiştir:
-
-$$\text{Hazard Ratio (HR)} = \exp(\hat{\beta}) = \mathbf{0.684^{***}} \quad (z = -2.87, \; p = 0.0041)$$
-
-Savunma sanayii ile teknolojik akrabalığı olan tescilli buluşların sicilden düşme ve terk edilme riski sivil akranlarına kıyasla **$\%31.6$ daha düşüktür**. Üretilen bilgi stoğunun ekonomik ömrü ve ticari değeri belirgin biçimde daha yüksektir.
-
----
-
-## 4.9. Sağlamlık (Robustness) Sınamaları
-
-1.  **Dağıtılmış Gecikme Yapısı ($t-1 \dots t-5$):** En güçlü esnekliğin $t-2$ gecikmesinde ($\beta = 4.5163^{***}, p < 0.001$) zirve yaptığı; $t-4$ ve $t-5$ dönemlerinde etkinin sönümlendiği kanıtlanmıştır (Gaussian absorpsiyon eğrisi).
-2.  **CPC Alt Sınıf Jaffe Matrisi:** 4 haneli IPC yerine ayrıntılı CPC alt sınıf kodları kullanılmış; iki matris arasındaki korelasyon $r = 0.9999$ çıkmış ve katsayı zayıflama sapması (*attenuation bias*) göstermemiştir.
-3.  **BIST 100 Reel Ciro Kontrolleri:** Şirket net satışları kontrol edildiğinde de savunma yayılma esnekliği sarsılmazlığını korumuştur ($\beta = 4.5163^{***}, p = 0.0011$).
+""" + ch4_content + """
 
 ---
 
@@ -512,15 +401,15 @@ Savunma sanayii ile teknolojik akrabalığı olan tescilli buluşların sicilden
 Bu tez çalışmasında, Türkiye savunma sanayiinin 2010–2024 dönemindeki Ar-Ge genişlemesinin sivil ileri teknoloji ekosistemi üzerindeki etkileri, 93.240 patentlik TÜRKPATENT evreni ve 5-Pillar ekonometrik kanıt piramidiyle incelenmiş ve kuramsal hipotezler şu şekilde sonuçlanmıştır:
 
 1.  **Hipotez 1 ($H_1$ - Savunma İnovasyon Esnekliği ve Artan Getiri): KABUL EDİLDİ.**  
-    Griliches KPF tahmininde savunma Ar-Ge esnekliği $eta = 1.5566^{***}$ ($p < 0.001$) çıkmıştır. Sektör, yatırılan Ar-Ge kaynağının üzerinde bir patentleme üretkenliği sergileyerek ölçeğe göre artan bilgi getirisi kanıtlanmıştır.
+    Griliches KPF tahmininde savunma Ar-Ge esnekliği $\beta = 1.5566^{***}$ ($p < 0.001$) çıkmıştır. Sektör, yatırılan Ar-Ge kaynağının üzerinde bir patentleme üretkenliği sergileyerek ölçeğe göre artan bilgi getirisi kanıtlanmıştır.
 2.  **Hipotez 2 ($H_2$ - Sivil Yayılma ve Moretti Hipotezi): KABUL EDİLDİ.**  
-    Savunma harcamalarının sivil inovasyona doğrudan yayılma katsayısı $eta = 0.9098^{***}$ bulunmuş; Deger ve Sen'in salt dışlama savı reddedilerek Moretti vd. (2023) tezi gelişmekte olan bir ekonomi için ilk kez doğrulanmıştır.
+    Savunma harcamalarının sivil inovasyona doğrudan yayılma katsayısı $\beta = 0.9098^{***}$ bulunmuş; Deger ve Sen'in salt dışlama savı reddedilerek Moretti vd. (2023) tezi gelişmekte olan bir ekonomi için ilk kez doğrulanmıştır.
 3.  **Hipotez 3 ($H_3$ - Jaffe Kritik Teknolojik Eşik Türevi): KABUL EDİLDİ.**  
-    Savunma Ar-Ge'sinin sivil sanayiye marjinal etkisi Jaffe yakınlığına bağlı doğrusal bir türevdir. Analitik başabaş eşiği $	au^* = 0.2925$ olarak hesaplanmıştır. Bilişim, telekomünikasyon ve otonom otomotiv gibi teknolojik yakınlığı bu eşiğin üzerinde olan sektörler savunma harcamalarından muazzam bir kaldıraç sağlarken; geleneksel sektörlerde hafif bir kaynak dışlaması yaşanmaktadır.
+    Savunma Ar-Ge'sinin sivil sanayiye marjinal etkisi Jaffe yakınlığına bağlı doğrusal bir türevdir. Analitik başabaş eşiği $\tau^* = 0.2925$ olarak hesaplanmıştır. Bilişim, telekomünikasyon ve otonom otomotiv gibi teknolojik yakınlığı bu eşiğin üzerinde olan sektörler savunma harcamalarından muazzam bir kaldıraç sağlarken; geleneksel sektörlerde hafif bir kaynak dışlaması yaşanmaktadır.
 4.  **Hipotez 4 ($H_4$ - Hurdle Kapsam Ayrışımı): KABUL EDİLDİ.**  
-    Geniş kapsam katsayısı anlamsız ($eta = 0.1049, p > 0.10$), yoğun kapsam katsayısı ise $eta = 3.4322^{***}$ ($p = 0.0013$) çıkmıştır. Savunma yayılması rastgele dağılmamakta; absorptif kapasitesi olan aktif inovatif firmalarda patent hacmini katlamaktadır.
+    Geniş kapsam katsayısı anlamsız ($\beta = 0.1049, p > 0.10$), yoğun kapsam katsayısı ise $\beta = 3.4322^{***}$ ($p = 0.0013$) çıkmıştır. Savunma yayılması rastgele dağılmamakta; absorptif kapasitesi olan aktif inovatif firmalarda patent hacmini katlamaktadır.
 5.  **Hipotez 5 ($H_5$ - Mekânsal Kümelenme ve Mesafe Bozunumu): KABUL EDİLDİ.**  
-    Spatial Durbin modelinde $	heta = 23.8651^{***}$ katsayısıyla, Ankara savunma çekirdeğinin Marmara sanayi aksına doğrudan teknoloji transferi yaptığı kanıtlanmıştır.
+    Spatial Durbin modelinde $\theta = 23.8651^{***}$ katsayısıyla, Ankara savunma çekirdeğinin Marmara sanayi aksına doğrudan teknoloji transferi yaptığı kanıtlanmıştır.
 6.  **Hipotez 6 ($H_6$ - 2020 Ambargoları Doğal Deneyi): KABUL EDİLDİ.**  
     WESCAM ve CAATSA yaptırımları sonrasında hedef alınan teknoloji sınıflarında yerli patent üretiminde net $\%181.7$ oranında nedensel bir sıçrama gerçekleşmiştir.
 
@@ -535,7 +424,7 @@ Ampirik bulgularımız ışığında, Cumhurbaşkanlığı Savunma Sanayii Başk
 
 1.  **Çift Kullanımlı (Dual-Use) Proje Fonlama Şartı:**  
     Savunma Ar-Ge projeleri ihale edilirken (SSB sözleşmelerinde), üretilecek teknolojinin sivil sektörlere transfer edilebilirlik potansiyeli şartnameye zorunlu kriter olarak eklenmelidir.
-2.  **Kritik Eşik ($	au^* = 0.29$) Odaklı Kümelenme Teşvikleri:**  
+2.  **Kritik Eşik ($\tau^* = 0.29$) Odaklı Kümelenme Teşvikleri:**  
     Kamu teşvikleri rastgele dağıtılmamalı; Jaffe teknolojik yakınlığı $0.29$'un üzerinde olan bilişim, yapay zekâ, radar, aviyonik ve otonom mobilite sektörlerine odaklanmalıdır.
 3.  **Mekânsal Teknoloji Koridorları (Ankara-Marmara Ağı):**  
     Ankara'daki ana platform üreticileri ile Kocaeli, Bursa ve Sakarya'daki ileri imalat KOBİ'leri arasında teknoloji transfer ofisleri ve ortak test merkezleri kurulmalıdır.
@@ -613,3 +502,164 @@ Santos Silva, J. M. C., & Tenreyro, S. (2006). The log of gravity. *The Review o
 Sezgin, S. (1997). Country survey VII: Defence spending in Turkey. *Defence and Peace Economics*, 8(4), 381-409.
 
 Smith, R. P. (1980). Military expenditure and investment in OECD countries, 1954–1973. *Journal of Comparative Economics*, 4(1), 19-32.
+"""
+    return md
+
+def compile_full_docx(md_content):
+    doc = docx.Document()
+
+    for s in doc.sections:
+        s.top_margin = Inches(1.0) # 2.5 cm
+        s.bottom_margin = Inches(1.0) # 2.5 cm
+        s.left_margin = Inches(1.57) # 4.0 cm (AHBV kuralı)
+        s.right_margin = Inches(1.0) # 2.5 cm
+
+    style = doc.styles['Normal']
+    font = style.font
+    font.name = 'Times New Roman'
+    font.size = Pt(12)
+    font.color.rgb = RGBColor(0, 0, 0)
+
+    lines = md_content.split("\n")
+    in_table = False
+    table_lines = []
+
+    for line in lines:
+        sline = line.strip()
+
+        if sline.startswith("|") and sline.endswith("|"):
+            in_table = True
+            table_lines.append(sline)
+            continue
+        else:
+            if in_table:
+                render_table(doc, table_lines)
+                in_table = False
+                table_lines = []
+
+        if not sline:
+            continue
+
+        if sline.startswith("# "):
+            p = doc.add_paragraph()
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            p.paragraph_format.space_before = Pt(18)
+            p.paragraph_format.space_after = Pt(12)
+            r = p.add_run(clean_xml(sline[2:].strip()))
+            r.bold = True
+            r.font.size = Pt(14)
+        elif sline.startswith("## "):
+            p = doc.add_paragraph()
+            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            p.paragraph_format.space_before = Pt(14)
+            p.paragraph_format.space_after = Pt(6)
+            r = p.add_run(clean_xml(sline[3:].strip()))
+            r.bold = True
+            r.font.size = Pt(13)
+        elif sline.startswith("### "):
+            p = doc.add_paragraph()
+            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            p.paragraph_format.space_before = Pt(10)
+            p.paragraph_format.space_after = Pt(4)
+            r = p.add_run(clean_xml(sline[4:].strip()))
+            r.bold = True
+            r.font.size = Pt(12)
+        elif sline.startswith("---"):
+            p = doc.add_paragraph()
+            p.paragraph_format.space_after = Pt(12)
+        elif sline.startswith("$$"):
+            p = doc.add_paragraph()
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            p.paragraph_format.space_before = Pt(6)
+            p.paragraph_format.space_after = Pt(6)
+            r = p.add_run(clean_xml(sline.replace("$$", "").strip()))
+            r.italic = True
+            r.font.size = Pt(11)
+        elif sline.startswith("* ") or sline.startswith("- "):
+            p = doc.add_paragraph()
+            p.paragraph_format.line_spacing = 1.5
+            p.paragraph_format.space_after = Pt(4)
+            p.paragraph_format.left_indent = Inches(0.4)
+            add_formatted_text(p, "• " + sline[2:].strip())
+        elif re.match(r"^\d+\.\s", sline):
+            p = doc.add_paragraph()
+            p.paragraph_format.line_spacing = 1.5
+            p.paragraph_format.space_after = Pt(4)
+            p.paragraph_format.left_indent = Inches(0.4)
+            add_formatted_text(p, sline)
+        else:
+            p = doc.add_paragraph()
+            p.paragraph_format.line_spacing = 1.5
+            p.paragraph_format.space_after = Pt(6)
+            p.paragraph_format.first_line_indent = Inches(0.4)
+            add_formatted_text(p, sline)
+
+    if in_table:
+        render_table(doc, table_lines)
+
+    doc.save(DOCX_OUT_PATH)
+    doc.save(GIT_DOCX_PATH)
+    print(f"[✔] Compiled exhaustive AHBV thesis DOCX: {DOCX_OUT_PATH}")
+
+def add_formatted_text(paragraph, text):
+    text = clean_xml(text)
+    parts = text.split("**")
+    is_bold = False
+    for part in parts:
+        if part:
+            subparts = part.split("*")
+            is_italic = False
+            for sub in subparts:
+                if sub:
+                    r = paragraph.add_run(sub)
+                    if is_bold: r.bold = True
+                    if is_italic: r.italic = True
+                is_italic = not is_italic
+        is_bold = not is_bold
+
+def render_table(doc, lines):
+    rows = []
+    for l in lines:
+        if "---" in l: continue
+        cells = [clean_xml(c.strip()) for c in l.split("|")[1:-1]]
+        if cells: rows.append(cells)
+    if not rows: return
+
+    col_count = len(rows[0])
+    table = doc.add_table(rows=len(rows), cols=col_count)
+    table.alignment = WD_TABLE_ALIGNMENT.CENTER
+
+    for r_idx, row_data in enumerate(rows):
+        row = table.rows[r_idx]
+        is_header = (r_idx == 0)
+        for c_idx in range(min(col_count, len(row_data))):
+            cell = row.cells[c_idx]
+            cell.text = row_data[c_idx]
+            p = cell.paragraphs[0]
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER if (is_header or c_idx > 0) else WD_ALIGN_PARAGRAPH.LEFT
+            p.paragraph_format.line_spacing = 1.0
+            p.paragraph_format.space_before = Pt(2)
+            p.paragraph_format.space_after = Pt(2)
+            for run in p.runs:
+                run.font.name = 'Times New Roman'
+                run.font.size = Pt(10)
+                if is_header:
+                    run.bold = True
+            if is_header:
+                set_cell_background(cell, "EAECEE")
+    doc.add_paragraph().paragraph_format.space_after = Pt(6)
+
+def main():
+    print("=" * 80)
+    print("EXHAUSTIVE AHBV THESIS MANUSCRIPT COMPILER (2025/2026)")
+    print("=" * 80)
+    md_content = get_manuscript_markdown()
+    with open(MD_OUT_PATH, "w", encoding="utf-8") as f:
+        f.write(md_content)
+    with open(GIT_MD_PATH, "w", encoding="utf-8") as f:
+        f.write(md_content)
+    print(f"[✔] Saved Master Thesis Markdown: {MD_OUT_PATH}")
+    compile_full_docx(md_content)
+
+if __name__ == "__main__":
+    main()
