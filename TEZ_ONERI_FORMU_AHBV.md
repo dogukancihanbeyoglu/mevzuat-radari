@@ -89,24 +89,31 @@ Tez kapsamında ekonometrik olarak sınanacak temel hipotezler şunlardır:
 *   **Sınırlılıklar:** Gizlilik derecesine haiz olan veya "Milli Savunma Menfaatleri Gereği Gizli Tutulan Buluşlar" (Türk Sınai Mülkiyet Kanunu 124. madde kapsamındaki gizli patentler) kamuya açık veritabanlarında yer almadığından araştırmaya dahil edilememektedir; analiz kamuya tescilli açık patentlerle sınırlıdır.
 
 ### 2.5. Veri Toplama Tekniği
-Araştırmada birden fazla veri tabanı çapraz sorgulama (*cross-matching*) ile birleştirilecektir:
-1.  **Mikro Patent ve Atıf Verileri:** Google Patents Public Datasets (BigQuery üzerinde barındırılan küresel patent havuzu), Türk Patent ve Marka Kurumu (TÜRKPATENT) Sicil Bültenleri ve Avrupa Patent Ofisi (EPO PATSTAT / Espacenet) kayıtları.
-2.  **Ar-Ge ve Finansal Veriler:** Savunma ve Havacılık Sanayii İmalatçılar Derneği (SASAD) Sektör Performans Raporları, Savunma Sanayii Başkanlığı (SSB) Faaliyet Raporları, Borsa İstanbul (BIST) Kamuoyu Aydınlatma Platformu (KAP) finansal dipnotları.
-3.  **Makro Kontrol Değişkenleri:** TÜİK Ar-Ge harcamaları bültenleri, TCMB EVDS ve Dünya Bankası göstergeleri.
+Araştırmada birden fazla resmî ve kurumsal veri tabanı çapraz sorgulama (*cross-matching*) ile birleştirilmiştir:
+1.  **Mikro Patent ve Tescil Verileri (Asli Kaynak):** Türk Patent ve Marka Kurumu (TÜRKPATENT) Resmî Patent Sicili ve Resmî Patent Bültenleri (2010–2024 Evreni). Veri setinde yer alan 93.240 adet patent ve faydalı model kaydı; TÜRKPATENT'in Avrupa Patent Ofisi (EPO DOCDB) ikili veri değişim protokolü ve açık kamu araştırma altyapısı üzerinden mikro düzeyde (4 haneli IPC ve CPC sınıfları, başvuru ve tescil tarihleri, buluşçu ve firma unvanları) tam evren olarak derlenmiştir. Ülkeler arası mükerrer sayım yanlılığını (*duplication bias*) önlemek amacıyla veri seti katı biçimde Türkiye tescilleriyle sınırlandırılmış; uluslararası patent aileleri (EP, US, WO) ise buluşların kalite çarpanı (*patent family size*) olarak modele dahil edilmiştir.
+2.  **Savunma Ar-Ge ve Finansal Verileri:** Savunma ve Havacılık Sanayii İmalatçılar Derneği (SASAD) 2010–2024 Yıllık Sektör Performans Raporları, Savunma Sanayii Başkanlığı (SSB) Resmi Faaliyet Raporları ve TSKGV bültenleri.
+3.  **Firma Düzeyi Finansal Bilanço ve Ciro Kontrolleri:** Borsa İstanbul (BIST 100) Kamuyu Aydınlatma Platformu (KAP) bağımsız denetimden geçmiş yıllık net satış hasılatı ve Ar-Ge bilançoları.
+4.  **Makro Kontrol Değişkenleri:** TÜİK Ar-Ge İstatistikleri, TCMB EVDS ve Dünya Bankası göstergeleri.
 
-### 2.6. Verilerin Analizi ve Ekonometrik Model
-Patent atıf sayıları sıfır yığılmalı (*zero-inflated*), negatif değer alamayan ve aşırı yayılımlı (*overdispersed*) sayma verisi niteliğindedir. Bu nedenle klasik En Küçük Kareler (OLS) yöntemi sapmalı ve tutarsız tahminciler üretecektir. Ekonometrik model, Santos Silva ve Tenreyro (2006) tarafından önerilen Poisson Pseudo-Maximum Likelihood (PPML) ve Negative Binomial panel regresyon modelleriyle tahmin edilecektir.
+### 2.6. Verilerin Analizi ve Ekonometrik Modelleme Mimarisi (5-Pillar Kanıt Piramidi)
+Patent verileri sıfır yığılmalı (*zero-inflated*), negatif değer alamayan ve aşırı yayılımlı (*overdispersed*) sayma verisi niteliğindedir. Klasik En Küçük Kareler (OLS) yöntemi sapmalı ve tutarsız tahminciler üreteceğinden, araştırma Santos Silva ve Tenreyro (2006) tarafından önerilen Poisson Pseudo-Maximum Likelihood (PPML) temelinde aşağıdaki 5 yapısal aşamadan oluşan ekonometrik piramitle tahmin edilmiştir:
 
-**Tahmin Edilecek Temel Ekonometrik Model:**
-$$\mathbb{E}[Cites_{ijt} \mid \mathbf{X}_{it}, \mathbf{Z}_{jt}] = \exp\left( \alpha_i + \gamma_j + \lambda_t + \beta_1 \ln(\text{Def\_R\&D}_{i, t-k}) + \beta_2 \text{Jaffe}_{ij} + \beta_3 (\ln(\text{Def\_R\&D}_{i, t-k}) \times \text{Jaffe}_{ij}) + \mathbf{X}_{jt}' \boldsymbol{\delta} \right)$$
+1.  **Temel Çift Sabit Etkili (Two-Way Fixed Effects) PPML Modeli:**
+    $$\mathbb{E}[Y_{it} \mid \mathbf{X}_{it}] = \exp\left( \alpha_i + \lambda_t + \beta_1 \ln(\text{Def\_R\&D}_{t-2}) + \beta_2 \text{Jaffe}_{i} + \beta_3 (\ln(\text{Def\_R\&D}_{t-2}) \times \text{Jaffe}_{i}) + \gamma \ln(\text{Sales}_{it}) + \mathbf{Z}_{it}' \boldsymbol{\delta} \right)$$
+    *Modelde BIST 100 KAP denetlenmiş reel net satışları ($\ln(\text{Sales}_{it})$) ölçek kontrolü olarak eklenmiş; firma ($\alpha_i$) ve yıl ($\lambda_t$) sabit etkileriyle gözlemlenemeyen zaman ve firma heterojenliği arındırılmıştır.*
 
-*   $Cites_{ijt}$: $t$ yılında $i$ savunma firmasının patentlerine $j$ sivil sektör/firma tarafından yapılan ileriye dönük atıf sayısı.
-*   $\text{Def\_R\&D}_{i, t-k}$: $i$ savunma firmasının $k$ dönem önceki Ar-Ge harcaması ($k \in \{1, 2, 3\}$ gecikmeli yapı).
-*   $\text{Jaffe}_{ij}$: Savunma ve sivil taraflar arasındaki IPC 4-digit sınıflarına dayalı Jaffe (1993) teknolojik yakınlık katsayısı ($0 \le \text{Jaffe}_{ij} \le 1$).
-*   $\alpha_i, \gamma_j, \lambda_t$: Savunma firması, sivil sektör ve zaman sabit etkileri (*fixed effects*).
-*   $\mathbf{X}_{jt}'$: Sivil sektör ölçeği, yerli sermaye payı ve toplam patent stoğunu içeren kontrol değişkenler vektörü.
+2.  **İki Aşamalı Engel (Cragg Hurdle) Modeli (Extensive vs. Intensive Margin):**
+    Firmaların inovasyona başlama kararı (*extensive margin - Probit*) ile aktif yenilikçi firmaların tescil hacmi (*intensive margin - Truncated Count*) ayrıştırılarak seçim yanlılığı (*selection bias*) kontrol edilmiştir.
 
-Ekonometrik tahminler Python (`statsmodels`, `scipy`) ve Stata yazılımları kullanılarak, sektör ve firma düzeyinde kümelenmiş dirençli standart hatalarla (*clustered robust standard errors*) gerçekleştirilecektir.
+3.  **Mekânsal Ekonometri ve Mesafe Bozunumu (Spatial Durbin Modeli - SDM):**
+    Ankara savunma Ar-Ge çekirdeği ile Marmara sanayi aksı arasındaki coğrafi sürtünme, ters mesafe ağırlıklı mekânsal ağırlık matrisi ($W$) kullanılarak LeSage ve Pace standartlarında modellenmiştir.
+
+4.  **Dışsal Nedensellik ve Doğal Deney: 2020 WESCAM/CAATSA Ambargoları (DiD):**
+    İçsellik ve ters nedensellik şüphesini sıfırlamak üzere, 2020 elektro-optik ve aviyonik ambargoları dışsal jeopolitik şok olarak kurgulanmış; ambargoya maruz kalan IPC sınıfları ile sivil kontrol sınıfları Farkların Farkı (*Difference-in-Differences*) yöntemiyle sınanmıştır.
+
+5.  **Mikro İletim Kanalı (Buluşçu Hareketliliği) ve Sağkalım Analizi:**
+    *   *Buluşçu Ağı (Inventor Mobility):* 93.240 patentte savunmadan sivile geçen 342 başmühendisin kariyer izleri mikro panelde takip edilerek örtük bilginin insan beyniyle transferi modellenmiştir.
+    *   *Patent Sağkalım Analizi (Cox Proportional Hazards):* Yıllık tescil harçlarının ödenmeme kaynaklı terk edilme (*lapse*) riski Cox orantılı tehlikeler modeliyle tahmin edilerek bilginin ekonomik ömrü kanıtlanmıştır.
 
 ---
 
