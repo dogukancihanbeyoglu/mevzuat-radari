@@ -15,7 +15,7 @@
 **Tezi Hazırlayan:** Doğukan CİHANBEYOĞLU  
 **Öğrenci No:** [Öğrenci Numarası]  
 **Danışman:** [Unvanı, Adı SOYADI]  
-**Savunma Yılı / Dönemi:** Ankara, 2026 / Güz  
+**Savunma Yılı / Dönemi:** Ankara, Ocak 2027 / 2026–2027 Güz Dönemi Sonu  
 
 ---
 
@@ -150,12 +150,11 @@ Tez çalışması için öngörülen taslak içindekiler planı aşağıda sunul
 
 | Planlanan Çalışma / İş Paketi | Tarih Aralığı |
 | :--- | :---: |
-| **İP 1: Tez Önerisinin Kesinleşmesi ve Enstitü Onayı** | Eylül 2025 – Ekim 2025 |
-| **İP 2: Literatür Sentezi ve Kuramsal Çerçevenin Yazımı** | Kasım 2025 – Aralık 2025 |
-| **İP 3: TÜRKPATENT 93.240 Verisinin Derlenmesi ve Jaffe Matrisi** | Ocak 2026 – Şubat 2026 |
-| **İP 4: Ekonometrik Modelleme (Hurdle, Spatial, DiD, Cox)** | Mart 2026 – Nisan 2026 |
-| **İP 5: Tez Metninin Tamamlanması ve Danışman İncelemesi** | Mayıs 2026 – Haziran 2026 |
-| **İP 6: Enstitüye Teslim, İntihal Raporu ve Tez Savunması** | Temmuz 2026 – Eylül 2026 |
+| **İP 1: Tez Önerisi Onayı, Enstitü Kaydı ve Literatür Sentezi** | Eylül 2026 |
+| **İP 2: Kuramsal Çerçeve ve Yöntem Bölümlerinin Yazımı (Bölüm 1, 2 ve 3)** | Ekim 2026 |
+| **İP 3: TÜRKPATENT 93.240 Verisi Ekonometrik Modellemesi ve Bölüm 4 Çıktıları** | Kasım 2026 |
+| **İP 4: Bölüm 5 (Sonuç ve Politika Önerileri) ve Taslak Metnin Danışmana Sunumu** | Aralık 2026 |
+| **İP 5: Danışman Düzeltmeleri, Turnitin Benzerlik Raporu ve Tez Savunması** | Ocak 2027 |
 
 ---
 

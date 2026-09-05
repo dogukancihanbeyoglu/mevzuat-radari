@@ -114,7 +114,7 @@ def create_proposal_document():
         tcPr.append(borders)
 
     p = doc.add_paragraph()
-    set_para(p, "Ankara, 2026", align=WD_ALIGN_PARAGRAPH.CENTER, space_before=24, space_after=0, indent=0, bold=True, font_size=12)
+    set_para(p, "Ankara, Ocak 2027", align=WD_ALIGN_PARAGRAPH.CENTER, space_before=24, space_after=0, indent=0, bold=True, font_size=12)
 
     # ==========================================
     # SAYFA 2: İÇİNDEKİLER
@@ -316,18 +316,17 @@ def create_proposal_document():
     p = doc.add_paragraph()
     set_para(p, "Tez çalışmasının öngörülen iş paketleri ve tahmini zamanlama takvimi aşağıda sunulmuştur:", indent=1.0)
 
-    tbl_time = doc.add_table(rows=7, cols=2)
+    tbl_time = doc.add_table(rows=6, cols=2)
     tbl_time.alignment = WD_TABLE_ALIGNMENT.CENTER
     tbl_time.autofit = False
 
     time_data = [
         ("Planlanan Çalışma / İş Paketi", "Tarih Aralığı"),
-        ("İP 1: Tez Önerisinin Kesinleşmesi ve Enstitü Onayı", "Eylül 2025 – Ekim 2025"),
-        ("İP 2: Literatür Sentezi ve Kuramsal Çerçevenin Yazımı", "Kasım 2025 – Aralık 2025"),
-        ("İP 3: TÜRKPATENT 93.240 Verisinin Derlenmesi ve Jaffe Matrisi", "Ocak 2026 – Şubat 2026"),
-        ("İP 4: Ekonometrik Modelleme (Hurdle, Spatial, DiD, Cox)", "Mart 2026 – Nisan 2026"),
-        ("İP 5: Tez Metninin Tamamlanması ve Danışman İncelemesi", "Mayıs 2026 – Haziran 2026"),
-        ("İP 6: Enstitüye Teslim, İntihal Raporu ve Tez Savunması", "Temmuz 2026 – Eylül 2026")
+        ("İP 1: Tez Önerisi Onayı, Enstitü Kaydı ve Literatür Sentezi", "Eylül 2026"),
+        ("İP 2: Kuramsal Çerçeve ve Yöntem Bölümlerinin Yazımı (Bölüm 1, 2 ve 3)", "Ekim 2026"),
+        ("İP 3: TÜRKPATENT 93.240 Verisi Ekonometrik Modellemesi ve Bölüm 4 Çıktıları", "Kasım 2026"),
+        ("İP 4: Bölüm 5 (Sonuç ve Politika Önerileri) ve Taslak Metnin Danışmana Sunumu", "Aralık 2026"),
+        ("İP 5: Danışman Düzeltmeleri, Turnitin Benzerlik Raporu ve Tez Savunması", "Ocak 2027")
     ]
 
     for i, row in enumerate(time_data):
